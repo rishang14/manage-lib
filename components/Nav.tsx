@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { motion } from "framer-motion"
 
-export function Header() {
+ const  Nav =()=> {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
@@ -123,3 +123,6 @@ export function Header() {
     </motion.header>
   )
 }
+
+
+export default Nav;
