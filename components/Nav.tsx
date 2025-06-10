@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-// import { ModeToggle } from "@/components/mode-toggle"
+import { ModeToggle } from "./Theme"
 import { Menu, X } from "lucide-react"
 import { motion } from "framer-motion"
 
@@ -29,22 +29,20 @@ import { motion } from "framer-motion"
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
-          {["Features", "Pricing", "About"].map((item, i) => (
+          
             <motion.div
-              key={item}
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 + 0.2 }}
+              transition={{ delay: 1 * 0.1 + 0.2 }}
               whileHover={{ y: -2 }}
             >
               <Link
-                href={`#${item.toLowerCase()}`}
+                href={"#features"}
                 className="text-sm font-medium hover:text-primary transition-colors"
               >
-                {item}
+              Features
               </Link>
             </motion.div>
-          ))}
         </nav>
 
         <div className="flex items-center space-x-4">
@@ -53,7 +51,7 @@ import { motion } from "framer-motion"
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5 }}
           >
-            {/* <ModeToggle /> */}
+            <ModeToggle />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -90,22 +88,20 @@ import { motion } from "framer-motion"
           transition={{ duration: 0.3 }}
         >
           <nav className="container flex flex-col space-y-4 px-4 py-4">
-            {["Features", "Pricing", "About"].map((item, i) => (
+
               <motion.div
-                key={item}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: 1 * 0.1 }}
               >
                 <Link
-                  href={`#${item.toLowerCase()}`}
+                  href={"#features"}
                   className="text-sm font-medium hover:text-primary transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {item}
+                 Features
                 </Link>
               </motion.div>
-            ))}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}

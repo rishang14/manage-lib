@@ -114,7 +114,7 @@ export function FeaturesSection() {
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
                 <Card
-                  className={`relative overflow-hidden border ${feature.borderColor} ${feature.shadowColor} shadow-xl hover:shadow-2xl transition-all duration-300`}
+                  className={`relative overflow-hidden border ${feature.borderColor} ${feature.shadowColor} shadow-sm hover:shadow-xl dark:inset-shadow-card-foreground  bg-card   transition-all duration-300`}
                 >
                   <div
                     className="absolute top-0 left-0 w-2 h-full"
@@ -165,7 +165,7 @@ export function FeaturesSection() {
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-              <span className="text-muted-foreground">24/7 customer support</span>
+              <span className="text-muted-foreground">Control is in your hand.</span>
             </motion.div>
             <motion.div
               className="flex items-center space-x-3"
@@ -173,7 +173,7 @@ export function FeaturesSection() {
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-              <span className="text-muted-foreground">No long-term contracts</span>
+              <span className="text-muted-foreground">we help to get work done asap</span>
             </motion.div>
           </div>
         </motion.div>
