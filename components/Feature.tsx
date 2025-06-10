@@ -149,7 +149,7 @@ export function FeaturesSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <h3 className="text-2xl font-semibold mb-8">Why choose LibraryX?</h3>
+          <h3 className="text-2xl font-semibold mb-8">Why choose LibShift?</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             <motion.div
               className="flex items-center space-x-3"
