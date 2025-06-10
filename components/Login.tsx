@@ -100,19 +100,6 @@ const LoginPage = () => {
               </div>
             </div>
 
-            {/* Additional Info */}
-            <div className="text-center">
-              <p className="text-sm text-blue-100/70">
-                By continuing, you agree to our{' '}
-                <a href="#" className="text-blue-300 hover:text-blue-200 underline transition-colors">
-                  Terms of Service
-                </a>{' '}
-                and{' '}
-                <a href="#" className="text-blue-300 hover:text-blue-200 underline transition-colors">
-                  Privacy Policy
-                </a>
-              </p>
-            </div>
           </CardContent>
         </Card>
       </div>
@@ -120,7 +107,7 @@ const LoginPage = () => {
       {/* Footer */}
       <div className="absolute bottom-4 left-0 right-0 z-10">
         <p className="text-center text-blue-100/50 text-sm">
-          © 2025 NexusFlow. All rights reserved.
+          © 2025 LibShift. All rights reserved.
         </p>
       </div>
     </div>
