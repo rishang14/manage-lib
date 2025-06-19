@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Armchair, Clock, Users, CreditCard, Bell, CheckCircle } from "lucide-react"
-import { motion } from "framer-motion"
+import { motion } from "framer-motion" 
 
 const features = [
   {
@@ -104,7 +104,8 @@ export function FeaturesSection() {
           whileInView="show"
           viewport={{ once: true }}
         >
-          {features.map((feature, index) => (
+          {features.map((feature, index) => ( 
+            // @ts-ignore
             <motion.div key={index} variants={item}>
               <motion.div
                 whileHover={{

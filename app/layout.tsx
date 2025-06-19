@@ -1,7 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google"; 
+import localFont from 'next/font/local'; 
 import "./globals.css";
-import { Provider } from "./provider";
+import { Provider } from "./provider"; 
+
+
+const rubik = localFont({
+  display: 'swap',
+  src: [
+    {
+      path: '../public/font/rubik.woff2',
+    },
+  ],
+  variable: '--font-rubik',
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,9 +36,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning={true}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${rubik.variable}  antialiased`}
       >
         <Provider
           attribute="class"
