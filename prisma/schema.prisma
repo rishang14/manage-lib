@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id         String     @id @default(cuid())
+  name       String?
+  email      String     @unique
+  image      String?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  userRoles  UserRole[]   // Roles assigned to user per library
+}
+
+
+model Library {
+  id         String     @id @default(cuid())
+  name       String
+  ownerId    String
+  createdAt  DateTime   @default(now())
+
+  owner      User       @relation(fields: [ownerId], references: [id])
+  userRoles  UserRole[]   // Managers/Admins of this library
+  seats      Seat[]       // Seats under this library
+  members    Member[]     // Members registered in this library
+  shifts     Shift[]      // Shifts configured by this library
+}
+
+model UserRole {
+  id         String     @id @default(cuid())
+  userId     String
+  libraryId  String
+  role       RoleType
+
+  user       User       @relation(fields: [userId], references: [id])
+  library    Library    @relation(fields: [libraryId], references: [id])
+
+  @@unique([userId, libraryId]) // one role per user per library
+}
+
+enum RoleType {
+  ADMIN     // Library owner
+  MANAGER   // Limited access staff
+}
+
+model Seat {
+  id         String     @id @default(cuid())
+  seatNumber String
+  libraryId  String
+
+  library    Library    @relation(fields: [libraryId], references: [id])
+  bookings   Booking[]
+}
+
+model Member {
+  id         String     @id @default(cuid())
+  name       String
+  phone      String
+  joinedAt   DateTime   @default(now())
+  libraryId  String
+
+  library    Library    @relation(fields: [libraryId], references: [id])
+  bookings   Booking[]     // Bookings made by this member
+  payments   Payment[]     // Payments made by this member
+}
+
+model Shift {
+  id         String     @id @default(cuid())
+  name       String           // "Morning", "Evening", etc.
+  startTime  String           // "08:00"
+  endTime    String           // "12:00"
+  libraryId  String
+
+  library    Library          @relation(fields: [libraryId], references: [id])
+  bookings   Booking[]        // Bookings tied to this shift
+}
+
+
+model Booking {
+  id         String     @id @default(cuid())
+  seatId     String
+  memberId   String
+  date       DateTime         // Date of booking
+  shiftId    String           
+
+  createdAt  DateTime   @default(now())
+
+  seat       Seat       @relation(fields: [seatId], references: [id])
+  member     Member     @relation(fields: [memberId], references: [id])
+  shift      Shift      @relation(fields: [shiftId], references: [id])
+
+  @@unique([seatId, date, shiftId]) // no double-booking for same slot
+}
+
+
+model Payment {
+  id         String     @id @default(cuid())
+  memberId   String
+  month      String           // e.g., "2024-06"
+  amount     Float
+  paid       Boolean    @default(false)
+  paidAt     DateTime?        // Null if unpaid
+  createdAt  DateTime   @default(now())
+
+  member     Member     @relation(fields: [memberId], references: [id])
+
+  @@unique([memberId, month]) // One payment entry per month per member
+}
