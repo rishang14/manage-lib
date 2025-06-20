@@ -81,7 +81,7 @@ const getStatusBadgeClass = (status: string) => {
 
 const HomepageCard = () => {
   return (
-    <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div className="w-full max-w-7xl md:mx-auto md:p-4  p-2 lg:p-8">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
