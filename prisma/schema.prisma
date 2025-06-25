@@ -12,13 +12,46 @@ model User {
   id         String     @id @default(cuid())
   name       String?
   email      String     @unique
-  image      String?
+  image      String? 
+  accounts    Account[]
   createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-
-  userRoles  UserRole[]   // Roles assigned to user per library
+  updatedAt  DateTime   @updatedAt 
+  sessions   Session[]
+  userRoles  UserRole[]   
+  Library Library[]
 }
 
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+} 
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
 model Library {
   id         String     @id @default(cuid())
@@ -27,7 +60,7 @@ model Library {
   createdAt  DateTime   @default(now())
 
   owner      User       @relation(fields: [ownerId], references: [id])
-  userRoles  UserRole[]   // Managers/Admins of this library
+  userRoles  UserRole[]   
   seats      Seat[]       // Seats under this library
   members    Member[]     // Members registered in this library
   shifts     Shift[]      // Shifts configured by this library
@@ -42,12 +75,12 @@ model UserRole {
   user       User       @relation(fields: [userId], references: [id])
   library    Library    @relation(fields: [libraryId], references: [id])
 
-  @@unique([userId, libraryId]) // one role per user per library
+  @@unique([userId, libraryId]) 
 }
 
 enum RoleType {
-  ADMIN     // Library owner
-  MANAGER   // Limited access staff
+  ADMIN     
+  MANAGER   
 }
 
 model Seat {
