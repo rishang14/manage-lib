@@ -19,14 +19,42 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       });
     },
   }, 
-    callbacks: {
-    async signIn ({user,account,profile}) {
+    callbacks: { 
+      async jwt({ token, user }) {
+    if (user && user.email) {
+      const dbUser = await prisma.user.findUnique({
+        where: { email: user.email },
+      });
+      
+      token.id = dbUser?.id;  
+      console.log(dbUser?.id,"userid") 
+      token.name=dbUser?.name;
+      token.email=dbUser?.email
+      console.log("i got triggered")
+    }
+
+    return token;
+  },
+
+    async signIn ({account}) {
        if (account?.provider !== "credentials") {
         return true;
       } 
         return false;  
-    }
+    }, 
+
+     async session({ session, token }) { 
+       if(token.id && session.user){
+        session.user.id=token.id; //attach user id for api calls 
+       } 
+       if(session?.user){
+        session.user.name=token.name; 
+        session.user.email=token.email;
+       }
+      return session
+    },
 },
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt" }, 
+  secret:process.env.AUTHSECERT,
   ...authConfig,
 })

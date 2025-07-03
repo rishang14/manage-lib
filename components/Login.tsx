@@ -8,14 +8,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
-import { signIn ,auth} from "@/auth";
+import { signIn ,auth,signOut} from "@/auth";
 
 const LoginPage = async() => { 
   const session = await auth() 
   console.log(session,"user")
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-neutral-900 via-zinc-900 to-slate-900">
-      {/* Animated Background Elements */}
+      {/* Animated Background Elements */}  
       <div className="absolute inset-0">
         {/* Floating Orbs */}
         <div className="absolute top-20 left-20 w-72 h-72 bg-violet-500/30 rounded-full blur-xl animate-pulse"></div>

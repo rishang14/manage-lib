@@ -3,8 +3,11 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight, } from "lucide-react"
 import { motion } from "framer-motion"
+import { useSession } from "next-auth/react"
 
-export function HeroSection() {
+export function HeroSection() { 
+  const {data:session,status} =useSession() 
+  console.log(session,"data")
   return (
     <section className="relative overflow-hidden py-20 md:py-15">
       {/* Background gradient */}
