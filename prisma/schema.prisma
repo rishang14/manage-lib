@@ -130,7 +130,7 @@ model Booking {
   member     Member     @relation(fields: [memberId], references: [id])
   shift      Shift      @relation(fields: [shiftId], references: [id])
 
-  @@unique([seatId, date, shiftId]) // no double-booking for same slot
+  @@unique([seatId,shiftId]) // no double-booking for same slot
 }
 
 
