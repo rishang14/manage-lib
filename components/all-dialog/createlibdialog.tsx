@@ -24,16 +24,18 @@ interface Shift {
   endTime: string
 }
 
-interface CreateLibraryDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
+// interface CreateLibraryDialogProps {
+//   open: boolean
+//   onOpenChange: (open: boolean) => void
+// }
 
-export function CreateLibraryDialog({ open, onOpenChange }: CreateLibraryDialogProps) {
+export function CreateLibraryDialog({ open, onOpenChange }: any) {
   const [libraryName, setLibraryName] = useState("")
   const [shifts, setShifts] = useState<Shift[]>([
     { id: "1", name: "Morning Shift", startTime: "09:00", endTime: "17:00" },
-  ])
+  ]) 
+
+  console.log(shifts,"shifts")
   const [isSubmitting, setIsSubmitting] = useState(false)
 //   const { toast } = useToast()
 
@@ -79,7 +81,7 @@ export function CreateLibraryDialog({ open, onOpenChange }: CreateLibraryDialogP
     setIsSubmitting(true)
 
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    // await new Promise((resolve) => setTimeout(resolve, 1500))
 
     // toast({
     //   title: "Success!",
@@ -87,10 +89,10 @@ export function CreateLibraryDialog({ open, onOpenChange }: CreateLibraryDialogP
     // })
 
     // Reset form
-    setLibraryName("")
-    setShifts([{ id: "1", name: "Morning Shift", startTime: "09:00", endTime: "17:00" }])
-    setIsSubmitting(false)
-    onOpenChange(false)
+    // setLibraryName("")
+    // setShifts([{ id: "1", name: "Morning Shift", startTime: "09:00", endTime: "17:00" }])
+    // setIsSubmitting(false)
+    // onOpenChange(false)
   }
 
   return (

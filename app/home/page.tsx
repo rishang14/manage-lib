@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Plus, FileText, Clock, Users, ExternalLink, Sparkles } from "lucide-react"
+import { CreateLibraryDialog } from '@/components/all-dialog/createlibdialog'
 // import { CreateLibraryDialog } from "../create-library-dialog"
 
 const existingFiles = [
@@ -181,7 +182,7 @@ const existingFiles = [
           ))}
         </div>
 
-        {/* <CreateLibraryDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} /> */}
+        <CreateLibraryDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} />
 
     </div> 
      </div>
