@@ -1,6 +1,6 @@
 "use client"
-
-import { useState } from "react"
+import { useState } from "react" 
+import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -8,92 +8,29 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+  DialogTitle, 
+} from "@/components/ui/dialog"  
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Label } from "@/components/ui/label" 
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Trash2, Clock } from "lucide-react"
-// import { useToast } from "@/hooks/use-toast"
+import { dialogopenprops } from "@/common/types"
+import 
 
-interface Shift {
-  id: string
-  name: string
-  startTime: string
-  endTime: string
-}
+ const CreateLibraryDialog=({ open, onOpenChange }: dialogopenprops)=> { 
 
-// interface CreateLibraryDialogProps {
-//   open: boolean
-//   onOpenChange: (open: boolean) => void
-// }
-
-export function CreateLibraryDialog({ open, onOpenChange }: any) {
-  const [libraryName, setLibraryName] = useState("")
-  const [shifts, setShifts] = useState<Shift[]>([
-    { id: "1", name: "Morning Shift", startTime: "09:00", endTime: "17:00" },
-  ]) 
-
-  console.log(shifts,"shifts")
-  const [isSubmitting, setIsSubmitting] = useState(false)
 //   const { toast } = useToast()
 
-  const addShift = () => {
-    const newShift: Shift = {
-      id: Date.now().toString(),
-      name: `Shift ${shifts.length + 1}`,
-      startTime: "09:00",
-      endTime: "17:00",
-    }
-    setShifts([...shifts, newShift])
-  }
-
-  const removeShift = (id: string) => {
-    if (shifts.length > 1) {
-      setShifts(shifts.filter((shift) => shift.id !== id))
-    }
-  }
-
-  const updateShift = (id: string, field: keyof Shift, value: string) => {
-    setShifts(shifts.map((shift) => (shift.id === id ? { ...shift, [field]: value } : shift)))
-  }
-
-  const handleSubmit = async () => {
-    // if (!libraryName.trim()) {
-    //   toast({
-    //     title: "Error",
-    //     description: "Please enter a library name",
-    //     variant: "destructive",
-    //   })
-    //   return
-    // }
-
-    // if (shifts.some((shift) => !shift.name.trim() || !shift.startTime || !shift.endTime)) {
-    //   toast({
-    //     title: "Error",
-    //     description: "Please fill in all shift details",
-    //     variant: "destructive",
-    //   })
-    //   return
-    // }
-
-    setIsSubmitting(true)
-
-    // Simulate API call
-    // await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    // toast({
-    //   title: "Success!",
-    //   description: `Library "${libraryName}" created with ${shifts.length} shift${shifts.length > 1 ? "s" : ""}`,
-    // })
-
-    // Reset form
-    // setLibraryName("")
-    // setShifts([{ id: "1", name: "Morning Shift", startTime: "09:00", endTime: "17:00" }])
-    // setIsSubmitting(false)
-    // onOpenChange(false)
-  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -104,7 +41,7 @@ export function CreateLibraryDialog({ open, onOpenChange }: any) {
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* Library Name */}
+
           <div className="space-y-2">
             <Label htmlFor="library-name" className="text-sm font-medium">
               Library Name
@@ -118,7 +55,6 @@ export function CreateLibraryDialog({ open, onOpenChange }: any) {
             />
           </div>
 
-          {/* Shifts Section */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
@@ -213,3 +149,6 @@ export function CreateLibraryDialog({ open, onOpenChange }: any) {
     </Dialog>
   )
 }
+
+
+export default CreateLibraryDialog;
