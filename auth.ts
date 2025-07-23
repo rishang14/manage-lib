@@ -27,10 +27,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       });
       
       token.id = dbUser?.id;  
-      console.log(dbUser?.id,"userid") 
       token.name=dbUser?.name;
       token.email=dbUser?.email
-      console.log("i got triggered")
     }
 
     return token;
@@ -43,15 +41,17 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         return false;  
     }, 
 
-     async session({ session, token }) { 
-       if(token.id && session.user){
-        session.user.id=token.id; //attach user id for api calls 
-       } 
-       if(session?.user){
-        session.user.name=token.name; 
-        session.user.email=token.email;
-       }
-      return session
+     async session({ session, token, }) {  
+            return {
+                ...session,
+                user: {
+                    ...session.user,
+                    id: token.id, 
+                    name:token.name ,
+                    email:token.email,
+                    
+                }
+            }
     },
 },
   session: { strategy: "jwt" }, 

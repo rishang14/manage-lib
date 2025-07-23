@@ -15,4 +15,17 @@ export const CreateLibrarySchema = LibrarySchema
     ).min(1, "At least one shift is required")
   })
 
-export type CreateLibraryInput = z.infer<typeof CreateLibrarySchema>
+export type CreateLibraryInput = z.infer<typeof CreateLibrarySchema>   
+
+
+
+
+
+
+
+/// types script types 
+
+ export interface dialogopenprops {
+  open: boolean
+  onOpenChange: React.Dispatch<React.SetStateAction<boolean>>
+}
