@@ -110,7 +110,7 @@ export const LibrarySchema = z.object({
   createdAt: z.coerce.date(),
 })
 
-export type Library = z.infer<typeof LibrarySchema>
+export type LibraryType = z.infer<typeof LibrarySchema>
 
 /////////////////////////////////////////
 // USER ROLE SCHEMA
