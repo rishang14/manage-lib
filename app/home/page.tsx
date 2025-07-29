@@ -1,14 +1,14 @@
 // import { Button } from '@/components/ui/button'
 "use client"
-import React from 'react'
+import React, { useEffect }  from 'react'
 
-
-import { useState } from "react"
+import axios from "axios"
+// import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Plus, FileText, Clock, Users, ExternalLink, Sparkles } from "lucide-react"
-import { CreateLibraryDialog } from '@/components/all-dialog/createlibdialog'
+// import  CreateLibraryDialog  from '@/components/all-dialog/createlibdialog'
 // import { CreateLibraryDialog } from "../create-library-dialog"
 
 const existingFiles = [
@@ -45,12 +45,19 @@ const existingFiles = [
 ]
 
  const Page= ()=> {
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  // const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const handleFileClick = (file: (typeof existingFiles)[0]) => {
     window.open(`/file-info/${file.id}`, "_blank")
-  }
+  } 
 
+
+ useEffect(()=>{
+   async function getsession(){
+   const res=  await axios.get(`/api/getlibdetails/cmdd8ze7r0001zg90bpviffwb`,{withCredentials:true});  
+   } 
+   getsession()
+ },[])
   return ( 
     <div className='max-w-7xl container mx-auto'>
       <div className="relative z-10 space-y-8">
@@ -67,7 +74,7 @@ const existingFiles = [
               </p>
             </div>
             <Button
-              onClick={() => setIsDialogOpen(true)}
+              // onClick={() => setIsDialogOpen(true)}
               className="backdrop-blur-xl bg-white/20 dark:bg-slate-900/20 border border-white/30 dark:border-slate-700/30 text-slate-900 dark:text-slate-100 hover:bg-white/30 dark:hover:bg-slate-900/30 px-6 py-3 rounded-2xl shadow-lg"
             >
               <Plus className="w-5 h-5 mr-2" />
@@ -182,7 +189,7 @@ const existingFiles = [
           ))}
         </div>
 
-        <CreateLibraryDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} />
+        {/* <CreateLibraryDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} /> */}
 
     </div> 
      </div>

@@ -34,6 +34,12 @@ export async function POST(req:NextRequest){
             startTime: shift.startTime,
             endTime: shift.endTime
           }))
+        }, 
+        userRoles:{
+           create:{
+            userId:validatedata.data.ownerId, 
+            role:"ADMIN"
+           } 
         }
         }
       }) 
