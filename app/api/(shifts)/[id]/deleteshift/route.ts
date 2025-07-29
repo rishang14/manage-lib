@@ -2,8 +2,6 @@ import { checkIdSchema } from "@/common/types";
 import authConfig from "@/lib/auth.config";
 import { getuserID, islibexist, isthisUserIsInLib } from "@/lib/helper";
 import prisma from "@/lib/prisma";
-import { Console, error } from "console";
-import { CodeSquare } from "lucide-react";
 import NextAuth from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -41,7 +39,7 @@ export async function DELETE(req:NextRequest,{ params }: { params: Promise<{ id:
       
       await prisma.shift.delete({where:{id}}); 
 
-      return NextResponse.json({message:"shift is deleted"},{status:400});
+      return NextResponse.json({message:"shift is deleted"},{status:200});
    } catch (error) {
      console.log("error while deleteing shift",error)
      return NextResponse.json({error:"Internal Server Error"})

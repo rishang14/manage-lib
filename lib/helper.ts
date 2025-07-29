@@ -1,8 +1,6 @@
 import { LibraryType, Shift } from "@/prisma/generated/zod";
 import prisma from "./prisma";
-import { apiResponse, shiftschemaInput } from "@/common/types";
-import { Fascinate } from "next/font/google";
-
+import { apiResponse, shiftschemaInput ,shiftupdateschemainput} from "@/common/types";
 export async function getuserID(email: string): Promise<string | undefined> {
   try {
     const user = await prisma.user.findUnique({
@@ -140,7 +138,7 @@ export async function deleteLIb(id: string): Promise<void> {
   }
 }
 
-export async function UpdateShift(shift: shiftschemaInput): Promise<Shift> {
+export async function addnewShift(shift: shiftschemaInput): Promise<Shift> {
   const addedshift = await prisma.shift.create({
     data: {
       startTime: shift.startTime,
@@ -151,4 +149,18 @@ export async function UpdateShift(shift: shiftschemaInput): Promise<Shift> {
   });
 
   return addedshift;
+}
+
+
+export async function UpdateShift(id:string, details:shiftupdateschemainput  ):Promise<Shift>{
+   const updatedshifts= await prisma.shift.update({
+    where:{id}, 
+    data:{
+      name:details.name, 
+      startTime:details.startTime, 
+      endTime:details.endTime 
+    }
+   }) 
+
+   return updatedshifts;
 }

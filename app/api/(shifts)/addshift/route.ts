@@ -1,6 +1,6 @@
 import { shiftschema } from "@/common/types";
 import authConfig from "@/lib/auth.config";
-import { getuserID, islibexist, isthisUserIsInLib, UpdateShift } from "@/lib/helper";
+import { addnewShift, getuserID, islibexist, isthisUserIsInLib,  } from "@/lib/helper";
 import NextAuth from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 const { auth } = NextAuth(authConfig);
@@ -33,10 +33,10 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({error:userrole.message},{status:400})
     }
    
-    if(userrole.success && userrole.message !== "ADMIN" || userrole.message !== "MANAGER"){
-        return NextResponse.json({error:"Only admin and manager can add shift"})
+    if(userrole.success && userrole.message !== "ADMIN" && userrole.message !== "MANAGER"){
+        return NextResponse.json({error:"Only admin and manager can add shift"},{status:403})
     }
-    const newshift = await UpdateShift(validatedata.data);
+    const newshift = await addnewShift(validatedata.data);
 
     return NextResponse.json(
       { message: "Added Successfully", newshift },

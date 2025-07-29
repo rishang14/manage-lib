@@ -37,6 +37,8 @@ export const shiftschema = ShiftSchema.omit({ id: true }).extend({
     .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "HH:mm format required"),
 });  
 
+export const shiftupdateschema=ShiftSchema.partial(); 
+export type shiftupdateschemainput= z.infer<typeof shiftupdateschema>
 export type shiftschemaInput = z.infer<typeof shiftschema>;
 
 /// types script types
