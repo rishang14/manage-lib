@@ -2,9 +2,7 @@
  import NextAuth from "next-auth"; 
  import authConfig from "@/lib/auth.config"; 
 import { checkIdSchema } from "@/common/types";
-import {  islibexist, isthisUserIsLibAdmin, isuserexist } from "@/lib/helper";
-import { error } from "console";
-
+import {  deleteLIb, getuserID, islibexist, isthisUserIsInLib, isuserexist } from "@/lib/helper";
 
  const {auth}=NextAuth(authConfig); 
 
@@ -16,17 +14,13 @@ import { error } from "console";
       } 
 
       try {
-         const parseddatauser = checkIdSchema.safeParse(req.body) 
          const {id} = await params; 
          const parseddatalib= checkIdSchema.safeParse({id}); 
-         if(!parseddatauser.success){
-            return NextResponse.json({error:"UserId is wrong or missing "},{status:400});
-         } 
          if(!parseddatalib.success){
             return NextResponse.json({error:"Lib id format is wrong or missing"},{status:400});
          }
-         
-          const userexist = await isuserexist(parseddatauser.data.id as string); 
+          const userid= await getuserID(session?.user?.email);
+          const userexist = await isuserexist(userid as string); 
           const libexist= await islibexist(parseddatalib.data.id as string); 
 
           if(!userexist.success){
@@ -37,13 +31,16 @@ import { error } from "console";
           }
           
           if(libexist.success && userexist.success){
-             const isadmin=  await isthisUserIsLibAdmin(parseddatalib.data.id as string,parseddatauser.data.id as string); 
+             const userRole=  await isthisUserIsInLib(parseddatalib.data.id as string,userid as string); 
              
-             if(!isadmin.success){
-               return NextResponse.json({error:isadmin.message},{status:400});
+             if(!userRole.success){
+               return NextResponse.json({error:userRole.message},{status:400});
              } 
-
-
+             
+             if(userRole.success && userRole.message !== "ADMIN"){
+               return NextResponse.json({error:"Only admin can delete Lib "},{status:400})
+             }
+             const deleted =await deleteLIb(parseddatalib.data.id as string)
           }   
 
           return NextResponse.json({message:"Lib is deleted Successfully"},{status:200});

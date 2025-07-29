@@ -1,6 +1,6 @@
-import { LibraryType } from "@/prisma/generated/zod";
+import { LibraryType, Shift } from "@/prisma/generated/zod";
 import prisma from "./prisma";
-import { apiResponse } from "@/common/types";
+import { apiResponse, shiftschemaInput } from "@/common/types";
 import { Fascinate } from "next/font/google";
 
 export async function getuserID(email: string): Promise<string | undefined> {
@@ -14,11 +14,11 @@ export async function getuserID(email: string): Promise<string | undefined> {
       },
     });
 
-    if (user) {
-      return user.id;
-    } else {
-      return undefined;
-    }
+    if(!user){
+      return undefined
+    } 
+
+    return user.id
   } catch (error) {
     console.error(`Error retrieving user with email ${email}:`, error);
     return undefined;
@@ -65,8 +65,8 @@ export async function getlibrarydetails(id: string) {
 }
 
 export async function isuserexist(id: string): Promise<apiResponse> {
-  const user = await prisma.user.findFirst({ where: { id } }); 
-  console.log(user,"user exist or not in the db");
+  const user = await prisma.user.findFirst({ where: { id } });
+  console.log(user, "user exist or not in the db");
   if (!user) {
     return {
       success: false,
@@ -76,71 +76,79 @@ export async function isuserexist(id: string): Promise<apiResponse> {
   return { success: true, message: "got the user" };
 }
 
-export async function islibexist(id: string): Promise<apiResponse> { 
+export async function islibexist(id: string): Promise<apiResponse> {
   try {
-    const lib = await prisma.library.findFirst({ where: { id } }); 
-  console.log(lib,"libexist or not ")
-  if (!lib) {
+    const lib = await prisma.library.findFirst({ where: { id } });
+    console.log(lib, "libexist or not ");
+    if (!lib) {
+      return {
+        success: false,
+        message: "lib with this id not exist",
+      };
+    }
+
+    return { success: true, message: "got the library" };
+  } catch (error) {
     return {
       success: false,
-      message: "lib with this id not exist",
+      message: "Internal error in function islibexist",
     };
   }
-
-  return { success: true, message: "got the library" }; 
-  } catch (error) {
-    return{
-      success:false, 
-      message:"Internal error in function islibexist"
-    }
-  }
-
 }
 
-export async function isthisUserIsLibAdmin(
+export async function isthisUserIsInLib(
   libid: string,
   userId: string
-): Promise<apiResponse> { 
-
+): Promise<apiResponse> {
   try {
-     const userAdmin = await prisma.userRole.findUnique({
-    where: {
-      userId_libraryId: {
-        userId: userId,
-        libraryId: libid,
+    const user = await prisma.userRole.findUnique({
+      where: {
+        userId_libraryId: {
+          userId: userId,
+          libraryId: libid,
+        },
       },
-    },
-  });
-  console.log(userAdmin, "userrole inside the library");
-  if (!userAdmin) {
+    });
+    console.log(user, "userrole inside the library");
+    if (!user) {
+      return {
+        success: false,
+        message: "User not assigned to this library",
+      };
+    }
+
+    if (user && user.role === "ADMIN") {
+      return { success: true, message: "ADMIN" };
+    }    
+      return {success:true , message:"MANAGER"};
+  } catch (error) {
+    console.log(error, "error while finding the admin in lib");
     return {
       success: false,
-      message: "User not assigned to this library",
+      message: "Intenal error in function isthisUserIsLibAdmin",
     };
-  }
-
-  if (userAdmin && userAdmin.role !== "ADMIN") {
-    return { success: false, message: "User is not admin" };
-  }
-
-  return { success: true, message: "User is admin" }; 
-  } catch (error) {
-    console.log(error,"error while finding the admin in lib")
-    return {
-      success:false, 
-      message:"Intenal error in function isthisUserIsLibAdmin"
-    } 
   }
 }
 
-
-export async function deleteLIb(id:string):Promise<void> { 
-
+export async function deleteLIb(id: string): Promise<void> {
   try {
-   const dellib= await prisma.library.delete({
-    where:{id}
-  })
+    const dellib = await prisma.library.delete({
+      where: { id },
+    });
   } catch (error) {
-    console.log(error,"while delting the library")
+    console.log(error, "while delting the library");
   }
+}
+
+export async function UpdateShift(shift: shiftschemaInput): Promise<Shift> {
+  const addedshift = await prisma.shift.create({
+    data: {
+      startTime: shift.startTime,
+      endTime: shift.endTime,
+      name: shift.name,
+      libraryId: shift.libraryId,
+    },
+  });
+
+  return addedshift;
 }
