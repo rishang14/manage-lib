@@ -76,8 +76,9 @@ export async function isuserexist(id: string): Promise<apiResponse> {
   return { success: true, message: "got the user" };
 }
 
-export async function islibexist(id: string): Promise<apiResponse> {
-  const lib = await prisma.library.findFirst({ where: { id } }); 
+export async function islibexist(id: string): Promise<apiResponse> { 
+  try {
+    const lib = await prisma.library.findFirst({ where: { id } }); 
   console.log(lib,"libexist or not ")
   if (!lib) {
     return {
@@ -86,14 +87,23 @@ export async function islibexist(id: string): Promise<apiResponse> {
     };
   }
 
-  return { success: true, message: "got the library" };
+  return { success: true, message: "got the library" }; 
+  } catch (error) {
+    return{
+      success:false, 
+      message:"Internal error in function islibexist"
+    }
+  }
+
 }
 
 export async function isthisUserIsLibAdmin(
   libid: string,
   userId: string
-): Promise<apiResponse> {
-  const userAdmin = await prisma.userRole.findUnique({
+): Promise<apiResponse> { 
+
+  try {
+     const userAdmin = await prisma.userRole.findUnique({
     where: {
       userId_libraryId: {
         userId: userId,
@@ -113,10 +123,24 @@ export async function isthisUserIsLibAdmin(
     return { success: false, message: "User is not admin" };
   }
 
-  return { success: true, message: "User is admin" };
+  return { success: true, message: "User is admin" }; 
+  } catch (error) {
+    console.log(error,"error while finding the admin in lib")
+    return {
+      success:false, 
+      message:"Intenal error in function isthisUserIsLibAdmin"
+    } 
+  }
 }
 
 
-export async function deleteLIb(libid:string):Promise<void> {
-  
+export async function deleteLIb(id:string):Promise<void> { 
+
+  try {
+   const dellib= await prisma.library.delete({
+    where:{id}
+  })
+  } catch (error) {
+    console.log(error,"while delting the library")
+  }
 }

@@ -3,6 +3,7 @@
  import authConfig from "@/lib/auth.config"; 
 import { checkIdSchema } from "@/common/types";
 import {  islibexist, isthisUserIsLibAdmin, isuserexist } from "@/lib/helper";
+import { error } from "console";
 
 
  const {auth}=NextAuth(authConfig); 
@@ -36,9 +37,19 @@ import {  islibexist, isthisUserIsLibAdmin, isuserexist } from "@/lib/helper";
           }
           
           if(libexist.success && userexist.success){
-             const isadmin=  await isthisUserIsLibAdmin(parseddatalib.data.id as string,parseddatauser.data.id as string);
-          }
+             const isadmin=  await isthisUserIsLibAdmin(parseddatalib.data.id as string,parseddatauser.data.id as string); 
+             
+             if(!isadmin.success){
+               return NextResponse.json({error:isadmin.message},{status:400});
+             } 
+
+
+          }   
+
+          return NextResponse.json({message:"Lib is deleted Successfully"},{status:200});
       } catch (error) {
-        
+        console.log("error while deleting the Library error:", error); 
+
+        return NextResponse.json({error:"Internal Server Error"},{status:500});
       }
  }
