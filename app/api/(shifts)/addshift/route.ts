@@ -27,10 +27,10 @@ export async function POST(req: NextRequest) {
     const userrole=await isthisUserIsInLib(validatedata.data.libraryId as string,userid as string);  
 
     if (!libexist.success) {
-      return NextResponse.json({ error: libexist.message }, { status: 400 });
+      return NextResponse.json({ error: libexist.message }, { status: 404 });
     }
     if(!userrole.success){ 
-        return NextResponse.json({error:userrole.message},{status:400})
+        return NextResponse.json({error:userrole.message},{status:404})
     }
    
     if(userrole.success && userrole.message !== "ADMIN" && userrole.message !== "MANAGER"){

@@ -58,7 +58,7 @@ export async function getlibrarydetails(id: string) {
       },
     },
   });
-  if (!libdetails) return {};
+  if (!libdetails) return undefined;
   return libdetails;
 }
 
@@ -81,7 +81,7 @@ export async function islibexist(id: string): Promise<apiResponse> {
     if (!lib) {
       return {
         success: false,
-        message: "lib with this id not exist",
+        message: "lib not found ",
       };
     }
 
@@ -128,15 +128,7 @@ export async function isthisUserIsInLib(
   }
 }
 
-export async function deleteLIb(id: string): Promise<void> {
-  try {
-    const dellib = await prisma.library.delete({
-      where: { id },
-    });
-  } catch (error) {
-    console.log(error, "while delting the library");
-  }
-}
+
 
 export async function addnewShift(shift: shiftschemaInput): Promise<Shift> {
   const addedshift = await prisma.shift.create({

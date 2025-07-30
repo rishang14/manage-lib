@@ -28,12 +28,12 @@ export async function PATCH(req:NextRequest,{ params }: { params: Promise<{ id: 
      const userid=await getuserID(session?.user?.email); 
      const libexist= await islibexist(validatedata.data?.libraryId as string) 
       if(!libexist.success){
-        return NextResponse.json({error:libexist.message},{status:400})
+        return NextResponse.json({error:libexist.message},{status:404})
       } 
 
       const userrole= await isthisUserIsInLib(validatedata.data?.libraryId as string, userid as string ); 
       if(!userrole.success){
-       return NextResponse.json({error:userrole.message},{status:400});
+       return NextResponse.json({error:userrole.message},{status:404});
       } 
 
       if(userrole.success && userrole.message !== "ADMIN" && userrole.message !== "MANAGER" ){
