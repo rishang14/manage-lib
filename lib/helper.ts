@@ -1,6 +1,6 @@
-import { LibraryType, Shift } from "@/prisma/generated/zod";
+import { LibraryType, Seat, Shift } from "@/prisma/generated/zod";
 import prisma from "./prisma";
-import { apiResponse, shiftschemaInput ,shiftupdateschemainput} from "@/common/types";
+import { apiResponse, seatdetails, shiftschemaInput ,shiftupdateschemainput} from "@/common/types";
 export async function getuserID(email: string): Promise<string | undefined> {
   try {
     const user = await prisma.user.findUnique({
@@ -163,4 +163,21 @@ export async function UpdateShift(id:string, details:shiftupdateschemainput  ):P
    }) 
 
    return updatedshifts;
+} 
+
+
+export async function createseat(details:seatdetails):Promise<Seat | undefined>{
+   
+  const createseat= await prisma.seat.create({
+    data:{
+      seatNumber:details.seatNumber,  
+      libraryId:details.libraryId
+    }
+  }) 
+
+  if(!createseat){
+     return undefined; 
+  } 
+
+  return createseat;
 }

@@ -1,5 +1,5 @@
 import z from "zod";
-import { ShiftSchema, LibrarySchema } from "@/prisma/generated/zod";
+import { ShiftSchema, LibrarySchema ,SeatSchema } from "@/prisma/generated/zod";
 
 export const CreateLibrarySchema = LibrarySchema.omit({
   id: true,
@@ -53,3 +53,8 @@ export type apiResponse<> = {
   message?: string;
   error?: string;
 };
+
+
+export const seatdetailsschema= SeatSchema.omit({id:true}); 
+
+export type seatdetails= z.infer<typeof  seatdetailsschema>;
