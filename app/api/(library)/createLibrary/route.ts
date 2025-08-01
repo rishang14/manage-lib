@@ -24,27 +24,27 @@ export async function POST(req:NextRequest){
         return NextResponse.json({error:validatedata.error},{status:400}); 
       } 
 
-      const created= await prisma.library.create({
-        data:{
-          name: validatedata.data.name, 
-          ownerId:validatedata.data.ownerId, 
-           shifts: {
-           create: validatedata.data.shifts.map(shift => ({
-            name: shift.name,
-            startTime: shift.startTime,
-            endTime: shift.endTime
-          }))
-        }, 
-        userRoles:{
-           create:{
-            userId:validatedata.data.ownerId, 
-            role:"ADMIN"
-           } 
-        }
-        }
-      }) 
+      // const created= await prisma.library.create({
+      //   data:{
+      //     name: validatedata.data.name, 
+      //     ownerId:validatedata.data.ownerId, 
+      //      shifts: {
+      //      create: validatedata.data.shifts.map(shift => ({
+      //       name: shift.name,
+      //       startTime: shift.startTime,
+      //       endTime: shift.endTime
+      //     }))
+      //   }, 
+      //   userRoles:{
+      //      create:{
+      //       userId:validatedata.data.ownerId, 
+      //       role:"ADMIN"
+      //      } 
+      //   }
+      //   }
+      // }) 
 
-      return NextResponse.json({message:"Success library created",created},{status:200}); 
+      return NextResponse.json({message:"Success library created",},{status:200}); 
     } catch (error) {
        console.log(error,"something went wrong ") 
       return NextResponse.json({ error: "Failed to create library" }, { status: 500 }); 

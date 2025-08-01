@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Plus, FileText, Clock, Users, ExternalLink, Sparkles } from "lucide-react"
+import { useSession } from 'next-auth/react' 
+import { createlibdata } from '@/lib/dumydata'
 // import  CreateLibraryDialog  from '@/components/all-dialog/createlibdialog'
 // import { CreateLibraryDialog } from "../create-library-dialog"
 
@@ -45,8 +47,10 @@ const existingFiles = [
 ]
 
  const Page= ()=> {
-  // const [isDialogOpen, setIsDialogOpen] = useState(false)
-
+  // const [isDialogOpen, setIsDialogOpen] = useState(false) 
+  const {data,status}=useSession(); 
+  console.log(data,"data") 
+ 
   const handleFileClick = (file: (typeof existingFiles)[0]) => {
     window.open(`/file-info/${file.id}`, "_blank")
   } 
@@ -54,10 +58,11 @@ const existingFiles = [
 
  useEffect(()=>{
    async function getsession(){
-   const res=  await axios.get(`/api/getlibdetails/cmdd8ze7r0001zg90bpviffwb`,{withCredentials:true});  
+   const res=  await axios.post(`/api/createLibrary`,createlibdata,{withCredentials:true});  
+   console.log(res); 
    } 
-   getsession()
- },[])
+   getsession();
+ },[]) 
   return ( 
     <div className='max-w-7xl container mx-auto'>
       <div className="relative z-10 space-y-8">

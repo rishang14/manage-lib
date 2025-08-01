@@ -12,7 +12,7 @@ import { signIn ,auth,signOut} from "@/auth";
 
 const LoginPage = async() => { 
   const session = await auth() 
-  console.log(session,"user")
+  // console.log(session,"user")
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-neutral-900 via-zinc-900 to-slate-900">
       {/* Animated Background Elements */}  

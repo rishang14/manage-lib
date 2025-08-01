@@ -5,7 +5,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "./Theme"
 import { Menu, X } from "lucide-react"
-import { motion } from "framer-motion"
+import { motion } from "framer-motion" 
+import { signOut } from "next-auth/react"
 
  const  Nav =()=> {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -86,7 +87,12 @@ import { motion } from "framer-motion"
           >
             <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
               {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
+            </Button> 
+               <Button  className="w-fit text-white"  onClick={async()=>{
+                  await signOut()
+                }}>
+                  signOut
+              </Button>
           </motion.div>
         </div>
       </div>
@@ -124,7 +130,7 @@ import { motion } from "framer-motion"
             >
               <Button asChild className="w-fit">
                 <Link href="/login">Login</Link>
-              </Button>
+              </Button> 
             </motion.div>
           </nav>
         </motion.div>
