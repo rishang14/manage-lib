@@ -3,7 +3,6 @@ import authConfig from "@/lib/auth.config";
 import NextAuth from "next-auth";
 import { checkIdSchema } from "@/common/types";
 import { getlibrarydetails, getuserID, islibexist, isthisUserIsInLib } from "@/lib/helper";
-import { error } from "console";
 
 const { auth } = NextAuth(authConfig);
 

@@ -172,4 +172,20 @@ export async function createseat(details:seatdetails):Promise<Seat | undefined>{
   } 
 
   return createseat;
+} 
+
+
+
+
+export async function DeleteUser(userid:string){ 
+  try {
+    
+    const delteduser= await prisma.user.delete({where:{id:userid}}); 
+    if(delteduser){
+ 
+     console.log("user deleted")
+    }
+  } catch (error) {
+    console.log(error,"while deleting user")
+  }
 }
