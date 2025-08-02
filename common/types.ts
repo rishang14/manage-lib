@@ -57,4 +57,10 @@ export type apiResponse<> = {
 
 export const seatdetailsschema= SeatSchema.omit({id:true}); 
 
-export type seatdetails= z.infer<typeof  seatdetailsschema>;
+export type seatdetails= z.infer<typeof  seatdetailsschema>; 
+
+
+export type libroles<>={
+ libid:string, 
+ role:string
+}

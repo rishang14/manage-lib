@@ -1,8 +1,7 @@
-import NextAuth, { User as NextAuthUser } from "next-auth";
+import NextAuth  from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "./lib/prisma";
 import authConfig from "./lib/auth.config";
-import { CodeSquare } from "lucide-react";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -19,7 +18,13 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       });
     },
   },
-  callbacks: {
+  callbacks: { 
+        async signIn({ account }) {
+      if (account?.provider !== "credentials") {
+        return true;
+      }
+      return false;
+    },
     async jwt({ token, user }) {
       if (user && user.email) {
         const dbUser = await prisma.user.findUnique({
@@ -37,19 +42,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           role : u.role 
         }));
       }
-      console.log('token',token);
+      // console.log(token,"modified token");
       return token;
     },
 
-    async signIn({ account }) {
-      if (account?.provider !== "credentials") {
-        return true;
-      }
-      return false;
-    },
-
     async session({ session, token, user }) {
-       console.log(token,"token inside session is this available ")
+      //  console.log(token,"token inside session is this available ")
       return {
         ...session,
         user: {
