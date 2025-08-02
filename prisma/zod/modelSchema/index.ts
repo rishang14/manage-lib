@@ -1,6 +1,7 @@
 export * from './UserSchema';
 export * from './AccountSchema';
 export * from './SessionSchema';
+export * from './RequestLogSchema';
 export * from './LibrarySchema';
 export * from './UserRoleSchema';
 export * from './SeatSchema';

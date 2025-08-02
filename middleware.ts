@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { publicRoutes, protectedRoutes, libadminRoute } from "./lib/pathroute";
+import { publicRoutes, protectedRoutes } from "./lib/pathroute";
 import { auth } from "@/auth";
 import { libroles } from "./common/types";
 export default async function middleware(req: NextRequest) {

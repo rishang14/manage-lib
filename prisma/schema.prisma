@@ -8,25 +8,25 @@ datasource db {
 }
 
 generator zod {
-  provider       = "zod-prisma-types"
-   output           = "./zod"
+  provider         = "zod-prisma-types"
+  output           = "./zod"
   useMultipleFiles = true
   relationModel    = true
   generateClient   = true
 }
 
 model User {
-  id         String     @id @default(cuid())
-  name       String?
-  email      String     @unique 
+  id            String     @id @default(cuid())
+  name          String?
+  email         String     @unique
   emailVerified DateTime?
-  image      String? 
-  accounts    Account[]
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt 
-  sessions   Session[]
-  userRoles  UserRole[]   
-  Library Library[]
+  image         String?
+  accounts      Account[]
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  sessions      Session[]
+  userRoles     UserRole[]
+  Library       Library[]
 }
 
 model Account {
@@ -49,108 +49,113 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-} 
+}
 
 model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Library {
-  id         String     @id @default(cuid())
-  name       String
-  ownerId    String
-  createdAt  DateTime   @default(now())
+model RequestLog {
+  id        String   @id // UUID or unique string per request
+  createdAt DateTime @default(now())
 
-  owner      User       @relation(fields: [ownerId], references: [id],onDelete: Cascade)
-  userRoles  UserRole[]   
-  seats      Seat[]       // Seats under this library
-  members    Member[]     // Members registered in this library
-  shifts     Shift[]      // Shifts configured by this library
+  @@index([createdAt]) // optional, helps with cleanup queries
+}
+
+model Library {
+  id        String   @id @default(cuid())
+  name      String
+  ownerId   String
+  createdAt DateTime @default(now())
+
+  owner     User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  userRoles UserRole[]
+  seats     Seat[] // Seats under this library
+  members   Member[] // Members registered in this library
+  shifts    Shift[] // Shifts configured by this library
 }
 
 model UserRole {
-  id         String     @id @default(cuid())
-  userId     String
-  libraryId  String
-  role       RoleType
+  id        String   @id @default(cuid())
+  userId    String
+  libraryId String
+  role      RoleType
 
-  user       User       @relation(fields: [userId], references: [id])
-  library    Library    @relation(fields: [libraryId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
+  library Library @relation(fields: [libraryId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, libraryId]) 
+  @@unique([userId, libraryId])
 }
 
 enum RoleType {
-  ADMIN     
-  MANAGER   
+  ADMIN
+  MANAGER
 }
 
 model Seat {
-  id         String     @id @default(cuid())
+  id         String @id @default(cuid())
   seatNumber String
   libraryId  String
 
-  library    Library    @relation(fields: [libraryId], references: [id], onDelete: Cascade)
-  bookings   Booking[]
+  library  Library   @relation(fields: [libraryId], references: [id], onDelete: Cascade)
+  bookings Booking[]
 }
 
 model Member {
-  id         String     @id @default(cuid())
-  name       String
-  phone      String
-  joinedAt   DateTime   @default(now())
-  libraryId  String
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  joinedAt  DateTime @default(now())
+  libraryId String
 
-  library    Library    @relation(fields: [libraryId], references: [id], onDelete: Cascade)
-  bookings   Booking[]     // Bookings made by this member
-  payments   Payment[]     // Payments made by this member
+  library  Library   @relation(fields: [libraryId], references: [id], onDelete: Cascade)
+  bookings Booking[] // Bookings made by this member
+  payments Payment[] // Payments made by this member
 }
 
 model Shift {
-  id         String     @id @default(cuid())
-  name       String           // "Morning", "Evening", etc.
-  startTime  String           // "08:00"
-  endTime    String           // "12:00"
-  libraryId  String
+  id        String @id @default(cuid())
+  name      String // "Morning", "Evening", etc.
+  startTime String // "08:00"
+  endTime   String // "12:00"
+  libraryId String
 
-  library    Library          @relation(fields: [libraryId], references: [id], onDelete: Cascade)
-  bookings   Booking[]        // Bookings tied to this shift
+  library  Library   @relation(fields: [libraryId], references: [id], onDelete: Cascade)
+  bookings Booking[] // Bookings tied to this shift
 }
-
 
 model Booking {
-  id         String     @id @default(cuid())
-  seatId     String
-  memberId   String
-  date       DateTime         // Date of booking
-  shiftId    String           
+  id       String   @id @default(cuid())
+  seatId   String
+  memberId String
+  date     DateTime // Date of booking
+  shiftId  String
 
-  createdAt  DateTime   @default(now())
+  createdAt DateTime @default(now())
 
-  seat       Seat       @relation(fields: [seatId], references: [id],onDelete: Cascade)
-  member     Member     @relation(fields: [memberId], references: [id],onDelete: Cascade)
-  shift      Shift      @relation(fields: [shiftId], references: [id],onDelete: Cascade)
+  seat   Seat   @relation(fields: [seatId], references: [id], onDelete: Cascade)
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  shift  Shift  @relation(fields: [shiftId], references: [id], onDelete: Cascade)
 
-  @@unique([seatId,shiftId]) // no double-booking for same slot
+  @@unique([seatId, shiftId]) // no double-booking for same slot
 }
 
-
 model Payment {
-  id         String     @id @default(cuid())
-  memberId   String
-  month      String           // e.g., "2024-06"
-  amount     Float
-  paid       Boolean    @default(false)
-  paidAt     DateTime?        // Null if unpaid
-  createdAt  DateTime   @default(now())
+  id        String    @id @default(cuid())
+  memberId  String
+  month     String // e.g., "2024-06"
+  amount    Float
+  paid      Boolean   @default(false)
+  paidAt    DateTime? // Null if unpaid
+  createdAt DateTime  @default(now())
 
-  member     Member     @relation(fields: [memberId], references: [id],onDelete: Cascade)
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
   @@unique([memberId, month]) // One payment entry per month per member
 }
