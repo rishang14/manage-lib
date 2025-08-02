@@ -198,6 +198,7 @@ export { SeatScalarRelationFilterSchema } from './SeatScalarRelationFilterSchema
 export { MemberScalarRelationFilterSchema } from './MemberScalarRelationFilterSchema';
 export { ShiftScalarRelationFilterSchema } from './ShiftScalarRelationFilterSchema';
 export { BookingSeatIdShiftIdCompoundUniqueInputSchema } from './BookingSeatIdShiftIdCompoundUniqueInputSchema';
+export { BookingMemberIdSeatIdCompoundUniqueInputSchema } from './BookingMemberIdSeatIdCompoundUniqueInputSchema';
 export { BookingCountOrderByAggregateInputSchema } from './BookingCountOrderByAggregateInputSchema';
 export { BookingMaxOrderByAggregateInputSchema } from './BookingMaxOrderByAggregateInputSchema';
 export { BookingMinOrderByAggregateInputSchema } from './BookingMinOrderByAggregateInputSchema';

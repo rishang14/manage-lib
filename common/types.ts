@@ -1,5 +1,5 @@
 import z from "zod";
-import { ShiftSchema, LibrarySchema ,SeatSchema } from "@/prisma/generated/zod";
+import { ShiftSchema, LibrarySchema ,SeatSchema,MemberSchema, BookingSchema } from "@/prisma/generated/zod";
 
 export const CreateLibrarySchema = LibrarySchema.omit({
   id: true,
@@ -63,4 +63,22 @@ export type seatdetails= z.infer<typeof  seatdetailsschema>;
 export type libroles<>={
  libid:string, 
  role:string
-}
+} 
+
+
+export type bookingdetailsType<>={
+  seatId:string, 
+  shiftIds:Array<string>
+}  
+
+
+export const  MemberdetailsData= MemberSchema.omit({id:true, libraryId:true}); 
+export const BookingRequestSchema = z.object({
+  seatId: z.string(),
+  shiftIds: z.array(z.string()).min(1), 
+  date: z.coerce.date(),
+  member: MemberdetailsData,
+}); 
+
+
+export type CreateBookingInput = z.infer<typeof BookingRequestSchema>;

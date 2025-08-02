@@ -1,6 +1,6 @@
 import { LibraryType, Seat, Shift } from "@/prisma/generated/zod";
 import prisma from "./prisma";
-import { apiResponse, seatdetails, shiftschemaInput ,shiftupdateschemainput} from "@/common/types";
+import { apiResponse, bookingdetailsType, CreateBookingInput, seatdetails, shiftschemaInput ,shiftupdateschemainput} from "@/common/types";
 export async function getuserID(email: string): Promise<string | undefined> {
   try {
     const user = await prisma.user.findUnique({
@@ -200,4 +200,47 @@ export async  function getseatdetails(seatId:string){
   }) 
 
  return seat;
+} 
+
+
+export async function isbookingexist(data:bookingdetailsType){
+  const isbookingexist= await prisma.booking.findMany({
+    where:{
+      seatId:data.seatId, 
+      shiftId:{
+       in : data.shiftIds
+       } 
+       
+    } , 
+    include:{
+      shift:true
+    }
+  }) 
+
+  return isbookingexist?.length > 0 ? isbookingexist : null;
+} 
+
+
+export  async function createbooking(datas:CreateBookingInput, libid:string){
+   const created= await prisma.member.create({
+   data:{
+    name:datas.member.name , 
+    phone:datas.member.phone , 
+    joinedAt:datas.member.joinedAt, 
+    libraryId:libid, 
+    bookings:{
+      create: datas.shiftIds.map((shiftId) => ({ 
+        shiftId:shiftId, 
+        seatId:datas.seatId, 
+        date:datas.date,
+      }))
+    }
+   }, 
+   }) 
+
+
+   if(!created){
+    return undefined
+   } 
+   return created;
 }

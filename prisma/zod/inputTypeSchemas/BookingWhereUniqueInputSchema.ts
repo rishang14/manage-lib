@@ -2,6 +2,7 @@ import type { Prisma } from '@prisma/client';
 
 import { z } from 'zod';
 import { BookingSeatIdShiftIdCompoundUniqueInputSchema } from './BookingSeatIdShiftIdCompoundUniqueInputSchema';
+import { BookingMemberIdSeatIdCompoundUniqueInputSchema } from './BookingMemberIdSeatIdCompoundUniqueInputSchema';
 import { BookingWhereInputSchema } from './BookingWhereInputSchema';
 import { StringFilterSchema } from './StringFilterSchema';
 import { DateTimeFilterSchema } from './DateTimeFilterSchema';
@@ -15,18 +16,35 @@ import { ShiftWhereInputSchema } from './ShiftWhereInputSchema';
 export const BookingWhereUniqueInputSchema: z.ZodType<Prisma.BookingWhereUniqueInput> = z.union([
   z.object({
     id: z.string().cuid(),
-    seatId_shiftId: z.lazy(() => BookingSeatIdShiftIdCompoundUniqueInputSchema)
+    seatId_shiftId: z.lazy(() => BookingSeatIdShiftIdCompoundUniqueInputSchema),
+    memberId_seatId: z.lazy(() => BookingMemberIdSeatIdCompoundUniqueInputSchema)
+  }),
+  z.object({
+    id: z.string().cuid(),
+    seatId_shiftId: z.lazy(() => BookingSeatIdShiftIdCompoundUniqueInputSchema),
+  }),
+  z.object({
+    id: z.string().cuid(),
+    memberId_seatId: z.lazy(() => BookingMemberIdSeatIdCompoundUniqueInputSchema),
   }),
   z.object({
     id: z.string().cuid(),
   }),
   z.object({
     seatId_shiftId: z.lazy(() => BookingSeatIdShiftIdCompoundUniqueInputSchema),
+    memberId_seatId: z.lazy(() => BookingMemberIdSeatIdCompoundUniqueInputSchema),
+  }),
+  z.object({
+    seatId_shiftId: z.lazy(() => BookingSeatIdShiftIdCompoundUniqueInputSchema),
+  }),
+  z.object({
+    memberId_seatId: z.lazy(() => BookingMemberIdSeatIdCompoundUniqueInputSchema),
   }),
 ])
 .and(z.object({
   id: z.string().cuid().optional(),
   seatId_shiftId: z.lazy(() => BookingSeatIdShiftIdCompoundUniqueInputSchema).optional(),
+  memberId_seatId: z.lazy(() => BookingMemberIdSeatIdCompoundUniqueInputSchema).optional(),
   AND: z.union([ z.lazy(() => BookingWhereInputSchema),z.lazy(() => BookingWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => BookingWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => BookingWhereInputSchema),z.lazy(() => BookingWhereInputSchema).array() ]).optional(),
