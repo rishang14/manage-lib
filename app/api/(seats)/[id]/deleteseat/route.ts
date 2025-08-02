@@ -3,7 +3,6 @@ import authConfig from "@/lib/auth.config";
 import { getuserID, islibexist, isthisUserIsInLib, } from "@/lib/helper";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import { error } from "console";
 import NextAuth from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 

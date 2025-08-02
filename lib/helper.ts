@@ -188,4 +188,16 @@ export async function DeleteUser(userid:string){
   } catch (error) {
     console.log(error,"while deleting user")
   }
+}  
+
+
+export async  function getseatdetails(seatId:string){
+  const seat= await prisma.seat.findFirst({
+    where:{id:seatId},
+    include:{
+      bookings:true
+    }
+  }) 
+
+ return seat;
 }

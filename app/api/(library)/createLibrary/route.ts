@@ -4,8 +4,8 @@ import NextAuth from "next-auth";
 import { NextRequest, NextResponse } from "next/server"; 
 import prisma from "@/lib/prisma";
 import { CreateLibrarySchema } from "@/common/types";
+import { auth } from "@/auth";
 
-const {auth}= NextAuth(authConfig);
  
 
 
