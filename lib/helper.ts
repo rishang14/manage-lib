@@ -1,6 +1,6 @@
 import { Library ,Shift,Seat} from "@/prisma/zod";
 import prisma from "./prisma";
-import { apiResponse, bookingdetailsType, CreateBookingInput, seatdetails, shiftschemaInput ,shiftupdateschemainput} from "@/common/types";
+import { apiResponse, bookingdetailsType, CreateBookingInput, seatdetails, shiftschemaInput ,shiftupdateschemainput,meberinfo } from "@/common/types";
 export async function getuserID(email: string): Promise<string | undefined> {
   try {
     const user = await prisma.user.findUnique({
@@ -253,4 +253,26 @@ export  async function createbooking(datas:CreateBookingInput, libid:string){
     return undefined
    } 
    return created;
+}  
+
+
+export async function undatedmemberinfo(memberinfo:meberinfo){
+ 
+   try {
+    const editedmember = await prisma.member.update({
+      where: { id: memberinfo.id },
+      data: {
+        name: memberinfo.name,
+        joinedAt: memberinfo.joinedAt,
+        phone: memberinfo.phone,
+      },
+    });
+
+    return editedmember;
+  } catch (error: any) {
+    if (error.code === 'P2025') {
+      return undefined;
+    }  
+    throw error;
+  }
 }
