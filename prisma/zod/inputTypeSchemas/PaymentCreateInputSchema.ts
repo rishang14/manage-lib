@@ -5,7 +5,9 @@ import { MemberCreateNestedOneWithoutPaymentsInputSchema } from './MemberCreateN
 
 export const PaymentCreateInputSchema: z.ZodType<Prisma.PaymentCreateInput> = z.object({
   id: z.string().cuid().optional(),
-  month: z.string(),
+  startMonth: z.string(),
+  validTill: z.coerce.date(),
+  duration: z.number().int(),
   amount: z.number(),
   paid: z.boolean().optional(),
   paidAt: z.coerce.date().optional().nullable(),

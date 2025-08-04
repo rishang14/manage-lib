@@ -8,7 +8,9 @@ import { MemberOrderByWithRelationInputSchema } from './MemberOrderByWithRelatio
 export const PaymentOrderByWithRelationInputSchema: z.ZodType<Prisma.PaymentOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   memberId: z.lazy(() => SortOrderSchema).optional(),
-  month: z.lazy(() => SortOrderSchema).optional(),
+  startMonth: z.lazy(() => SortOrderSchema).optional(),
+  validTill: z.lazy(() => SortOrderSchema).optional(),
+  duration: z.lazy(() => SortOrderSchema).optional(),
   amount: z.lazy(() => SortOrderSchema).optional(),
   paid: z.lazy(() => SortOrderSchema).optional(),
   paidAt: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),

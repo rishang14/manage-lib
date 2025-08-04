@@ -7,7 +7,9 @@ import { z } from 'zod';
 export const PaymentSchema = z.object({
   id: z.string().cuid(),
   memberId: z.string(),
-  month: z.string(),
+  startMonth: z.string(),
+  validTill: z.coerce.date(),
+  duration: z.number().int(),
   amount: z.number(),
   paid: z.boolean(),
   paidAt: z.coerce.date().nullable(),

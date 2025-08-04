@@ -4,7 +4,9 @@ import { z } from 'zod';
 
 export const PaymentCreateManyMemberInputSchema: z.ZodType<Prisma.PaymentCreateManyMemberInput> = z.object({
   id: z.string().cuid().optional(),
-  month: z.string(),
+  startMonth: z.string(),
+  validTill: z.coerce.date(),
+  duration: z.number().int(),
   amount: z.number(),
   paid: z.boolean().optional(),
   paidAt: z.coerce.date().optional().nullable(),

@@ -148,15 +148,17 @@ model Booking {
 }
 
 model Payment {
-  id        String    @id @default(cuid())
-  memberId  String
-  month     String // e.g., "2024-06"
-  amount    Float
-  paid      Boolean   @default(false)
-  paidAt    DateTime? // Null if unpaid
-  createdAt DateTime  @default(now())
+  id         String    @id @default(cuid())
+  memberId   String
+  startMonth String    // e.g. "2025-08"
+  validTill  DateTime  // Calculate from startMonth + duration
+  duration   Int       // In months (1, 3, 6, 12)
+  amount     Float
+  paid       Boolean   @default(false)
+  paidAt     DateTime? // Null if unpaid
+  createdAt  DateTime  @default(now())
 
   member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
-  @@unique([memberId, month]) // One payment entry per month per member
+  @@index([memberId, validTill])
 }

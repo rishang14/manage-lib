@@ -11,7 +11,9 @@ import { MemberArgsSchema } from "../outputTypeSchemas/MemberArgsSchema"
 export const PaymentSelectSchema: z.ZodType<Prisma.PaymentSelect> = z.object({
   id: z.boolean().optional(),
   memberId: z.boolean().optional(),
-  month: z.boolean().optional(),
+  startMonth: z.boolean().optional(),
+  validTill: z.boolean().optional(),
+  duration: z.boolean().optional(),
   amount: z.boolean().optional(),
   paid: z.boolean().optional(),
   paidAt: z.boolean().optional(),

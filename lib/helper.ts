@@ -1,4 +1,4 @@
-import { LibraryType, Seat, Shift } from "@/prisma/generated/zod";
+import { Library ,Shift,Seat} from "@/prisma/zod";
 import prisma from "./prisma";
 import { apiResponse, bookingdetailsType, CreateBookingInput, seatdetails, shiftschemaInput ,shiftupdateschemainput} from "@/common/types";
 export async function getuserID(email: string): Promise<string | undefined> {
@@ -23,7 +23,7 @@ export async function getuserID(email: string): Promise<string | undefined> {
   }
 }
 
-export async function getalllibrary(userid: string): Promise<LibraryType[]> {
+export async function getalllibrary(userid: string): Promise<Library[]> {
   try {
     const lib = await prisma.library.findMany({
       where: {
@@ -234,6 +234,16 @@ export  async function createbooking(datas:CreateBookingInput, libid:string){
         seatId:datas.seatId, 
         date:datas.date,
       }))
+    }, 
+    payments:{
+      create:{
+        paid:datas.payment.paid,
+        amount:datas.payment.amount,
+        paidAt:datas.member.joinedAt, 
+        validTill:datas.payment.validTill, 
+        duration:datas.payment.amount, 
+        startMonth:datas.payment.startMonth
+      }
     }
    }, 
    }) 
