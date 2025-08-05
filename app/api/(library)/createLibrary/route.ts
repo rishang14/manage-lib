@@ -1,8 +1,5 @@
 
-import authConfig from "@/lib/auth.config";
-import NextAuth from "next-auth";
-import { NextRequest, NextResponse } from "next/server"; 
-import prisma from "@/lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
 import { CreateLibrarySchema } from "@/common/types";
 import { auth } from "@/auth";
 
@@ -46,9 +43,9 @@ export async function POST(req:NextRequest){
       //   }
       // }) 
 
-      return NextResponse.json({message:"Success library created",},{status:200}); 
+      return NextResponse.json({message:" library created successfully",},{status:201}); 
     } catch (error) {
-       console.log(error,"something went wrong ") 
+       console.log(error,"something went wrong  while creating the library ") 
       return NextResponse.json({ error: "Failed to create library" }, { status: 500 }); 
     }
 } 

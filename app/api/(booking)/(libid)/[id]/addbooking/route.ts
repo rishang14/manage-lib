@@ -31,7 +31,7 @@ export async function POST(
     if (!validateddata.success) {
       return NextResponse.json(
         { error: validateddata.error.flatten() },
-        { status: 400 }
+        { status: 401 }
       );
     }
     const libexist = session?.user?.libdetails.find(

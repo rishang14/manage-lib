@@ -1,6 +1,6 @@
 import { Library ,Shift,Seat} from "@/prisma/zod";
 import prisma from "./prisma";
-import { apiResponse, bookingdetailsType, CreateBookingInput, seatdetails, shiftschemaInput ,shiftupdateschemainput,meberinfo } from "@/common/types";
+import { apiResponse, bookingdetailsType, CreateBookingInput, seatdetails, shiftschemaInput ,shiftupdateschemainput,meberinfo, changeshift, addshift } from "@/common/types";
 export async function getuserID(email: string): Promise<string | undefined> {
   try {
     const user = await prisma.user.findUnique({
@@ -275,4 +275,66 @@ export async function undatedmemberinfo(memberinfo:meberinfo){
     }  
     throw error;
   }
+} 
+
+export function changemembershifts(datas: changeshift) {
+  return datas.newShiftIds.map((shiftId) =>
+    prisma.booking.create({
+      data: {
+        memberId: datas.memberId,
+        seatId: datas.seatId,
+        shiftId,
+        date: new Date(),
+      },
+    })
+  );
+}
+
+
+export async function changememberseat(datas:changeshift){
+    const {newShiftIds}= datas; 
+
+    for(const newshift of newShiftIds){
+      await prisma.booking.create({
+        data:{
+          memberId:datas.memberId, 
+          seatId:datas.seatId,
+          shiftId:newshift, 
+          date: new Date,
+        }
+      })
+    }
+}  
+ 
+
+export  function delteshiftBooking(data: bookingdetailsType) {
+ return prisma.booking.deleteMany({
+    where: {
+      seatId: data.seatId,
+      shiftId: {
+        in: data.shiftIds,
+      },
+    },
+  });
+}
+ 
+export async function addnewShiftinmember(datas:addshift){
+  const updatedshift= await prisma.member.update({
+  where: { id: datas.memberId },
+  data: {
+    bookings: {
+      createMany: {
+        data: datas.newShiftIds.map((shiftId) => ({
+          seatId: datas.seatId,
+          shiftId,
+          date: new Date(),
+        })),
+        skipDuplicates: true,
+      },
+    },
+  },
+}); 
+if(!updatedshift){return undefined}
+ 
+return updatedshift;
 }

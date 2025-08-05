@@ -39,7 +39,6 @@ export const shiftschema = ShiftSchema.omit({ id: true }).extend({
   
   export const shiftupdateschema=ShiftSchema.partial(); 
   
-  /// types script types
   
   export interface dialogopenprops {
     open: boolean;
@@ -49,16 +48,6 @@ export const shiftschema = ShiftSchema.omit({ id: true }).extend({
   
   
 export const seatdetailsschema= SeatSchema.omit({id:true}); 
-
-
-
-
-
-export type bookingdetailsType<>={
-  seatId:string, 
-  shiftIds:Array<string>
-}  
-
 export const  MemberdetailsData= MemberSchema.omit({id:true, libraryId:true});   
 export const paymentmode= PaymentSchema.omit({id:true,createdAt:true,paidAt:true,})
 export const  Membereditinfo= MemberSchema.partial(); 
@@ -69,8 +58,27 @@ export const BookingRequestSchema = z.object({
   date: z.coerce.date(),
   member: MemberdetailsData, 
   payment:paymentmode
-}); 
+});  
+ 
 
+export const changeshiftSchema=z.object({
+  seatId: z.string(),
+  oldShiftIds: z.array(z.string()).min(1),  
+  newShiftIds: z.array(z.string()).min(1),  
+  libraryId:z.string(), 
+  memberId:z.string() 
+}) 
+
+export const shiftdataschema= changeshiftSchema.omit({oldShiftIds:true});
+
+export const seatdetails = z.object({
+  oldseatId:z.string(), 
+  newSeatId:z.string(), 
+  memberId:z.string(),
+  oldShiftIds: z.array(z.string()).min(1),  
+  newShiftIds: z.array(z.string()).min(1),  
+  libraryId:z.string(), 
+}) 
 
 export type apiResponse<> = {
   success: boolean;
@@ -86,4 +94,10 @@ export type CreateLibraryInput = z.infer<typeof CreateLibrarySchema>;
 export type libroles<>={
   libid:string, 
   role:string
-} 
+}  
+export type changeshift=z.infer<typeof changeshiftSchema> 
+export type bookingdetailsType<>={
+  seatId:string, 
+  shiftIds:Array<string>
+}    
+export type addshift=z.infer<typeof shiftdataschema>;
