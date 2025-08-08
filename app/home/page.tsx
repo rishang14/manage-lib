@@ -13,7 +13,7 @@ import { createlibdata } from '@/lib/dumydata'
 import { SidebarProvider,SidebarInset } from '@/components/ui/sidebar'
 import { Avatar, AvatarFallback,AvatarImage } from '@/components/ui/avatar'
 import { SimpleSidebar } from '@/components/simple-sidebar'
-import { SimplifiedNavbar } from '@/components/simplified-sidebar'
+import HomeNavBar from '@/components/Homepagenav'
 import { DashboardHeader } from '@/components/dashboard-header'
 import { StatsCards } from '@/components/statscard'
 import { SharedLibrariesSection } from '@/components/sharedlibsection'
@@ -85,41 +85,18 @@ const sharedLibraries = [
   const {data,status}=useSession(); 
   console.log(data,"data") 
  
-  // const handleFileClick = (file: (typeof existingFiles)[0]) => {
-  //   window.open(`/file-info/${file.id}`, "_blank")
-  // } 
-
-
- useEffect(()=>{
-   async function getsession(){
-   const res=  await axios.post(`/api/createLibrary`,createlibdata,{withCredentials:true});  
-   console.log(res); 
-   } 
-   getsession();
- },[])  
-   const totalRevenue = myLibraries.reduce((sum, lib) => sum + lib.monthlyRevenue, 0)
-  const totalSeats = myLibraries.reduce((sum, lib) => sum + lib.totalSeats, 0)
-  const totalOccupied = myLibraries.reduce((sum, lib) => sum + lib.occupiedSeats, 0)
-  const occupancyRate = Math.round((totalOccupied / totalSeats) * 100)
   return (  
      <SidebarProvider>
       <SimpleSidebar />
       <SidebarInset>
-        <SimplifiedNavbar />
+        <HomeNavBar />
         
         <div className="flex-1 space-y-6 p-6">
           <DashboardHeader />
           
-          <StatsCards 
-            totalRevenue={totalRevenue}
-            occupancyRate={occupancyRate}
-            totalSeats={totalSeats}
-            libraryCount={myLibraries.length}
-          />
+           <MyLibrariesSection  />
 
-           <MyLibrariesSection libraries={myLibraries} />
-
-          <SharedLibrariesSection libraries={sharedLibraries}/> 
+          <SharedLibrariesSection /> 
         </div>
       </SidebarInset>
     </SidebarProvider>

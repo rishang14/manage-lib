@@ -1,47 +1,96 @@
-"use client"
-import { useState } from "react" 
-import { useForm } from "react-hook-form"
-import { Button } from "@/components/ui/button"
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle, 
-} from "@/components/ui/dialog"  
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label" 
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Trash2, Clock } from "lucide-react";
+import { dialogopenprops } from "@/common/types";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Plus, Trash2, Clock } from "lucide-react"
-import { dialogopenprops } from "@/common/types"
-import 
+// Type for a shift
+type Shift = {
+  id: string;
+  name: string;
+  startTime: string;
+  endTime: string;
+};
 
- const CreateLibraryDialog=({ open, onOpenChange }: dialogopenprops)=> { 
+const CreateLibraryDialog = ({ open, onOpenChange }: dialogopenprops) => {
+  // Form states
+  const [libraryName, setLibraryName] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-//   const { toast } = useToast()
+  // Dummy default shifts
+  const [shifts, setShifts] = useState<Shift[]>([
+    {
+      id: crypto.randomUUID(),
+      name: "Morning Shift",
+      startTime: "08:00",
+      endTime: "12:00",
+    },
+    {
+      id: crypto.randomUUID(),
+      name: "Evening Shift",
+      startTime: "13:00",
+      endTime: "17:00",
+    },
+  ]);
 
+  // Handlers
+  const addShift = () => {
+    setShifts([
+      ...shifts,
+      { id: crypto.randomUUID(), name: "", startTime: "", endTime: "" },
+    ]);
+  };
+
+  const removeShift = (id: string) => {
+    setShifts(shifts.filter((s) => s.id !== id));
+  };
+
+  const updateShift = (id: string, field: keyof Shift, value: string) => {
+    setShifts(
+      shifts.map((shift) =>
+        shift.id === id ? { ...shift, [field]: value } : shift
+      )
+    );
+  };
+
+  const handleSubmit = () => {
+    setIsSubmitting(true);
+
+    // Simulate API call
+    setTimeout(() => {
+      console.log("Library Created:", { libraryName, shifts });
+      setIsSubmitting(false);
+      onOpenChange(false);
+    }, 1000);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Create New Library</DialogTitle>
-          <DialogDescription>Set up a new library with custom shift schedules for your team</DialogDescription>
+          <DialogTitle className="text-2xl font-bold">
+            Create New Library
+          </DialogTitle>
+          <DialogDescription>
+            Set up a new library with custom shift schedules for your team
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-
+          {/* Library Name */}
           <div className="space-y-2">
             <Label htmlFor="library-name" className="text-sm font-medium">
               Library Name
@@ -55,11 +104,14 @@ import
             />
           </div>
 
+          {/* Shifts */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <Label className="text-sm font-medium">Shift Schedule</Label>
-                <p className="text-sm text-muted-foreground">Configure your team's working shifts</p>
+                <p className="text-sm text-muted-foreground">
+                  Configure your team's working shifts
+                </p>
               </div>
               <Badge variant="secondary" className="flex items-center gap-1">
                 <Clock className="w-3 h-3" />
@@ -69,10 +121,15 @@ import
 
             <div className="space-y-3">
               {shifts.map((shift, index) => (
-                <Card key={shift.id} className="border-slate-200 dark:border-slate-700">
+                <Card
+                  key={shift.id}
+                  className="border-slate-200 dark:border-slate-700"
+                >
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-base font-medium">Shift {index + 1}</CardTitle>
+                      <CardTitle className="text-base font-medium">
+                        Shift {index + 1}
+                      </CardTitle>
                       {shifts.length > 1 && (
                         <Button
                           variant="ghost"
@@ -87,37 +144,52 @@ import
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <Label htmlFor={`shift-name-${shift.id}`} className="text-sm">
+                      <Label
+                        htmlFor={`shift-name-${shift.id}`}
+                        className="text-sm"
+                      >
                         Shift Name
                       </Label>
                       <Input
                         id={`shift-name-${shift.id}`}
                         value={shift.name}
-                        onChange={(e) => updateShift(shift.id, "name", e.target.value)}
+                        onChange={(e) =>
+                          updateShift(shift.id, "name", e.target.value)
+                        }
                         placeholder="e.g., Morning Shift"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor={`start-time-${shift.id}`} className="text-sm">
+                        <Label
+                          htmlFor={`start-time-${shift.id}`}
+                          className="text-sm"
+                        >
                           Start Time
                         </Label>
                         <Input
                           id={`start-time-${shift.id}`}
                           type="time"
                           value={shift.startTime}
-                          onChange={(e) => updateShift(shift.id, "startTime", e.target.value)}
+                          onChange={(e) =>
+                            updateShift(shift.id, "startTime", e.target.value)
+                          }
                         />
                       </div>
                       <div>
-                        <Label htmlFor={`end-time-${shift.id}`} className="text-sm">
+                        <Label
+                          htmlFor={`end-time-${shift.id}`}
+                          className="text-sm"
+                        >
                           End Time
                         </Label>
                         <Input
                           id={`end-time-${shift.id}`}
                           type="time"
                           value={shift.endTime}
-                          onChange={(e) => updateShift(shift.id, "endTime", e.target.value)}
+                          onChange={(e) =>
+                            updateShift(shift.id, "endTime", e.target.value)
+                          }
                         />
                       </div>
                     </div>
@@ -138,17 +210,24 @@ import
         </div>
 
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={isSubmitting} className="bg-blue-600 hover:bg-blue-700">
+          <Button
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
             {isSubmitting ? "Creating..." : "Create Library"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
-
+  );
+};
 
 export default CreateLibraryDialog;

@@ -17,7 +17,7 @@ interface SharedLibrariesSectionProps {
   libraries: SharedLibrary[]
 }
 
-export function SharedLibrariesSection({ libraries }: SharedLibrariesSectionProps) {
+export function SharedLibrariesSection() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -32,9 +32,9 @@ export function SharedLibrariesSection({ libraries }: SharedLibrariesSectionProp
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {libraries.map((library) => (
+        {/* {libraries.map((library) => (
           <SharedLibraryCard key={library.id} library={library} />
-        ))}
+        ))} */}
       </div>
     </div>
   )

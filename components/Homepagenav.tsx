@@ -1,4 +1,4 @@
-'use client'
+// 'use client'
 
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
@@ -14,15 +14,18 @@ import { Badge } from "@/components/ui/badge"
 //   DropdownMenuTrigger,
 // } from "@/components/ui/dropdown-menu"
 import { BookOpen, Search, Bell, Moon, Sun, User, Settings, LogOut } from 'lucide-react'
+import { ModeToggle } from './Theme'
+import { SidebarTrigger } from './ui/sidebar'
 
-export function SimplifiedNavbar() {
-  const [notifications] = useState(5)
+const  HomeNavBar=()=> {
+  // const [notifications] = useState(5)
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center px-4">
         {/* Logo */}
-        <div className="flex items-center space-x-2 mr-8">
+        <div className="flex items-center space-x-2 mr-8"> 
+           <SidebarTrigger className="h-10 w-10 text-white hover:text-white bg-zinc-800 hover:bg-zinc-800 rounded-md mr-2 " />
           <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center">
             <BookOpen className="h-5 w-5 text-primary-foreground" />
           </div>
@@ -30,7 +33,7 @@ export function SimplifiedNavbar() {
         </div>
 
         {/* Search */}
-        <div className="flex-1 max-w-md">
+        <div className="flex-1 max-w-md   md:block hidden">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -43,20 +46,17 @@ export function SimplifiedNavbar() {
         {/* Right side actions */}
         <div className="flex items-center space-x-3 ml-6">
           {/* Notifications */}
-          <Button variant="ghost" size="icon" className="relative">
+          {/* <Button variant="ghost" size="icon" className="relative">
             <Bell className="h-5 w-5" />
             {notifications > 0 && (
               <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
                 {notifications}
               </Badge>
             )}
-          </Button>
+          </Button> */}
 
           {/* Theme toggle */}
-          <Button variant="ghost" size="icon">
-            <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          </Button>
+          <ModeToggle/>
 
           {/* User menu */}
           {/* <DropdownMenu>
@@ -98,3 +98,6 @@ export function SimplifiedNavbar() {
     </header>
   )
 }
+
+
+export default HomeNavBar;

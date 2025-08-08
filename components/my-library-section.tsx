@@ -18,7 +18,7 @@ interface MyLibrariesSectionProps {
   libraries: MyLibrary[]
 }
 
-export function MyLibrariesSection({ libraries }: MyLibrariesSectionProps) {
+export function MyLibrariesSection() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -33,9 +33,9 @@ export function MyLibrariesSection({ libraries }: MyLibrariesSectionProps) {
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {libraries.map((library) => (
+        {/* {libraries.map((library) => (
           <LibraryCard key={library.id} library={library} />
-        ))}
+        ))} */}
       </div>
     </div>
   )
