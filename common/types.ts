@@ -80,6 +80,13 @@ export const seatdetails = z.object({
   libraryId:z.string(), 
 }) 
 
+
+export type DialogState = {
+  isDialogOpen: boolean;
+  setIsdialogOpen:(value: boolean) => void;
+ 
+};
+
 export type apiResponse<> = {
   success: boolean;
   message?: string;

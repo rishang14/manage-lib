@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Clock } from "lucide-react";
 import { dialogopenprops } from "@/common/types";
+import { useDialogstore } from "@/store/StateStore";
 
 // Type for a shift
 type Shift = {
@@ -25,10 +26,11 @@ type Shift = {
   endTime: string;
 };
 
-const CreateLibraryDialog = ({ open, onOpenChange }: dialogopenprops) => {
+const CreateLibraryDialog = () => {
   // Form states
   const [libraryName, setLibraryName] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); 
+  const {isDialogOpen,setIsdialogOpen}= useDialogstore();
 
   // Dummy default shifts
   const [shifts, setShifts] = useState<Shift[]>([
@@ -73,12 +75,12 @@ const CreateLibraryDialog = ({ open, onOpenChange }: dialogopenprops) => {
     setTimeout(() => {
       console.log("Library Created:", { libraryName, shifts });
       setIsSubmitting(false);
-      onOpenChange(false);
+      // onOpenChange(false);
     }, 1000);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isDialogOpen} onOpenChange={setIsdialogOpen}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
@@ -212,7 +214,7 @@ const CreateLibraryDialog = ({ open, onOpenChange }: dialogopenprops) => {
         <DialogFooter className="gap-2">
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={() => setIsdialogOpen(false)}
             disabled={isSubmitting}
           >
             Cancel

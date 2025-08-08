@@ -1,11 +1,11 @@
-"use client"
 import { Button } from "@/components/ui/button"
 import { Plus } from 'lucide-react' 
 import CreateLibraryDialog from "./all-dialog/createlibdialog"
 import { useState } from "react"
+import { useDialogstore } from "@/store/StateStore"
 
 export function DashboardHeader() {
-  const [open,setOpen]= useState(false)
+  const {setIsdialogOpen}= useDialogstore()
   return (  
     <>
     <div className="flex   items-center  md:flex-row flex-col md:justify-between  gap-2">
@@ -15,12 +15,12 @@ export function DashboardHeader() {
           Manage your libraries and track performance
         </p>
       </div>
-      <Button onClick={()=>setOpen(true)}>
+      <Button onClick={()=>setIsdialogOpen(true)}>
         <Plus className="h-4 w-4 mr-2" />
         Add New Library
       </Button>
     </div> 
-    <CreateLibraryDialog open={open} onOpenChange={setOpen}/>
+    <CreateLibraryDialog />
     </>
   )
 }
