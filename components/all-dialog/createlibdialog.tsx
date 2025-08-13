@@ -1,32 +1,25 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2, Clock } from "lucide-react";
-import { dialogopenprops } from "@/common/types";
-import { useDialogstore } from "@/store/StateStore";
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge"
+import { Clock, Trash2, Plus } from "lucide-react"
+import { useDialogstore } from "@/store/StateStore"
+import type { Shift } from "@/common/types"
 
-// Type for a shift
-type Shift = {
-  id: string;
-  name: string;
-  startTime: string;
-  endTime: string;
-};
-  const CreateLibraryDialog=()=>{
- // Form states
+const CreateLibraryDialog = () => {
+  // Form states
   const [libraryName, setLibraryName] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { isDialogOpen, setIsdialogOpen } = useDialogstore()
@@ -73,13 +66,13 @@ type Shift = {
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsdialogOpen}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="md:min-w-2xl max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Create New Library</DialogTitle>
           <DialogDescription>Set up a new library with custom shift schedules for your team</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-3 py-2 ">
           {/* Library Name */}
           <div className="space-y-2">
             <Label htmlFor="library-name" className="text-sm font-medium">
@@ -94,7 +87,7 @@ type Shift = {
             />
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div>
                 <Label className="text-sm font-medium">Shift Schedule</Label>
@@ -110,8 +103,8 @@ type Shift = {
               <CardContent className="p-4">
                 {/* Header row for larger screens */}
                 <div className="hidden md:grid md:grid-cols-12 gap-4 pb-3 mb-3 border-b border-slate-200 dark:border-slate-700">
-                  <div className="col-span-1 text-sm font-medium text-muted-foreground">#</div>
-                  <div className="col-span-5 text-sm font-medium text-muted-foreground">Shift Name</div>
+                  <div className="col-span-2 text-sm font-medium text-muted-foreground">#</div>
+                  <div className="col-span-4 text-sm font-medium text-muted-foreground">Shift Name</div>
                   <div className="col-span-2 text-sm font-medium text-muted-foreground">Start Time</div>
                   <div className="col-span-2 text-sm font-medium text-muted-foreground">End Time</div>
                   <div className="col-span-2 text-sm font-medium text-muted-foreground">Actions</div>
@@ -122,7 +115,7 @@ type Shift = {
                   {shifts.map((shift, index) => (
                     <div
                       key={shift.id}
-                      className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 p-3 md:p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                      className="grid grid-cols-1 md:grid-cols-12 gap-3  p-3 md:p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                     >
                       {/* Mobile: Shift number and delete button */}
                       <div className="flex items-center justify-between md:hidden mb-2">
@@ -156,7 +149,7 @@ type Shift = {
                       </div>
 
                       {/* Time inputs - side by side on mobile, separate columns on desktop */}
-                      <div className="grid grid-cols-2 gap-3 md:contents">
+                      <div className="grid grid-cols-2 gap-2 md:contents">
                         <div className="md:col-span-2">
                           <Label className="text-xs text-muted-foreground md:hidden">Start Time</Label>
                           <Input
@@ -194,7 +187,7 @@ type Shift = {
                   ))}
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700">
+                <div className="mt-2 pt-3 border-t border-slate-200 dark:border-slate-700">
                   <Button
                     variant="outline"
                     onClick={addShift}

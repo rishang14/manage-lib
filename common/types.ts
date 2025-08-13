@@ -171,3 +171,96 @@ export interface Notification {
   isRead: boolean
   createdAt: string
 }
+
+
+export interface Library {
+  id: string
+  name: string
+  totalSeats: number
+  occupiedSeats: number
+  shifts: Shift[]
+  managerId?: string
+  createdAt: string
+}
+
+export interface Member {
+  id: string
+  name: string
+  email: string
+  phone: string
+  libraryId: string
+  shiftId: string
+  seatNumber: number
+  paymentStatus: "paid" | "pending" | "overdue"
+  paymentAmount: number
+  paymentDueDate: string
+  joinedAt: string
+}
+
+export interface Manager {
+  id: string
+  name: string
+  email: string
+  phone: string
+  libraryIds: string[]
+  permissions: string[]
+  createdAt: string
+}
+
+export interface Payment {
+  id: string
+  memberId: string
+  amount: number
+  status: "paid" | "pending" | "overdue"
+  dueDate: string
+  paidDate?: string
+  method?: "cash" | "card" | "upi" | "bank_transfer"
+}
+
+export interface Notification {
+  id: string
+  type: "member_added" | "member_removed" | "payment_received" | "seat_changed" | "manager_action"
+  title: string
+  message: string
+  managerId?: string
+  memberId?: string
+  libraryId: string
+  isRead: boolean
+  createdAt: string
+}
+
+export interface SeatShift {
+  id: string
+  type: "morning" | "afternoon" | "evening"
+  startTime: string
+  endTime: string
+  member?: {
+    id: string
+    name: string
+    phone: string
+    email?: string
+    paymentStatus: "paid" | "pending" | "overdue"
+    paymentAmount: number
+    joinedAt: string
+  }
+}
+
+export interface Seat {
+  id: string
+  seatNumber: number
+  libraryId: string
+  shifts: SeatShift[]
+  status: "empty" | "partially_filled" | "full"
+  createdAt: string
+}
+
+
+export interface LibraryStats {
+  totalSeats: number
+  fullyOccupiedSeats: number
+  partiallyFilledSeats: number
+  emptySeats: number
+  totalMembers: number
+  totalRevenue: number
+  pendingPayments: number
+}

@@ -1,0 +1,432 @@
+"use client"
+
+import { useState } from "react"
+import {
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+  getPaginationRowModel,
+  flexRender,
+  type ColumnDef,
+  type SortingState,
+  type ColumnFiltersState,
+} from "@tanstack/react-table"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import {
+  Search,
+  Plus,
+  Edit,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Phone,
+  Mail,
+  User,
+  Calendar,
+  CreditCard,
+} from "lucide-react"
+import { Seat } from "@/common/types"
+
+
+interface SeatManagementTableProps {
+  seats: Seat[]
+}
+
+export function SeatManagementTable({ seats }: SeatManagementTableProps) {
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [globalFilter, setGlobalFilter] = useState("")
+  const [selectedSeat, setSelectedSeat] = useState<Seat | null>(null)
+
+  const columns: ColumnDef<Seat>[] = [
+    {
+      accessorKey: "seatNumber",
+      header: "Seat #",
+      cell: ({ row }) => (
+        <div className="font-semibold text-slate-900 dark:text-slate-100">#{row.getValue("seatNumber")}</div>
+      ),
+    },
+    {
+      id: "shifts",
+      header: "Shifts",
+      cell: ({ row }) => {
+        const seat = row.original
+        return (
+          <div className="flex flex-wrap gap-1.5">
+            {seat.shifts.map((shift) => (
+              <Badge
+                key={shift.id}
+                variant={shift.member ? "default" : "secondary"}
+                className={`text-xs font-medium ${
+                  shift.member
+                    ? shift.type === "morning"
+                      ? "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
+                      : shift.type === "afternoon"
+                        ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                        : "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
+                    : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+                }`}
+              >
+                {shift.type.charAt(0).toUpperCase() + shift.type.slice(1)}
+                {shift.member && (
+                  <span className="ml-1">
+                    {shift.member.paymentStatus === "overdue" && "⚠️"}
+                    {shift.member.paymentStatus === "pending" && "⏳"}
+                    {shift.member.paymentStatus === "paid" && "✅"}
+                  </span>
+                )}
+              </Badge>
+            ))}
+          </div>
+        )
+      },
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.getValue("status") as string
+        const variant = status === "full" ? "default" : status === "partially_filled" ? "secondary" : "outline"
+        const colorClass =
+          status === "full"
+            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+            : status === "partially_filled"
+              ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+              : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+        return (
+          <Badge variant={variant} className={colorClass}>
+            {status.replace("_", " ").toUpperCase()}
+          </Badge>
+        )
+      },
+    },
+    {
+      id: "members",
+      header: "Members",
+      cell: ({ row }) => {
+        const seat = row.original
+        const members = seat.shifts.filter((s) => s.member)
+        return (
+          <div className="space-y-1">
+            {members.map((shift) => (
+              <div key={shift.id} className="text-sm">
+                <div className="font-medium text-slate-900 dark:text-slate-100">{shift.member?.name}</div>
+                <div className="text-muted-foreground text-xs">
+                  {shift.type} • {shift.member?.phone}
+                </div>
+              </div>
+            ))}
+            {members.length === 0 && <span className="text-muted-foreground text-sm">No members</span>}
+          </div>
+        )
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const seat = row.original
+        return (
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={() => setSelectedSeat(seat)} className="hover:bg-blue-50">
+              <Edit className="w-4 h-4" />
+            </Button>
+            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50">
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
+        )
+      },
+    },
+  ]
+
+  const table = useReactTable({
+    data: seats,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      sorting,
+      columnFilters,
+      globalFilter,
+    },
+  })
+
+  return (
+    <>
+      <Card className="shadow-sm">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">Seat Management</CardTitle>
+          <CardDescription>Manage seat assignments, shifts, and member details</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Input
+                  placeholder="Search seats, members, or phone numbers..."
+                  value={globalFilter ?? ""}
+                  onChange={(e) => setGlobalFilter(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <Select
+              value={(table.getColumn("status")?.getFilterValue() as string) ?? ""}
+              onValueChange={(value) => table.getColumn("status")?.setFilterValue(value === "all" ? "" : value)}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Seats</SelectItem>
+                <SelectItem value="empty">Empty</SelectItem>
+                <SelectItem value="partially_filled">Partially Filled</SelectItem>
+                <SelectItem value="full">Full</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Table */}
+          <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <Table>
+              <TableHeader className="bg-slate-50 dark:bg-slate-800">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id} className="font-semibold">
+                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                      className="hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                      No results.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Pagination */}
+          <div className="flex items-center justify-between space-x-2 py-4">
+            <div className="text-sm text-muted-foreground">
+              Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to{" "}
+              {Math.min(
+                (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
+                table.getFilteredRowModel().rows.length,
+              )}{" "}
+              of {table.getFilteredRowModel().rows.length} seats
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Previous
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+                Next
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Enhanced Seat Detail Modal */}
+      <Dialog open={!!selectedSeat} onOpenChange={() => setSelectedSeat(null)}>
+        <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader className="pb-6">
+            <DialogTitle className="text-xl font-bold">Seat #{selectedSeat?.seatNumber} Management</DialogTitle>
+            <DialogDescription>Manage shifts and member assignments for this seat</DialogDescription>
+          </DialogHeader>
+
+          {selectedSeat && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {selectedSeat.shifts.map((shift) => (
+                  <Card
+                    key={shift.id}
+                    className={`relative overflow-hidden transition-all duration-200 hover:shadow-md ${
+                      shift.member
+                        ? shift.type === "morning"
+                          ? "border-l-4 border-l-amber-400 bg-gradient-to-br from-amber-50 to-white dark:from-amber-950/20 dark:to-slate-900"
+                          : shift.type === "afternoon"
+                            ? "border-l-4 border-l-blue-400 bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/20 dark:to-slate-900"
+                            : "border-l-4 border-l-purple-400 bg-gradient-to-br from-purple-50 to-white dark:from-purple-950/20 dark:to-slate-900"
+                        : "border-l-4 border-l-slate-300 bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-900"
+                    }`}
+                  >
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                              shift.type === "morning"
+                                ? "bg-amber-100 text-amber-600 dark:bg-amber-900 dark:text-amber-300"
+                                : shift.type === "afternoon"
+                                  ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
+                                  : "bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300"
+                            }`}
+                          >
+                            <Clock className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <CardTitle className="text-base font-semibold capitalize">{shift.type} Shift</CardTitle>
+                            <p className="text-sm text-muted-foreground">
+                              {shift.startTime} - {shift.endTime}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge
+                          variant="outline"
+                          className={`font-medium ${
+                            shift.member
+                              ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400"
+                              : "bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400"
+                          }`}
+                        >
+                          {shift.member ? "Occupied" : "Available"}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {shift.member ? (
+                        <div className="space-y-4">
+                          {/* Member Info */}
+                          <div className="bg-white/60 dark:bg-slate-800/60 rounded-lg p-4 space-y-3">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center">
+                                <User className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                              </div>
+                              <div>
+                                <p className="font-semibold text-slate-900 dark:text-slate-100">{shift.member.name}</p>
+                                <p className="text-xs text-muted-foreground">Member ID: {shift.member.id}</p>
+                              </div>
+                            </div>
+
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2 text-sm">
+                                <Phone className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-slate-700 dark:text-slate-300">{shift.member.phone}</span>
+                              </div>
+                              {shift.member.email && (
+                                <div className="flex items-center gap-2 text-sm">
+                                  <Mail className="w-4 h-4 text-muted-foreground" />
+                                  <span className="text-slate-700 dark:text-slate-300">{shift.member.email}</span>
+                                </div>
+                              )}
+                              <div className="flex items-center gap-2 text-sm">
+                                <Calendar className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-slate-700 dark:text-slate-300">
+                                  Joined: {new Date(shift.member.joinedAt).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Payment Info */}
+                          <div className="bg-white/60 dark:bg-slate-800/60 rounded-lg p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <CreditCard className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-sm font-medium">Payment Status</span>
+                              </div>
+                              <Badge
+                                variant={
+                                  shift.member.paymentStatus === "paid"
+                                    ? "default"
+                                    : shift.member.paymentStatus === "pending"
+                                      ? "secondary"
+                                      : "destructive"
+                                }
+                                className={
+                                  shift.member.paymentStatus === "paid"
+                                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                    : shift.member.paymentStatus === "pending"
+                                      ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                                      : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                                }
+                              >
+                                {shift.member.paymentStatus.toUpperCase()}
+                              </Badge>
+                            </div>
+                            <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                              ₹{shift.member.paymentAmount.toLocaleString()}
+                            </p>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" className="flex-1 bg-white/80 hover:bg-white">
+                              <Edit className="w-3 h-3 mr-1" />
+                              Edit Member
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="flex-1 text-red-600 hover:text-red-700 bg-white/80 hover:bg-red-50"
+                            >
+                              <Trash2 className="w-3 h-3 mr-1" />
+                              Remove
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-center py-8">
+                          <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <User className="w-8 h-8 text-slate-400" />
+                          </div>
+                          <p className="text-muted-foreground text-sm mb-4">No member assigned to this shift</p>
+                          <Button size="sm" className="w-full">
+                            <Plus className="w-4 h-4 mr-2" />
+                            Assign Member
+                          </Button>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
+  )
+}

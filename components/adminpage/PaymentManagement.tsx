@@ -21,7 +21,8 @@ import {
   Calendar,
   DollarSign,
 } from "lucide-react"
-import type { Payment } from "@/types"
+import { Payment } from "@/common/types"
+
 
 // Mock payment data
 const mockPayments: Payment[] = [
