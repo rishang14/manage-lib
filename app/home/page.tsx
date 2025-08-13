@@ -81,8 +81,8 @@ const sharedLibraries = [
 
  const Page= ()=> {
   // const [isDialogOpen, setIsDialogOpen] = useState(false) 
-  const {data,status}=useSession(); 
-  console.log(data,"data") 
+  // const {data,status}=useSession(); 
+  // console.log(data,"data") 
  
   return (  
      <SidebarProvider>

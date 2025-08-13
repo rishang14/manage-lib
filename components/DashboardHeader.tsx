@@ -1,6 +1,7 @@
+"use client"
 import { Button } from "@/components/ui/button"
 import { Plus } from 'lucide-react' 
-import CreateLibraryDialog from "./all-dialog/createlibdialog"
+import CreateLibraryDialog from "./all-dialog/Createlibdialog"
 import { useDialogstore } from "@/store/StateStore"
 
 export function DashboardHeader() {

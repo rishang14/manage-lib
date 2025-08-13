@@ -107,4 +107,67 @@ export type bookingdetailsType<>={
   seatId:string, 
   shiftIds:Array<string>
 }    
-export type addshift=z.infer<typeof shiftdataschema>;
+export type addshift=z.infer<typeof shiftdataschema>; 
+
+export interface Shift {
+  id: string
+  name: string
+  startTime: string
+  endTime: string
+}
+
+export interface Library {
+  id: string
+  name: string
+  totalSeats: number
+  occupiedSeats: number
+  shifts: Shift[]
+  managerId?: string
+  createdAt: string
+}
+
+export interface Member {
+  id: string
+  name: string
+  email: string
+  phone: string
+  libraryId: string
+  shiftId: string
+  seatNumber: number
+  paymentStatus: "paid" | "pending" | "overdue"
+  paymentAmount: number
+  paymentDueDate: string
+  joinedAt: string
+}
+
+export interface Manager {
+  id: string
+  name: string
+  email: string
+  phone: string
+  libraryIds: string[]
+  permissions: string[]
+  createdAt: string
+}
+
+export interface Payment {
+  id: string
+  memberId: string
+  amount: number
+  status: "paid" | "pending" | "overdue"
+  dueDate: string
+  paidDate?: string
+  method?: "cash" | "card" | "upi" | "bank_transfer"
+}
+
+export interface Notification {
+  id: string
+  type: "member_added" | "member_removed" | "payment_received" | "seat_changed" | "manager_action"
+  title: string
+  message: string
+  managerId?: string
+  memberId?: string
+  libraryId: string
+  isRead: boolean
+  createdAt: string
+}
