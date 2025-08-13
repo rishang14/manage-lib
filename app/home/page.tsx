@@ -1,6 +1,5 @@
 // import { Button } from '@/components/ui/button'
-"use client"
-import React, { useEffect }  from 'react'
+
 
 import axios from "axios"
 // import { useState } from "react"
@@ -14,7 +13,7 @@ import { SidebarProvider,SidebarInset } from '@/components/ui/sidebar'
 import { Avatar, AvatarFallback,AvatarImage } from '@/components/ui/avatar'
 import { SimpleSidebar } from '@/components/simple-sidebar'
 import HomeNavBar from '@/components/Homepagenav'
-import { DashboardHeader } from '@/components/dashboard-header'
+import { DashboardHeader } from '@/components/DashboardHeader'
 import { StatsCards } from '@/components/statscard'
 import { SharedLibrariesSection } from '@/components/sharedlibsection'
 import { MyLibrariesSection } from '@/components/my-library-section'
