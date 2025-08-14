@@ -1,10 +1,17 @@
 
-import { auth } from '@/auth'
-import React from 'react'
-// const {auth} =NextAuth(authConfig)
-const   Page = async() => { 
-    const session= await auth() 
-    console.log(session,"users")
+"use client"
+// import { getalllibrary } from '@/lib/serverClienthelper'
+import React, { useEffect } from 'react'
+
+const   Page = () => { 
+ 
+  // useEffect(()=>{
+  //     async function  getdetailsoflib(){
+  //      await getalllibrary()
+  //    } 
+
+  //    getdetailsoflib();
+  // },[])
   return (
     <div>page</div>
   )

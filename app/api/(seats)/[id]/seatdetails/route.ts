@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { checkIdSchema } from "@/common/types";
-import { getseatdetails } from "@/lib/helper";
+import { getseatdetails } from "@/lib/apihelper";
 import { NextResponse,NextRequest } from "next/server"; 
 
 

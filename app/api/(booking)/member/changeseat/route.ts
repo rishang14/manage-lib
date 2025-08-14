@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { bookingdetailsType, libroles, seatdetails } from "@/common/types";
-import { isbookingexist } from "@/lib/helper";
+import { isbookingexist } from "@/lib/apihelper";
 import prisma from "@/lib/prisma";
 import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";

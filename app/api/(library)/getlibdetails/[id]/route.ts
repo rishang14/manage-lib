@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import authConfig from "@/lib/auth.config";
 import NextAuth from "next-auth";
 import { checkIdSchema } from "@/common/types";
-import { getlibrarydetails, getuserID, islibexist, isthisUserIsInLib } from "@/lib/helper";
+import { getlibrarydetails, getuserID, islibexist, isthisUserIsInLib } from "@/lib/apihelper";
 
 const { auth } = NextAuth(authConfig);
 

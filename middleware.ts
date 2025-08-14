@@ -31,7 +31,7 @@ export default async function middleware(req: NextRequest) {
       (item: libroles) => item.libid === libid );
 
     if (!check) {
-      return NextResponse.redirect(new URL("/unauthorized?reason=you dont have valid roles ", req.nextUrl));
+      return NextResponse.redirect(new URL("/unauthorized?reason=Invalid Library Id ", req.nextUrl));
     }
 
     if (

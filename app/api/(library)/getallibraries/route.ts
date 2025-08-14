@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import authConfig from "@/lib/auth.config";
-import NextAuth from "next-auth";
-import { getalllibrary, getuserID } from "@/lib/helper";
+import { auth } from "@/auth";
+import { alllibrary, getuserID } from "@/lib/apihelper";
 
-const { auth } = NextAuth(authConfig);
+
 export async function GET(req: NextRequest) {
   const session = await auth();
-
+  // console.log(session,"session")
   if (!session?.user) {
     return NextResponse.json(
       { error: "Unauthorized request" },
@@ -15,14 +14,14 @@ export async function GET(req: NextRequest) {
   }
   
   try {
-    const userid = await getuserID(session?.user.email as string);
+    const userid = await session?.user?.id;
     if (!userid) {
       return NextResponse.json(
         { error: "Something is wrong with the user email" },
         { status: 401 }
       );
     }
-    const library = await getalllibrary(userid as string);
+    const library = await alllibrary(userid as string);
     return NextResponse.json(
       { message: "Successful ", library },
       { status: 200 }

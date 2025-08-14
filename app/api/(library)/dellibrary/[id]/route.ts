@@ -7,7 +7,7 @@ import {
   islibexist,
   isthisUserIsInLib,
   isuserexist,
-} from "@/lib/helper";
+} from "@/lib/apihelper";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 

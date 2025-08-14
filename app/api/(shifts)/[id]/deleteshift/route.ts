@@ -1,6 +1,6 @@
 import { checkIdSchema } from "@/common/types";
 import authConfig from "@/lib/auth.config";
-import { getuserID, islibexist, isthisUserIsInLib } from "@/lib/helper";
+import { getuserID, islibexist, isthisUserIsInLib } from "@/lib/apihelper";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { error } from "console";

@@ -23,7 +23,7 @@ export async function getuserID(email: string): Promise<string | undefined> {
   }
 }
 
-export async function getalllibrary(userid: string): Promise<Library[]> {
+export async function alllibrary(userid: string): Promise<Library[]> {
   try {
     const lib = await prisma.library.findMany({
       where: {

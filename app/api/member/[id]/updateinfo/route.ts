@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { checkIdSchema, libroles, Membereditinfo } from "@/common/types"; 
-import { undatedmemberinfo } from "@/lib/helper";
+import { undatedmemberinfo } from "@/lib/apihelper";
 import { NextRequest, NextResponse } from "next/server";
 export async function PATCH(req:NextRequest ,{params }:{params:Promise<{id:string}>}){
    const session= await auth(); 
