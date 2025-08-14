@@ -1,11 +1,15 @@
-import { Seat } from "@/common/types"
-import { SeatManagementTable } from "@/components/SeatManagementTable"
-import { SeatStatistics } from "@/components/SeatStatistics"
+"use client";
+
+import { SeatManagementTable } from "@/components/SeatManagementTable";
+import { SeatStatistics } from "@/components/SeatStatistics";
+import { getLibdetails } from "@/lib/serverClienthelper";
+import { useQuery } from "@tanstack/react-query";
+ import { useParams } from 'next/navigation';
 // import type { Seat } from "@/types"
 
 // Mock data for demonstration
 const mockSeats = Array.from({ length: 120 }, (_, i) => {
-  const seatNumber = i + 1
+  const seatNumber = i + 1;
   const shifts = [
     {
       id: `${seatNumber}-morning`,
@@ -19,7 +23,12 @@ const mockSeats = Array.from({ length: 120 }, (_, i) => {
               name: `Member ${seatNumber}M`,
               phone: `+91 98765${String(seatNumber).padStart(5, "0")}`,
               email: `member${seatNumber}m@example.com`,
-              paymentStatus: Math.random() > 0.8 ? "overdue" : Math.random() > 0.6 ? "pending" : "paid",
+              paymentStatus:
+                Math.random() > 0.8
+                  ? "overdue"
+                  : Math.random() > 0.6
+                  ? "pending"
+                  : "paid",
               paymentAmount: 2500,
               joinedAt: "2024-01-15",
             }
@@ -37,7 +46,12 @@ const mockSeats = Array.from({ length: 120 }, (_, i) => {
               name: `Member ${seatNumber}A`,
               phone: `+91 98765${String(seatNumber + 1000).padStart(5, "0")}`,
               email: `member${seatNumber}a@example.com`,
-              paymentStatus: Math.random() > 0.8 ? "overdue" : Math.random() > 0.6 ? "pending" : "paid",
+              paymentStatus:
+                Math.random() > 0.8
+                  ? "overdue"
+                  : Math.random() > 0.6
+                  ? "pending"
+                  : "paid",
               paymentAmount: 2500,
               joinedAt: "2024-01-20",
             }
@@ -55,16 +69,26 @@ const mockSeats = Array.from({ length: 120 }, (_, i) => {
               name: `Member ${seatNumber}E`,
               phone: `+91 98765${String(seatNumber + 2000).padStart(5, "0")}`,
               email: `member${seatNumber}e@example.com`,
-              paymentStatus: Math.random() > 0.8 ? "overdue" : Math.random() > 0.6 ? "pending" : "paid",
+              paymentStatus:
+                Math.random() > 0.8
+                  ? "overdue"
+                  : Math.random() > 0.6
+                  ? "pending"
+                  : "paid",
               paymentAmount: 2500,
               joinedAt: "2024-02-01",
             }
           : undefined,
     },
-  ]
+  ];
 
-  const filledShifts = shifts.filter((s) => s.member).length
-  const status = filledShifts === 0 ? "empty" : filledShifts === 3 ? "full" : "partially_filled"
+  const filledShifts = shifts.filter((s) => s.member).length;
+  const status =
+    filledShifts === 0
+      ? "empty"
+      : filledShifts === 3
+      ? "full"
+      : "partially_filled";
 
   return {
     id: `seat-${seatNumber}`,
@@ -73,20 +97,29 @@ const mockSeats = Array.from({ length: 120 }, (_, i) => {
     shifts,
     status,
     createdAt: "2024-01-01",
-  }
-})
+  };
+});
 
-const  Page =() =>{
+const Page = () => {
+  const { id } = useParams();
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["librarydetails", id],
+    queryFn: () => getLibdetails(id as string), 
+    // basically it will give me data from cache  
+    staleTime: 1000 * 60 * 5,
+  });
+  console.log(data, "data for the libdetails page");
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-6">
-      <div className="max-w-7xl mx-auto space-y-8"> 
+      <div className="max-w-7xl mx-auto space-y-8">
         {/* @ts-ignore */}
-        <SeatStatistics seats={mockSeats} /> 
+        <SeatStatistics seats={mockSeats} />
         {/* @ts-ignore */}
         <SeatManagementTable seats={mockSeats} />
       </div>
     </div>
-  )
-} 
+  );
+};
 
-export  default Page;
+export default Page;

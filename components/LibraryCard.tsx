@@ -1,6 +1,8 @@
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import { BookOpen, ExternalLink,  SquarePenIcon } from 'lucide-react'
 import { Library } from "@/prisma/zod"
+import { PrefectchLibdetailsCard } from "./PrefectchLibdetailsComp"
+
 
 
 export function LibraryCard({ library }: { library: Library }) {
@@ -13,10 +15,7 @@ export function LibraryCard({ library }: { library: Library }) {
                <BookOpen className="h-6 w-6 text-cyan-300/50" />
               <CardTitle className="text-lg text-cyan-400">{library.name}</CardTitle>
             </div> 
-            <div className="flex gap-2 flex-1 justify-end ">
-           <SquarePenIcon className="h-5 w-5  text-cyan-700" />
-           <ExternalLink className="h-5 w-5  text-cyan-700"/>
-          </div>
+            <PrefectchLibdetailsCard libid={library.id}/>
           </div>   
       </CardHeader>
     </Card>
