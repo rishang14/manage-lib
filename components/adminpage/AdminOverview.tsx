@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-// import { Progress } from "@/components/ui/progress"
+import { Progress } from "@/components/ui/progress"
 import { Building2, Users, AlertTriangle, TrendingUp, UserCheck } from "lucide-react"
 
 // Mock data - replace with real data from your backend

@@ -2,13 +2,13 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Users, Building2, CreditCard, Bell, UserCheck, TrendingUp, Settings } from "lucide-react"
-// import { AdminOverview } from "@/components/admin/admin-overview"
-// import { MemberManagement } from "@/components/admin/member-management"
-// import { PaymentManagement } from "@/components/admin/payment-management"
-// import { ManagerControls } from "@/components/admin/manager-controls"
-// import { NotificationCenter } from "@/components/admin/notification-center"
+import { AdminOverview } from "./AdminOverview"
+import { MemberManagement } from "./MemberManage"
+import { PaymentManagement } from "./PaymentManagement"
+import { ManagerControls } from "./ManagerControl"
+import { NotificationCenter } from "./NotificationCenter"
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview")

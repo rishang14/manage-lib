@@ -1,9 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Building2, Users, UserCheck, UserX, Clock, PieChart } from "lucide-react"
-import { Seat } from "@/common/types"
-
+import { Building2, Users, Clock } from "lucide-react"
+import type { Seat } from "@/common/types"
 
 interface SeatStatisticsProps {
   seats: Seat[]
@@ -40,178 +39,109 @@ export function SeatStatistics({ seats }: SeatStatisticsProps) {
 
   return (
     <div className="space-y-6">
-      {/* Main Seat Overview */}
-      <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+      <Card>
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                <Building2 className="w-6 h-6 text-blue-600" />
-              </div>
+              <Building2 className="w-5 h-5 text-blue-600" />
               <div>
-                <CardTitle className="text-xl font-bold text-slate-900 dark:text-slate-100">Seat Overview</CardTitle>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Total capacity and current occupancy</p>
+                <CardTitle className="text-lg font-semibold">Seat Overview</CardTitle>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Current occupancy status</p>
               </div>
             </div>
-            <Badge variant="secondary" className="text-lg px-3 py-1">
-              {occupancyRate}% Occupied
-            </Badge>
+            <Badge variant="secondary">{occupancyRate}% Occupied</Badge>
           </div>
         </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Total Seats Breakdown */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
-              <div className="text-3xl font-bold text-blue-600 mb-1">{totalSeats}</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Total Seats</div>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="text-center p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">{totalSeats}</div>
+              <div className="text-xs text-slate-600 dark:text-slate-400">Total</div>
             </div>
-            <div className="text-center p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
-              <div className="text-3xl font-bold text-green-600 mb-1">{fullyOccupiedSeats}</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Fully Occupied</div>
+            <div className="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+              <div className="text-2xl font-bold text-green-600">{fullyOccupiedSeats}</div>
+              <div className="text-xs text-slate-600 dark:text-slate-400">Full</div>
             </div>
-            <div className="text-center p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
-              <div className="text-3xl font-bold text-amber-600 mb-1">{partiallyFilledSeats}</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Partially Filled</div>
+            <div className="text-center p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+              <div className="text-2xl font-bold text-amber-600">{partiallyFilledSeats}</div>
+              <div className="text-xs text-slate-600 dark:text-slate-400">Partial</div>
             </div>
-            <div className="text-center p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
-              <div className="text-3xl font-bold text-slate-500 mb-1">{emptySeats}</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Empty</div>
+            <div className="text-center p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+              <div className="text-2xl font-bold text-slate-500">{emptySeats}</div>
+              <div className="text-xs text-slate-600 dark:text-slate-400">Empty</div>
             </div>
           </div>
 
-          {/* Visual Progress Bar */}
-          <div className="space-y-3">
-            <div className="flex justify-between text-sm font-medium">
-              <span>Seat Utilization</span>
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span>Utilization</span>
               <span>
-                {fullyOccupiedSeats + partiallyFilledSeats} of {totalSeats} seats in use
+                {fullyOccupiedSeats + partiallyFilledSeats}/{totalSeats}
               </span>
             </div>
-            <div className="relative">
-              <Progress value={occupancyRate} className="h-3" />
-              <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white">
-                {occupancyRate}%
-              </div>
-            </div>
+            <Progress value={occupancyRate} className="h-2" />
           </div>
 
-          {/* Member Count */}
-          <div className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
-            <div className="flex items-center gap-3">
-              <Users className="w-5 h-5 text-indigo-600" />
-              <div>
-                <div className="font-semibold text-slate-900 dark:text-slate-100">Total Members</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Across all shifts</div>
-              </div>
+          <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-blue-600" />
+              <span className="text-sm font-medium">Total Members</span>
             </div>
-            <div className="text-2xl font-bold text-indigo-600">{totalMembers}</div>
+            <span className="text-lg font-bold text-blue-600">{totalMembers}</span>
           </div>
         </CardContent>
       </Card>
 
-      {/* Shift-wise Detailed Statistics */}
-      <Card className="shadow-lg">
+      <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-              <Clock className="w-6 h-6 text-purple-600" />
-            </div>
+            <Clock className="w-5 h-5 text-purple-600" />
             <div>
-              <CardTitle className="text-lg font-semibold">Shift-wise Occupancy</CardTitle>
-              <p className="text-sm text-slate-600 dark:text-slate-400">Detailed breakdown by time slots</p>
+              <CardTitle className="text-lg font-semibold">Shift Occupancy</CardTitle>
+              <p className="text-sm text-slate-600 dark:text-slate-400">Breakdown by time slots</p>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {Object.entries(shiftStats).map(([shiftType, stats]) => {
               const occupancyPercent = Math.round((stats.occupied / stats.total) * 100)
-              const remaining = stats.total - stats.occupied
 
               return (
-                <div
-                  key={shiftType}
-                  className={`relative overflow-hidden rounded-xl p-6 ${
-                    shiftType === "morning"
-                      ? "bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border border-amber-200 dark:border-amber-800"
-                      : shiftType === "afternoon"
-                        ? "bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 border border-blue-200 dark:border-blue-800"
-                        : "bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 border border-purple-200 dark:border-purple-800"
-                  }`}
-                >
-                  {/* Background Pattern */}
-                  <div className="absolute top-0 right-0 opacity-10">
-                    <PieChart className="w-20 h-20" />
+                <div key={shiftType} className="p-4 border rounded-lg">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-medium capitalize">{shiftType}</h3>
+                    <Badge
+                      variant="outline"
+                      className={
+                        shiftType === "morning"
+                          ? "text-amber-600 border-amber-200"
+                          : shiftType === "afternoon"
+                            ? "text-blue-600 border-blue-200"
+                            : "text-purple-600 border-purple-200"
+                      }
+                    >
+                      {occupancyPercent}%
+                    </Badge>
                   </div>
 
-                  <div className="relative">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        <Clock
-                          className={`w-5 h-5 ${
-                            shiftType === "morning"
-                              ? "text-amber-600"
-                              : shiftType === "afternoon"
-                                ? "text-blue-600"
-                                : "text-purple-600"
-                          }`}
-                        />
-                        <h3 className="font-bold text-lg capitalize text-slate-900 dark:text-slate-100">{shiftType}</h3>
-                      </div>
-                      <Badge
-                        variant="secondary"
-                        className={`${
-                          shiftType === "morning"
-                            ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300"
-                            : shiftType === "afternoon"
-                              ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
-                              : "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300"
-                        }`}
-                      >
-                        {occupancyPercent}%
-                      </Badge>
+                  <div className="text-center mb-3">
+                    <div className="text-xl font-bold text-slate-900 dark:text-white">
+                      {stats.occupied}/{stats.total}
                     </div>
-
-                    <div className="space-y-4">
-                      <div className="text-center">
-                        <div className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-1">
-                          {stats.occupied}
-                          <span className="text-lg text-slate-500">/{stats.total}</span>
-                        </div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400">seats occupied</div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="text-center p-3 bg-white/60 dark:bg-slate-800/60 rounded-lg">
-                          <UserCheck className="w-5 h-5 text-green-600 mx-auto mb-1" />
-                          <div className="font-semibold text-green-700 dark:text-green-400">{stats.occupied}</div>
-                          <div className="text-xs text-slate-600 dark:text-slate-400">Taken</div>
-                        </div>
-                        <div className="text-center p-3 bg-white/60 dark:bg-slate-800/60 rounded-lg">
-                          <UserX className="w-5 h-5 text-slate-500 mx-auto mb-1" />
-                          <div className="font-semibold text-slate-700 dark:text-slate-300">{remaining}</div>
-                          <div className="text-xs text-slate-600 dark:text-slate-400">Available</div>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Progress
-                          value={occupancyPercent}
-                          className={`h-2 ${
-                            shiftType === "morning"
-                              ? "[&>div]:bg-amber-500"
-                              : shiftType === "afternoon"
-                                ? "[&>div]:bg-blue-500"
-                                : "[&>div]:bg-purple-500"
-                          }`}
-                        />
-                        <div className="flex justify-between text-xs text-slate-600 dark:text-slate-400">
-                          <span>0</span>
-                          <span>{stats.total}</span>
-                        </div>
-                      </div>
-                    </div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">occupied</div>
                   </div>
+
+                  <Progress
+                    value={occupancyPercent}
+                    className={`h-2 ${
+                      shiftType === "morning"
+                        ? "[&>div]:bg-amber-500"
+                        : shiftType === "afternoon"
+                          ? "[&>div]:bg-blue-500"
+                          : "[&>div]:bg-purple-500"
+                    }`}
+                  />
                 </div>
               )
             })}
