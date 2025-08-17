@@ -34,7 +34,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 const CreateLibraryDialog = () => {
-  const { data } = useSession();
+  const { data,update } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isDialogOpen, setIsdialogOpen } = useDialogstore();
   const form = useForm<CreateLibraryInput>({
@@ -68,10 +68,11 @@ const CreateLibraryDialog = () => {
       console.log("Form data:", data);
       formdata.ownerId = data?.user.id;
       const res= await axios.post("/api/createLibrary", JSON.stringify(formdata)); 
-      console.log(res,"res");
+      console.log(res,"res"); 
+      await update();
       toast.success("Library created Successfully", { duration: 2000 });
       setIsdialogOpen(false);
-      router.refresh();
+     window.location.reload();
       form.reset(); 
     } catch (error) { 
       console.error("Error creating library:", error);

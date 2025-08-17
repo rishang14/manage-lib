@@ -25,10 +25,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       }
       return false;
     },
-    async jwt({ token, user }) {
-      if (user && user.email) {
+    async jwt({ token,trigger, user }) {
+      if (user?.email || trigger === "update") {
         const dbUser = await prisma.user.findUnique({
-          where: { email: user.email },
+          where: { email: user?.email  as string},
           include: {
             userRoles: true,
           },

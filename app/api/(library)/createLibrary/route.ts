@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CreateLibrarySchema } from "@/common/types";
 import { auth } from "@/auth";
+import prisma from "@/lib/prisma";
 
  
 
@@ -23,25 +24,25 @@ export async function POST(req:NextRequest){
       
       
      
-      // const created= await prisma.library.create({
-      //   data:{
-      //     name: validatedata.data.name, 
-      //     ownerId:validatedata.data.ownerId, 
-      //      shifts: {
-      //      create: validatedata.data.shifts.map(shift => ({
-      //       name: shift.name,
-      //       startTime: shift.startTime,
-      //       endTime: shift.endTime
-      //     }))
-      //   }, 
-      //   userRoles:{
-      //      create:{
-      //       userId:validatedata.data.ownerId, 
-      //       role:"ADMIN"
-      //      } 
-      //   }
-      //   }
-      // }) 
+      const created= await prisma.library.create({
+        data:{
+          name: validatedata.data.name, 
+          ownerId:validatedata.data.ownerId, 
+           shifts: {
+           create: validatedata.data.shifts.map(shift => ({
+            name: shift.name,
+            startTime: shift.startTime,
+            endTime: shift.endTime
+          }))
+        }, 
+        userRoles:{
+           create:{
+            userId:validatedata.data.ownerId, 
+            role:"ADMIN"
+           } 
+        }
+        }
+      }) 
 
       return NextResponse.json({message:" library created successfully",},{status:201}); 
     } catch (error) {

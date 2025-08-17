@@ -33,7 +33,7 @@ export const PrefectchLibdetailsCard = ({ libid }: { libid: string }) => {
       }}
     >
       <SquarePenIcon className="h-5 w-5  text-cyan-700" />
-      <Link href={`library/${libid}`}>
+      <Link href={`/library/${libid}`}>
         <ExternalLink className="h-5 w-5  text-cyan-700" />
       </Link>
     </div>

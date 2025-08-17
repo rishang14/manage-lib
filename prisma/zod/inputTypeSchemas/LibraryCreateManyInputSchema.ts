@@ -10,6 +10,3 @@ export const LibraryCreateManyInputSchema: z.ZodType<Prisma.LibraryCreateManyInp
 }).strict();
 
 export default LibraryCreateManyInputSchema;
-
-
-export type Libraries=z.infer<typeof LibraryCreateManyInputSchema> 

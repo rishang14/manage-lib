@@ -1,9 +1,11 @@
+
 import { NextRequest, NextResponse } from "next/server";
 import { publicRoutes, protectedRoutes } from "./lib/pathroute";
 import { auth } from "@/auth";
 import { libroles } from "./common/types";
 export default async function middleware(req: NextRequest) {
-  const session = await auth();
+  const session = await auth(); 
+  console.log(session,"session")
   const pathname = req.nextUrl.pathname;
 
   const isProtected = protectedRoutes.some((route) =>
