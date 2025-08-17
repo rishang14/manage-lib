@@ -1,7 +1,7 @@
 
 
 import { SidebarProvider,SidebarInset } from '@/components/ui/sidebar'
-import { SimpleSidebar } from '@/components/simple-sidebar'
+import { SimpleSidebar } from '@/components/Simplesidebar'
 import HomeNavBar from '@/components/Homepagenav'
 import { DashboardHeader } from '@/components/DashboardHeader'
 import { SharedLibrariesSection } from '@/components/sharedlibsection'

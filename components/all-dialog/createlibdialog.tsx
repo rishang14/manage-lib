@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,211 +8,316 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { Clock, Trash2, Plus } from "lucide-react"
-import { useDialogstore } from "@/store/StateStore"
-import type { Shift } from "@/common/types"
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Clock, Trash2, Plus } from "lucide-react";
+import { useDialogstore } from "@/store/StateStore";
+import type { Shift } from "@/common/types";
+import { CreateLibraryInput, CreateLibrarySchema } from "@/common/types";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useSession } from "next-auth/react";
 
 const CreateLibraryDialog = () => {
-  // Form states
-  const [libraryName, setLibraryName] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const { isDialogOpen, setIsdialogOpen } = useDialogstore()
-
-  // Dummy default shifts
-  const [shifts, setShifts] = useState<Shift[]>([
-    {
-      id: crypto.randomUUID(),
-      name: "Morning Shift",
-      startTime: "08:00",
-      endTime: "12:00",
+  const { data } = useSession();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isDialogOpen, setIsdialogOpen } = useDialogstore();
+  const form = useForm<CreateLibraryInput>({
+    resolver: zodResolver(CreateLibrarySchema),
+    defaultValues: {
+      name: "",
+      ownerId: data?.user.id,
+      shifts: [
+        {
+          name: "Morning shift",
+          startTime: "06:00",
+          endTime: "10:00",
+        },
+      ],
     },
-    {
-      id: crypto.randomUUID(),
-      name: "Evening Shift",
-      startTime: "13:00",
-      endTime: "17:00",
-    },
-  ])
+  });
 
-  // Handlers
-  const addShift = () => {
-    setShifts([...shifts, { id: crypto.randomUUID(), name: "", startTime: "", endTime: "" }])
-  }
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = form;
+  const { fields, remove, append } = useFieldArray({
+    control,
+    name: "shifts",
+  });
 
-  const removeShift = (id: string) => {
-    setShifts(shifts.filter((s) => s.id !== id))
-  }
+  const onSubmit = async (data: CreateLibraryInput) => {
+    try {
+      console.log("Form data:", data);
+      // Handle form submission here
+      setIsdialogOpen(false);
+      form.reset();
+    } catch (error) {
+      console.error("Error creating library:", error);
+    }
+  };
 
-  const updateShift = (id: string, field: keyof Shift, value: string) => {
-    setShifts(shifts.map((shift) => (shift.id === id ? { ...shift, [field]: value } : shift)))
-  }
-
-  const handleSubmit = () => {
-    setIsSubmitting(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Library Created:", { libraryName, shifts })
-      setIsSubmitting(false)
-      setIsdialogOpen(false)
-    }, 1000)
-  }
+  const handleDialogClose = () => {
+    form.reset();
+    setIsdialogOpen(false);
+  };
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsdialogOpen}>
-      <DialogContent className="md:min-w-2xl max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Create New Library</DialogTitle>
-          <DialogDescription>Set up a new library with custom shift schedules for your team</DialogDescription>
-        </DialogHeader>
+    <>
+      <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
+        <DialogContent className="md:min-w-2xl max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">
+              Create New Library
+            </DialogTitle>
+            <DialogDescription>
+              Set up a new library with custom shift schedules for your team
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="space-y-3 py-2 ">
-          {/* Library Name */}
-          <div className="space-y-2">
-            <Label htmlFor="library-name" className="text-sm font-medium">
-              Library Name
-            </Label>
-            <Input
-              id="library-name"
-              placeholder="Enter library name..."
-              value={libraryName}
-              onChange={(e) => setLibraryName(e.target.value)}
-              className="text-base"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label className="text-sm font-medium">Shift Schedule</Label>
-                <p className="text-sm text-muted-foreground">Configure your team's working shifts</p>
-              </div>
-              <Badge variant="secondary" className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                {shifts.length} shift{shifts.length > 1 ? "s" : ""}
-              </Badge>
-            </div>
-
-            <Card className="border-slate-200 dark:border-slate-700">
-              <CardContent className="p-4">
-                {/* Header row for larger screens */}
-                <div className="hidden md:grid md:grid-cols-12 gap-4 pb-3 mb-3 border-b border-slate-200 dark:border-slate-700">
-                  <div className="col-span-2 text-sm font-medium text-muted-foreground">#</div>
-                  <div className="col-span-4 text-sm font-medium text-muted-foreground">Shift Name</div>
-                  <div className="col-span-2 text-sm font-medium text-muted-foreground">Start Time</div>
-                  <div className="col-span-2 text-sm font-medium text-muted-foreground">End Time</div>
-                  <div className="col-span-2 text-sm font-medium text-muted-foreground">Actions</div>
+          <Form {...form}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="space-y-3 py-2">
+                <div className="space-y-2">
+                  <FormField
+                    control={control}
+                    name="name"
+                    rules={{ required: "Library name is required" }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium">
+                          Library Name
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="text"
+                            placeholder="Enter library name..."
+                            className="text-base"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
 
-                {/* Shift rows */}
-                <div className="space-y-3">
-                  {shifts.map((shift, index) => (
-                    <div
-                      key={shift.id}
-                      className="grid grid-cols-1 md:grid-cols-12 gap-3  p-3 md:p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                    >
-                      {/* Mobile: Shift number and delete button */}
-                      <div className="flex items-center justify-between md:hidden mb-2">
-                        <span className="text-sm font-medium text-muted-foreground">Shift {index + 1}</span>
-                        {shifts.length > 1 && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeShift(shift.id)}
-                            className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 h-8 w-8 p-0"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        )}
-                      </div>
-
-                      {/* Desktop: Shift number */}
-                      <div className="hidden md:flex md:col-span-1 items-center">
-                        <span className="text-sm font-medium text-muted-foreground">{index + 1}</span>
-                      </div>
-
-                      {/* Shift Name */}
-                      <div className="md:col-span-5">
-                        <Label className="text-xs text-muted-foreground md:hidden">Shift Name</Label>
-                        <Input
-                          value={shift.name}
-                          onChange={(e) => updateShift(shift.id, "name", e.target.value)}
-                          placeholder="e.g., Morning Shift"
-                          className="mt-1 md:mt-0"
-                        />
-                      </div>
-
-                      {/* Time inputs - side by side on mobile, separate columns on desktop */}
-                      <div className="grid grid-cols-2 gap-2 md:contents">
-                        <div className="md:col-span-2">
-                          <Label className="text-xs text-muted-foreground md:hidden">Start Time</Label>
-                          <Input
-                            type="time"
-                            value={shift.startTime}
-                            onChange={(e) => updateShift(shift.id, "startTime", e.target.value)}
-                            className="mt-1 md:mt-0"
-                          />
-                        </div>
-                        <div className="md:col-span-2">
-                          <Label className="text-xs text-muted-foreground md:hidden">End Time</Label>
-                          <Input
-                            type="time"
-                            value={shift.endTime}
-                            onChange={(e) => updateShift(shift.id, "endTime", e.target.value)}
-                            className="mt-1 md:mt-0"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Desktop: Delete button */}
-                      <div className="hidden md:flex md:col-span-2 items-center">
-                        {shifts.length > 1 && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeShift(shift.id)}
-                            className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        )}
-                      </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label className="text-sm font-medium">
+                        Shift Schedule
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Configure your team's working shifts
+                      </p>
                     </div>
-                  ))}
+                    <Badge
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                    >
+                      <Clock className="w-3 h-3" />
+                      {fields.length} shift{fields.length > 1 ? "s" : ""}
+                    </Badge>
+                  </div>
+
+                  <Card className="border-slate-200 dark:border-slate-700">
+                    <CardContent className="p-4">
+                      {/* Header row for larger screens */}
+                      <div className="hidden md:grid md:grid-cols-12 gap-4 pb-3 mb-3 border-b border-slate-200 dark:border-slate-700">
+                        <div className="col-span-2 text-sm font-medium text-muted-foreground">
+                          #
+                        </div>
+                        <div className="col-span-4 text-sm font-medium text-muted-foreground">
+                          Shift Name
+                        </div>
+                        <div className="col-span-2 text-sm font-medium text-muted-foreground">
+                          Start Time
+                        </div>
+                        <div className="col-span-2 text-sm font-medium text-muted-foreground">
+                          End Time
+                        </div>
+                        <div className="col-span-2 text-sm font-medium text-muted-foreground">
+                          Actions
+                        </div>
+                      </div>
+
+                      {/* Shift rows */}
+                      <div className="space-y-3">
+                        {fields.map((field, index) => (
+                          <div
+                            key={field.id}
+                            className="grid grid-cols-1 md:grid-cols-12 gap-3 p-3 md:p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                          >
+                            {/* Mobile: Shift number and delete button */}
+                            <div className="flex items-center justify-between md:hidden mb-2">
+                              <span className="text-sm font-medium text-muted-foreground">
+                                Shift {index + 1}
+                              </span>
+                              {fields.length > 1 && (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => remove(index)}
+                                  className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 h-8 w-8 p-0"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              )}
+                            </div>
+
+                            {/* Desktop: Shift number */}
+                            <div className="hidden md:flex md:col-span-1 items-center">
+                              <span className="text-sm font-medium text-muted-foreground">
+                                {index + 1}
+                              </span>
+                            </div>
+
+                            {/* Shift Name */}
+                            <div className="md:col-span-5">
+                              <FormField
+                                control={control}
+                                name={`shifts.${index}.name`}
+                                rules={{ required: "Shift name is required" }}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-xs text-muted-foreground md:hidden">
+                                      Shift Name
+                                    </FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        {...field}
+                                        placeholder="e.g., Morning Shift"
+                                        className="mt-1 md:mt-0"
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+
+                            {/* Time inputs - side by side on mobile, separate columns on desktop */}
+                            <div className="grid grid-cols-2 gap-2 md:contents">
+                              <div className="md:col-span-2">
+                                <FormField
+                                  control={control}
+                                  name={`shifts.${index}.startTime`}
+                                  rules={{ required: "Start time is required" }}
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel className="text-xs text-muted-foreground md:hidden">
+                                        Start Time
+                                      </FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          {...field}
+                                          type="time"
+                                          className="mt-1 md:mt-0"
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              </div>
+                              <div className="md:col-span-2">
+                                <FormField
+                                  control={control}
+                                  name={`shifts.${index}.endTime`}
+                                  rules={{ required: "End time is required" }}
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel className="text-xs text-muted-foreground md:hidden">
+                                        End Time
+                                      </FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          {...field}
+                                          type="time"
+                                          className="mt-1 md:mt-0"
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Desktop: Delete button */}
+                            <div className="hidden md:flex md:col-span-2 items-center">
+                              {fields.length > 1 && (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => remove(index)}
+                                  className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mt-2 pt-3 border-b border-slate-200 dark:border-slate-700">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() =>
+                            append({ name: "", startTime: "", endTime: "" })
+                          }
+                          className="w-full border-dashed border-2 hover:bg-slate-50 dark:hover:bg-slate-800 bg-transparent"
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Add Another Shift
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
+              </div>
 
-                <div className="mt-2 pt-3 border-t border-slate-200 dark:border-slate-700">
-                  <Button
-                    variant="outline"
-                    onClick={addShift}
-                    className="w-full border-dashed border-2 hover:bg-slate-50 dark:hover:bg-slate-800 bg-transparent"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Another Shift
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+              <DialogFooter className="gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleDialogClose}
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {isSubmitting ? "Creating..." : "Create Library"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
 
-        <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={() => setIsdialogOpen(false)} disabled={isSubmitting}>
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} disabled={isSubmitting} className="bg-blue-600 hover:bg-blue-700">
-            {isSubmitting ? "Creating..." : "Create Library"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
-}
-
-export default CreateLibraryDialog
+export default CreateLibraryDialog;
