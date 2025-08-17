@@ -1,4 +1,4 @@
-import NextAuth  from "next-auth";
+import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "./lib/prisma";
 import authConfig from "./lib/auth.config";
@@ -18,36 +18,60 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       });
     },
   },
-  callbacks: { 
-        async signIn({ account }) {
+  callbacks: {
+    async signIn({ account }) {
+      // console.log("🔐 signIn callback triggered", { provider: account?.provider });
       if (account?.provider !== "credentials") {
         return true;
       }
       return false;
     },
-    async jwt({ token,trigger, user }) {
-      if (user?.email || trigger === "update") {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: user?.email  as string},
-          include: {
-            userRoles: true,
-          },
-        }); 
- 
-        token.id = dbUser?.id;
-        token.name = dbUser?.name;
-        token.email = dbUser?.email;
-        token.libraryRoles = dbUser?.userRoles.map((u) => ({ 
-         libid : u.libraryId,
-          role : u.role 
-        }));
+
+    async jwt({ token, trigger, user, session }) {
+      // Detect if we're running in Edge Runtime
+      const isEdgeRuntime =
+        typeof process === "undefined" || process.env.NEXT_RUNTIME === "edge";
+
+      // ✅ Only run Prisma queries outside of Edge Runtime (not in middleware)
+      if (token?.email && !isEdgeRuntime) {
+        const emailToQuery = user?.email || token.email;
+        // console.log("📧 Email to query:", emailToQuery);
+
+        try {
+          // console.log("🔍 Fetching user from database...");
+          const dbUser = await prisma.user.findUnique({
+            where: { email: emailToQuery as string },
+            include: {
+              userRoles: true,
+            },
+          });
+
+          // console.log("👤 DB User found:", !!dbUser, "Roles count:", dbUser?.userRoles?.length || 0);
+
+          if (dbUser) {
+            token.id = dbUser.id;
+            token.name = dbUser.name;
+            token.email = dbUser.email;
+            token.libraryRoles = dbUser.userRoles.map((u) => ({
+              libid: u.libraryId,
+              role: u.role,
+            }));
+            // console.log("✅ Token updated with library roles:", token.libraryRoles);
+          }
+        } catch (error) {
+          console.error("❌ Error fetching user data:", error);
+          // Keep existing token data if database query fails
+        }
+      } else if (isEdgeRuntime) {
+        console.log("🌐 Running in Edge Runtime - skipping database query");
       }
-      // console.log(token,"modified token");
+
       return token;
     },
 
-    async session({ session, token, user }) {
-      //  console.log(token,"token inside session is this available ")
+    async session({ session, token }) {
+      // const isEdgeRuntime = typeof process === 'undefined' || process.env.NEXT_RUNTIME === 'edge';
+
       return {
         ...session,
         user: {
@@ -55,7 +79,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           id: token.id,
           name: token.name,
           email: token.email,
-          libdetails:token.libraryRoles
+          libdetails: token.libraryRoles,
         },
       };
     },

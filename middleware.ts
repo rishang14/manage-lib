@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { publicRoutes, protectedRoutes } from "./lib/pathroute";
 import { auth } from "@/auth";
