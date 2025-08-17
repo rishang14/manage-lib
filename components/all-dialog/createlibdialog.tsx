@@ -29,6 +29,9 @@ import type { Shift } from "@/common/types";
 import { CreateLibraryInput, CreateLibrarySchema } from "@/common/types";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
+import axios from "axios";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const CreateLibraryDialog = () => {
   const { data } = useSession();
@@ -38,7 +41,7 @@ const CreateLibraryDialog = () => {
     resolver: zodResolver(CreateLibrarySchema),
     defaultValues: {
       name: "",
-      ownerId: data?.user.id,
+      ownerId: "",
       shifts: [
         {
           name: "Morning shift",
@@ -58,15 +61,23 @@ const CreateLibraryDialog = () => {
     control,
     name: "shifts",
   });
-
-  const onSubmit = async (data: CreateLibraryInput) => {
-    try {
+  const router = useRouter();
+  const onSubmit = async (formdata: CreateLibraryInput) => {
+    try { 
+      setIsSubmitting(true)
       console.log("Form data:", data);
-      // Handle form submission here
+      formdata.ownerId = data?.user.id;
+      const res= await axios.post("/api/createLibrary", JSON.stringify(formdata)); 
+      console.log(res,"res");
+      toast.success("Library created Successfully", { duration: 2000 });
       setIsdialogOpen(false);
-      form.reset();
-    } catch (error) {
+      router.refresh();
+      form.reset(); 
+    } catch (error) { 
       console.error("Error creating library:", error);
+      toast.error(" Error while  creating library", { duration: 2000 });
+    }finally{
+       setIsSubmitting(false)
     }
   };
 
