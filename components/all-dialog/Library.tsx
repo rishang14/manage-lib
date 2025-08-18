@@ -42,7 +42,6 @@ const CreateLibraryDialog = () => {
     defaultValues: {
       name: "",
       ownerId: "", 
-      seat:1,
       shifts: [
         {
           name: "Morning shift",
@@ -127,29 +126,7 @@ const CreateLibraryDialog = () => {
                     )}
                   />
                 </div> 
-                  <div className="space-y-2">
-                  <FormField
-                    control={control}
-                    name="seat"
-                    rules={{ required: "Number of seat id required" }}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-medium">
-                          No of seat
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            type="number"
-                            placeholder="Enter Number of seat..."
-                            className="text-base"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">

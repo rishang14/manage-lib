@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { CreateLibrarySchema } from "@/common/types";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
+import { array } from "zod";
 
  
 
@@ -34,7 +35,7 @@ export async function POST(req:NextRequest){
             startTime: shift.startTime,
             endTime: shift.endTime
           }))
-        }, 
+        },   
         userRoles:{
            create:{
             userId:validatedata.data.ownerId, 

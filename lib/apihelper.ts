@@ -42,7 +42,8 @@ export async function alllibrary(userid: string): Promise<Library[]> {
 }
 
 export async function getlibrarydetails(id: string) {
-  const libdetails = await prisma.library.findUnique({
+try {
+    const libdetails = await prisma.library.findUnique({
     where: { id },
     include: {
       shifts: true,
@@ -60,6 +61,9 @@ export async function getlibrarydetails(id: string) {
   });
   if (!libdetails) return undefined;
   return libdetails;
+} catch (error) {
+   console.log("error while getting libdetails",error)
+}
 }
 
 export async function isuserexist(id: string): Promise<apiResponse> {
@@ -130,8 +134,9 @@ export async function isthisUserIsInLib(
 
 
 
-export async function addnewShift(shift: shiftschemaInput): Promise<Shift> {
-  const addedshift = await prisma.shift.create({
+export async function addnewShift(shift: shiftschemaInput): Promise<Shift | undefined> {
+try {
+    const addedshift = await prisma.shift.create({
     data: {
       startTime: shift.startTime,
       endTime: shift.endTime,
@@ -141,11 +146,15 @@ export async function addnewShift(shift: shiftschemaInput): Promise<Shift> {
   });
 
   return addedshift;
+} catch (error) {
+  console.log(error,"while adding new seat")
+}
 }
 
 
-export async function UpdateShift(id:string, details:shiftupdateschemainput  ):Promise<Shift>{
-   const updatedshifts= await prisma.shift.update({
+export async function UpdateShift(id:string, details:shiftupdateschemainput  ):Promise<Shift | undefined>{
+  try {
+    const updatedshifts= await prisma.shift.update({
     where:{id}, 
     data:{
       name:details.name, 
@@ -154,13 +163,17 @@ export async function UpdateShift(id:string, details:shiftupdateschemainput  ):P
     }
    }) 
 
-   return updatedshifts;
+   return updatedshifts; 
+  } catch (error) {
+    console.log (error ,"while upating shift ")
+  }
 } 
 
 
 export async function createseat(details:seatdetails):Promise<Seat | undefined>{
    
-  const createseat= await prisma.seat.create({
+ try {
+   const createseat= await prisma.seat.create({
     data:{
       seatNumber:details.seatNumber,  
       libraryId:details.libraryId
@@ -172,6 +185,9 @@ export async function createseat(details:seatdetails):Promise<Seat | undefined>{
   } 
 
   return createseat;
+ } catch (error) {
+   console.log(error,"while creating seat ")
+ }
 } 
 
 
@@ -192,7 +208,8 @@ export async function DeleteUser(userid:string){
 
 
 export async  function getseatdetails(seatId:string){
-  const seat= await prisma.seat.findFirst({
+try {
+    const seat= await prisma.seat.findFirst({
     where:{id:seatId},
     include:{
       bookings:true
@@ -200,11 +217,15 @@ export async  function getseatdetails(seatId:string){
   }) 
 
  return seat;
+} catch (error) {
+   console.log("error while getting seat ",error)
+}
 } 
 
 
 export async function isbookingexist(data:bookingdetailsType){
-  const isbookingexist= await prisma.booking.findMany({
+   try {
+    const isbookingexist= await prisma.booking.findMany({
     where:{
       seatId:data.seatId, 
       shiftId:{
@@ -218,18 +239,22 @@ export async function isbookingexist(data:bookingdetailsType){
   }) 
 
   return isbookingexist?.length > 0 ? isbookingexist : null;
+   } catch (error) {
+    console.log(error,"checking booking")
+   }
 } 
 
 
 export  async function createbooking(datas:CreateBookingInput, libid:string){
-   const created= await prisma.member.create({
+ try {
+    const created= await prisma.member.create({
    data:{
     name:datas.member.name , 
     phone:datas.member.phone , 
     joinedAt:datas.member.joinedAt, 
     libraryId:libid, 
     bookings:{
-      create: datas.shiftIds.map((shiftId) => ({ 
+      create: datas.shiftIds.map((shiftId) => ({
         shiftId:shiftId, 
         seatId:datas.seatId, 
         date:datas.date,
@@ -247,12 +272,14 @@ export  async function createbooking(datas:CreateBookingInput, libid:string){
     }
    }, 
    }) 
-
-
-   if(!created){
-    return undefined
-   } 
+  if(!created ){
+    console.log("nothing got while booking ")
+  }
    return created;
+ } catch (error) {
+   console.log(error,"while creating booking")
+ }
+
 }  
 
 

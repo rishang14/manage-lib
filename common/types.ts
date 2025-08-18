@@ -26,9 +26,6 @@ export const CreateLibrarySchema = LibrarySchema.omit({
   createdAt: true,
 }).extend({
   name: z.string().min(3, "Library name is required"),
- seat: z.coerce.number()
-    .int("Seat count must be an integer")
-    .gt(0, "Seat count must be greater than 0"),
   shifts: z
     .array(ShiftCreateSchema)
     .min(1, "At least one shift is required")
