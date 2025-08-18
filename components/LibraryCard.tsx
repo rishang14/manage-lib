@@ -8,7 +8,7 @@ import { PrefectchLibdetailsCard } from "./PrefectchLibdetailsComp"
 export function LibraryCard({ library }: { library: Library }) {
 
   return (
-    <Card className="hover:shadow-md hover:shadow-cyan-900 border-cyan-950 transition-shadow border-1 ">
+    <Card className="hover:shadow-md hover:shadow-cyan-900 dark:border-cyan-950 transition-shadow border-1 ">
       <CardHeader className="pb-4">
           <div className="flex items-center justify-between space-x-3">
             <div className="space-x-2 flex items-center"> 
