@@ -66,35 +66,14 @@ const CreateLibraryDialog = () => {
   try { 
     setIsSubmitting(true);
     
-    console.log("🏗️ Starting library creation...");
-    console.log("📊 Current session before API call:", {
-      userId: data?.user?.id,
-      libdetailsCount: data?.user?.libdetails?.length || 0,
-      libdetails: data?.user?.libdetails
-    });
     
     formdata.ownerId = data?.user.id;
     const res = await axios.post("/api/createLibrary", JSON.stringify(formdata)); 
-    console.log("✅ API call successful:", res.data);
-    
-    console.log("🔄 Calling update()...");
     const updateResult = await update();
-    console.log("📝 Update result:", updateResult);
-    
-    // Give it a moment and check the session
-    setTimeout(() => {
-      console.log("📊 Session after update:", {
-        userId: data?.user?.id,
-        libdetailsCount: data?.user?.libdetails?.length || 0,
-        libdetails: data?.user?.libdetails
-      });
-    }, 1000);
-    
     toast.success("Library created Successfully", { duration: 2000 });
     setIsdialogOpen(false);
     form.reset(); 
     router.refresh();
-    
   } catch (error) { 
     console.error("❌ Error creating library:", error);
     toast.error("Error while creating library", { duration: 2000 });

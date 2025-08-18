@@ -52,8 +52,8 @@ export async function alllibrary(userid: string): Promise<Library[]> {
   }
 }
 
-export const getCachedLibraryDetails = unstable_cache(
-  async (id: string) => {
+export const getCachedLibraryDetails =(id:string)=> unstable_cache(
+  async () => {
     const libdetails = await prisma.library.findUnique({
       where: { id },
       include: {
@@ -76,10 +76,10 @@ export const getCachedLibraryDetails = unstable_cache(
   },
   ["library-details"],
   {
-    tags: ["library-details"],
+    tags:[`library-details-${id}`],
     revalidate: 60 * 100,
   }
-);
+)();
 
 export async function isuserexist(id: string): Promise<apiResponse> {
   const user = await prisma.user.findFirst({ where: { id } });
