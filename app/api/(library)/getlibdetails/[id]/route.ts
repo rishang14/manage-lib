@@ -3,7 +3,7 @@ import authConfig from "@/lib/auth.config";
 import NextAuth from "next-auth";
 import { checkIdSchema } from "@/common/types";
 import {
-  getCachedLibraryDetails,
+  getlibrarydetails,
   getuserID,
   islibexist,
   isthisUserIsInLib,
@@ -56,7 +56,7 @@ export async function GET(
       );
     }
 
-    const librariesDeatils = await getCachedLibraryDetails(
+    const librariesDeatils = await getlibrarydetails(
       parsed.data.id as string
     );
     if (librariesDeatils == undefined) {

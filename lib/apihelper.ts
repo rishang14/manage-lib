@@ -1,17 +1,6 @@
-import { Library, Shift, Seat } from "@/prisma/zod";
+import { Library ,Shift,Seat} from "@/prisma/zod";
 import prisma from "./prisma";
-import {
-  apiResponse,
-  bookingdetailsType,
-  CreateBookingInput,
-  seatdetails,
-  shiftschemaInput,
-  shiftupdateschemainput,
-  meberinfo,
-  changeshift,
-  addshift,
-} from "@/common/types";
-import { unstable_cache } from "next/cache";
+import { apiResponse, bookingdetailsType, CreateBookingInput, seatdetails, shiftschemaInput ,shiftupdateschemainput,meberinfo, changeshift, addshift } from "@/common/types";
 export async function getuserID(email: string): Promise<string | undefined> {
   try {
     const user = await prisma.user.findUnique({
@@ -23,11 +12,11 @@ export async function getuserID(email: string): Promise<string | undefined> {
       },
     });
 
-    if (!user) {
-      return undefined;
-    }
+    if(!user){
+      return undefined
+    } 
 
-    return user.id;
+    return user.id
   } catch (error) {
     console.error(`Error retrieving user with email ${email}:`, error);
     return undefined;
@@ -52,34 +41,26 @@ export async function alllibrary(userid: string): Promise<Library[]> {
   }
 }
 
-export const getCachedLibraryDetails =(id:string)=> unstable_cache(
-  async () => {
-    const libdetails = await prisma.library.findUnique({
-      where: { id },
-      include: {
-        shifts: true,
-        members: true,
-        seats: true,
-        userRoles: true,
-        owner: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
+export async function getlibrarydetails(id: string) {
+  const libdetails = await prisma.library.findUnique({
+    where: { id },
+    include: {
+      shifts: true,
+      members: true,
+      seats: true,
+      userRoles: true,
+      owner: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
         },
       },
-    });
-
-    if (!libdetails) return undefined;
-    return libdetails;
-  },
-  ["library-details"],
-  {
-    tags:[`library-details-${id}`],
-    revalidate: 60 * 100,
-  }
-)();
+    },
+  });
+  if (!libdetails) return undefined;
+  return libdetails;
+}
 
 export async function isuserexist(id: string): Promise<apiResponse> {
   const user = await prisma.user.findFirst({ where: { id } });
@@ -136,8 +117,8 @@ export async function isthisUserIsInLib(
 
     if (user && user.role === "ADMIN") {
       return { success: true, message: "ADMIN" };
-    }
-    return { success: true, message: "MANAGER" };
+    }    
+      return {success:true , message:"MANAGER"};
   } catch (error) {
     console.log(error, "error while finding the admin in lib");
     return {
@@ -146,6 +127,8 @@ export async function isthisUserIsInLib(
     };
   }
 }
+
+
 
 export async function addnewShift(shift: shiftschemaInput): Promise<Shift> {
   const addedshift = await prisma.shift.create({
@@ -160,112 +143,122 @@ export async function addnewShift(shift: shiftschemaInput): Promise<Shift> {
   return addedshift;
 }
 
-export async function UpdateShift(
-  id: string,
-  details: shiftupdateschemainput
-): Promise<Shift> {
-  const updatedshifts = await prisma.shift.update({
-    where: { id },
-    data: {
-      name: details.name,
-      startTime: details.startTime,
-      endTime: details.endTime,
-    },
-  });
 
-  return updatedshifts;
-}
+export async function UpdateShift(id:string, details:shiftupdateschemainput  ):Promise<Shift>{
+   const updatedshifts= await prisma.shift.update({
+    where:{id}, 
+    data:{
+      name:details.name, 
+      startTime:details.startTime, 
+      endTime:details.endTime 
+    }
+   }) 
 
-export async function createseat(
-  details: seatdetails
-): Promise<Seat | undefined> {
-  const createseat = await prisma.seat.create({
-    data: {
-      seatNumber: details.seatNumber,
-      libraryId: details.libraryId,
-    },
-  });
+   return updatedshifts;
+} 
 
-  if (!createseat) {
-    return undefined;
-  }
+
+export async function createseat(details:seatdetails):Promise<Seat | undefined>{
+   
+  const createseat= await prisma.seat.create({
+    data:{
+      seatNumber:details.seatNumber,  
+      libraryId:details.libraryId
+    }
+  }) 
+
+  if(!createseat){
+     return undefined; 
+  } 
 
   return createseat;
-}
+} 
 
-export async function DeleteUser(userid: string) {
+
+
+
+export async function DeleteUser(userid:string){ 
   try {
-    const delteduser = await prisma.user.delete({ where: { id: userid } });
-    if (delteduser) {
-      console.log("user deleted");
+    
+    const delteduser= await prisma.user.delete({where:{id:userid}}); 
+    if(delteduser){
+ 
+     console.log("user deleted")
     }
   } catch (error) {
-    console.log(error, "while deleting user");
+    console.log(error,"while deleting user")
   }
-}
+}  
 
-export async function getseatdetails(seatId: string) {
-  const seat = await prisma.seat.findFirst({
-    where: { id: seatId },
-    include: {
-      bookings: true,
-    },
-  });
 
-  return seat;
-}
+export async  function getseatdetails(seatId:string){
+  const seat= await prisma.seat.findFirst({
+    where:{id:seatId},
+    include:{
+      bookings:true
+    }
+  }) 
 
-export async function isbookingexist(data: bookingdetailsType) {
-  const isbookingexist = await prisma.booking.findMany({
-    where: {
-      seatId: data.seatId,
-      shiftId: {
-        in: data.shiftIds,
-      },
-    },
-    include: {
-      shift: true,
-    },
-  });
+ return seat;
+} 
+
+
+export async function isbookingexist(data:bookingdetailsType){
+  const isbookingexist= await prisma.booking.findMany({
+    where:{
+      seatId:data.seatId, 
+      shiftId:{
+       in : data.shiftIds
+       } 
+       
+    } , 
+    include:{
+      shift:true
+    }
+  }) 
 
   return isbookingexist?.length > 0 ? isbookingexist : null;
-}
+} 
 
-export async function createbooking(datas: CreateBookingInput, libid: string) {
-  const created = await prisma.member.create({
-    data: {
-      name: datas.member.name,
-      phone: datas.member.phone,
-      joinedAt: datas.member.joinedAt,
-      libraryId: libid,
-      bookings: {
-        create: datas.shiftIds.map((shiftId) => ({
-          shiftId: shiftId,
-          seatId: datas.seatId,
-          date: datas.date,
-        })),
-      },
-      payments: {
-        create: {
-          paid: datas.payment.paid,
-          amount: datas.payment.amount,
-          paidAt: datas.member.joinedAt,
-          validTill: datas.payment.validTill,
-          duration: datas.payment.amount,
-          startMonth: datas.payment.startMonth,
-        },
-      },
-    },
-  });
 
-  if (!created) {
-    return undefined;
-  }
-  return created;
-}
+export  async function createbooking(datas:CreateBookingInput, libid:string){
+   const created= await prisma.member.create({
+   data:{
+    name:datas.member.name , 
+    phone:datas.member.phone , 
+    joinedAt:datas.member.joinedAt, 
+    libraryId:libid, 
+    bookings:{
+      create: datas.shiftIds.map((shiftId) => ({ 
+        shiftId:shiftId, 
+        seatId:datas.seatId, 
+        date:datas.date,
+      }))
+    }, 
+    payments:{
+      create:{
+        paid:datas.payment.paid,
+        amount:datas.payment.amount,
+        paidAt:datas.member.joinedAt, 
+        validTill:datas.payment.validTill, 
+        duration:datas.payment.amount, 
+        startMonth:datas.payment.startMonth
+      }
+    }
+   }, 
+   }) 
 
-export async function undatedmemberinfo(memberinfo: meberinfo) {
-  try {
+
+   if(!created){
+    return undefined
+   } 
+   return created;
+}  
+
+
+export async function undatedmemberinfo(memberinfo:meberinfo){
+ 
+   try {
     const editedmember = await prisma.member.update({
       where: { id: memberinfo.id },
       data: {
@@ -277,12 +270,12 @@ export async function undatedmemberinfo(memberinfo: meberinfo) {
 
     return editedmember;
   } catch (error: any) {
-    if (error.code === "P2025") {
+    if (error.code === 'P2025') {
       return undefined;
-    }
+    }  
     throw error;
   }
-}
+} 
 
 export function changemembershifts(datas: changeshift) {
   return datas.newShiftIds.map((shiftId) =>
@@ -297,23 +290,25 @@ export function changemembershifts(datas: changeshift) {
   );
 }
 
-export async function changememberseat(datas: changeshift) {
-  const { newShiftIds } = datas;
 
-  for (const newshift of newShiftIds) {
-    await prisma.booking.create({
-      data: {
-        memberId: datas.memberId,
-        seatId: datas.seatId,
-        shiftId: newshift,
-        date: new Date(),
-      },
-    });
-  }
-}
+export async function changememberseat(datas:changeshift){
+    const {newShiftIds}= datas; 
 
-export function delteshiftBooking(data: bookingdetailsType) {
-  return prisma.booking.deleteMany({
+    for(const newshift of newShiftIds){
+      await prisma.booking.create({
+        data:{
+          memberId:datas.memberId, 
+          seatId:datas.seatId,
+          shiftId:newshift, 
+          date: new Date,
+        }
+      })
+    }
+}  
+ 
+
+export  function delteshiftBooking(data: bookingdetailsType) {
+ return prisma.booking.deleteMany({
     where: {
       seatId: data.seatId,
       shiftId: {
@@ -322,26 +317,24 @@ export function delteshiftBooking(data: bookingdetailsType) {
     },
   });
 }
-
-export async function addnewShiftinmember(datas: addshift) {
-  const updatedshift = await prisma.member.update({
-    where: { id: datas.memberId },
-    data: {
-      bookings: {
-        createMany: {
-          data: datas.newShiftIds.map((shiftId) => ({
-            seatId: datas.seatId,
-            shiftId,
-            date: new Date(),
-          })),
-          skipDuplicates: true,
-        },
+ 
+export async function addnewShiftinmember(datas:addshift){
+  const updatedshift= await prisma.member.update({
+  where: { id: datas.memberId },
+  data: {
+    bookings: {
+      createMany: {
+        data: datas.newShiftIds.map((shiftId) => ({
+          seatId: datas.seatId,
+          shiftId,
+          date: new Date(),
+        })),
+        skipDuplicates: true,
       },
     },
-  });
-  if (!updatedshift) {
-    return undefined;
-  }
-
-  return updatedshift;
+  },
+}); 
+if(!updatedshift){return undefined}
+ 
+return updatedshift;
 }

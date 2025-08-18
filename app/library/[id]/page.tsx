@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { libroles } from "@/common/types";
 import Libdetailspage from "@/components/Librarydetails";
-import { getCachedLibraryDetails } from "@/lib/apihelper";
+import { getlibrarydetails } from "@/lib/apihelper";
 import { makeQueryClient } from "@/lib/serverquery";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
@@ -25,7 +25,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
   queryClinet.prefetchQuery({
     queryKey: ["libdetails", id],
-    queryFn: () => getCachedLibraryDetails(id as string),
+    queryFn: () => getlibrarydetails(id as string),
     staleTime: 1000 * 60,
   });
 

@@ -211,7 +211,7 @@ const mockSeats = [
 ];
 
 const Libdetailspage = ({ id }: { id: string }) => {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("add-seat");
 
   //   const { id } = useParams();
 
@@ -228,16 +228,14 @@ const Libdetailspage = ({ id }: { id: string }) => {
   if (isLoading) return <p>isLoading</p>;
 
   const navigationItems = [
-    { id: "overview", label: "Overview", icon: BarChart3 },
     { id: "add-seat", label: "Add Seat", icon: Plus },
-    // { id: "members", label: "Members", icon: Users },
     { id: "shifts", label: "Shifts", icon: Clock },
     { id: "manage", label: "Manage", icon: Settings },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-neutral-900">
-      <header className="bg-white dark:bg-neutral-800 border-b border-slate-200 dark:border-slate-700">
+    <div className="min-h-screen">
+      <header className="bg-white dark:bg-neutral-950 border-b border-slate-200 dark:border-slate-700">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -272,7 +270,7 @@ const Libdetailspage = ({ id }: { id: string }) => {
         </div>
       </header>
 
-      <nav className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+      <nav className="bg-white border-b dark:bg-neutral-950 border-slate-200 dark:border-slate-700">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex space-x-6">
             {navigationItems.map((item) => (
@@ -294,16 +292,15 @@ const Libdetailspage = ({ id }: { id: string }) => {
       </nav>
 
       <main className="max-w-7xl mx-auto px-6 py-6">
-        {activeTab === "overview" && <Libraryoverview mockSeats={mockSeats} />}
-        {activeTab === "add-seat" && (
-          <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6">
-            <AddSeatForm />
-          </div>
-        )}
-
         {activeTab === "shifts" && (
           <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6">
             <ShiftManagement />
+          </div>
+        )}
+
+        {activeTab === "add-seat" && (
+          <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6">
+            <AddSeatForm />
           </div>
         )}
 

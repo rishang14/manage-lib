@@ -41,7 +41,8 @@ const CreateLibraryDialog = () => {
     resolver: zodResolver(CreateLibrarySchema),
     defaultValues: {
       name: "",
-      ownerId: "",
+      ownerId: "", 
+      seat:1,
       shifts: [
         {
           name: "Morning shift",
@@ -61,12 +62,13 @@ const CreateLibraryDialog = () => {
     control,
     name: "shifts",
   });
-  const router = useRouter();
- const onSubmit = async (formdata: CreateLibraryInput) => {
+ const router = useRouter();
+ const onSubmit = async (formdata: CreateLibraryInput) => { 
+  console.log(errors,"errors")
   try { 
     setIsSubmitting(true);
-    
-    
+    console.log("i am invoked")
+    console.log(formdata,"data")
     formdata.ownerId = data?.user.id;
     const res = await axios.post("/api/createLibrary", JSON.stringify(formdata)); 
     const updateResult = await update();
@@ -75,7 +77,6 @@ const CreateLibraryDialog = () => {
     form.reset(); 
     router.refresh();
   } catch (error) { 
-    console.error("❌ Error creating library:", error);
     toast.error("Error while creating library", { duration: 2000 });
   } finally {
     setIsSubmitting(false);
@@ -118,6 +119,29 @@ const CreateLibraryDialog = () => {
                             {...field}
                             type="text"
                             placeholder="Enter library name..."
+                            className="text-base"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div> 
+                  <div className="space-y-2">
+                  <FormField
+                    control={control}
+                    name="seat"
+                    rules={{ required: "Number of seat id required" }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium">
+                          No of seat
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            placeholder="Enter Number of seat..."
                             className="text-base"
                           />
                         </FormControl>
@@ -229,7 +253,6 @@ const CreateLibraryDialog = () => {
                                 <FormField
                                   control={control}
                                   name={`shifts.${index}.startTime`}
-                                  rules={{ required: "Start time is required" }}
                                   render={({ field }) => (
                                     <FormItem>
                                       <FormLabel className="text-xs text-muted-foreground md:hidden">
@@ -251,7 +274,6 @@ const CreateLibraryDialog = () => {
                                 <FormField
                                   control={control}
                                   name={`shifts.${index}.endTime`}
-                                  rules={{ required: "End time is required" }}
                                   render={({ field }) => (
                                     <FormItem>
                                       <FormLabel className="text-xs text-muted-foreground md:hidden">
@@ -295,7 +317,8 @@ const CreateLibraryDialog = () => {
                           variant="outline"
                           onClick={() =>
                             append({ name: "", startTime: "", endTime: "" })
-                          }
+                          } 
+                          disabled={isSubmitting}
                           className="w-full border-dashed border-2 hover:bg-slate-50 dark:hover:bg-slate-800 bg-transparent"
                         >
                           <Plus className="w-4 h-4 mr-2" />

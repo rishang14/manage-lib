@@ -6,6 +6,7 @@ import HomeNavBar from '@/components/Homepagenav'
 import { DashboardHeader } from '@/components/DashboardHeader'
 import { SharedLibrariesSection } from '@/components/sharedlibsection'
 import { MyLibrariesSection } from '@/components/MylibrarySection' 
+import { revalidatePath } from "next/cache";
 
 
 export const metadata:Metadata={
@@ -13,7 +14,7 @@ export const metadata:Metadata={
   description:"to manage libraries and all"
 }
 
- const Page= ()=> {  
+ const Page= async()=> {  
 //   //  made the call for server query 
 //   const queryclinet= makeQueryClient(); 
 
