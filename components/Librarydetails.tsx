@@ -211,7 +211,7 @@ const mockSeats = [
 ];
 
 const Libdetailspage = ({ id }: { id: string }) => {
-  const [activeTab, setActiveTab] = useState("add-seat");
+  const [activeTab, setActiveTab] = useState("shifts");
 
   //   const { id } = useParams();
 
@@ -228,13 +228,12 @@ const Libdetailspage = ({ id }: { id: string }) => {
   if (isLoading) return <p>isLoading</p>;
 
   const navigationItems = [
-    { id: "add-seat", label: "Add Seat", icon: Plus },
     { id: "shifts", label: "Shifts", icon: Clock },
     { id: "manage", label: "Manage", icon: Settings },
   ];
 
   return (
-    <div className="min-h-screen">
+    <>
       <header className="bg-white dark:bg-neutral-950 border-b border-slate-200 dark:border-slate-700">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -298,20 +297,20 @@ const Libdetailspage = ({ id }: { id: string }) => {
           </div>
         )}
 
-        {activeTab === "add-seat" && (
-          <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6">
+        {activeTab === "manage" && ( 
+          <> 
+             <div className="bg-white rounded-lg border flex  border-slate-200 dark:bg-zinc-950 dark:border-slate-700 shadow-sm p-6">
             <AddSeatForm />
-          </div>
-        )}
-
-        {activeTab === "manage" && (
+          </div> 
           <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6">
             {/* @ts-ignore */}
             <SeatManagementTable seats={mockSeattabledata} />
           </div>
+          </>
+          
         )}
       </main>
-    </div>
+        </>
   );
 };
 
