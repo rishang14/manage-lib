@@ -2,16 +2,25 @@
 import { SeatManagementTable } from "@/components/SeatManagementTable";
 import { getLibdetails } from "@/lib/serverClienthelper";
 import { useQuery } from "@tanstack/react-query";
- import { useParams } from 'next/navigation'; 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge" 
+import { useParams } from "next/navigation";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { SeatStatistics } from "@/components/SeatStatistics";
 // import { SeatManagementTable } from "@/components/seat-management-table"
 import { AddSeatForm } from "@/components/AddSeat";
 import { ShiftManagement } from "@/components/Shift";
-import { BarChart3, Plus, Users, Clock, Settings, Shield, Building2 } from "lucide-react"
+import {
+  BarChart3,
+  Plus,
+  Users,
+  Clock,
+  Settings,
+  Shield,
+  Building2,
+} from "lucide-react";
+import Libraryoverview from "./Libraryoverview";
 // import type { Seat } from "@/common/types"
 
 // import type { Seat } from "@/types"
@@ -199,24 +208,24 @@ const mockSeats = [
       { id: "9", type: "evening", startTime: "17:00", endTime: "21:00" },
     ],
   },
-]
+];
 
-const Libdetailspage=({id}:{id:string})=> {
-  const [activeTab, setActiveTab] = useState("overview") 
+const Libdetailspage = ({ id }: { id: string }) => {
+  const [activeTab, setActiveTab] = useState("overview");
 
-//   const { id } = useParams();
- 
-  console.log(id,"libraryid")
+  //   const { id } = useParams();
+
+  console.log(id, "libraryid");
   const { data, isLoading, error } = useQuery({
     queryKey: ["librarydetails", id],
-    queryFn: () => getLibdetails(id as string),  
-    staleTime:1000 * 60, 
-    gcTime:1000*60, 
+    queryFn: () => getLibdetails(id as string),
+    staleTime: 1000 * 60,
+    gcTime: 1000 * 60,
     placeholderData: (previousData) => previousData,
   });
-  console.log(data, "data for the libdetails page"); 
+  console.log(data, "data for the libdetails page");
 
-  if(isLoading) return <p>isLoading</p>
+  if (isLoading) return <p>isLoading</p>;
 
   const navigationItems = [
     { id: "overview", label: "Overview", icon: BarChart3 },
@@ -224,7 +233,7 @@ const Libdetailspage=({id}:{id:string})=> {
     // { id: "members", label: "Members", icon: Users },
     { id: "shifts", label: "Shifts", icon: Clock },
     { id: "manage", label: "Manage", icon: Settings },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-neutral-900">
@@ -236,23 +245,28 @@ const Libdetailspage=({id}:{id:string})=> {
                 <Building2 className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-slate-900 dark:text-white">{
-                       data?.name.charAt(0).toUpperCase() + data?.name.slice(1) 
-                  }</h1>
-                <p className="text-xs text-slate-600 dark:text-slate-400">Seat Management</p>
+                <h1 className="text-xl font-bold text-slate-900 dark:text-white">
+                  {data?.name.charAt(0).toUpperCase() + data?.name.slice(1)}
+                </h1>
+                <p className="text-xs text-slate-600 dark:text-slate-400">
+                  Seat Management
+                </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="text-green-600 border-green-200">
+              <Badge
+                variant="outline"
+                className="text-green-600 border-green-200"
+              >
                 Online
-              </Badge> 
+              </Badge>
               <Link href={`/library/${id}/admin`}>
-              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                <Shield className="w-4 h-4 mr-1" />
-                Admin
-              </Button> 
-                </Link>
+                <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                  <Shield className="w-4 h-4 mr-1" />
+                  Admin
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -280,113 +294,12 @@ const Libdetailspage=({id}:{id:string})=> {
       </nav>
 
       <main className="max-w-7xl mx-auto px-6 py-6">
-        {activeTab === "overview" && (
-          <div className="space-y-8">
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Button
-                onClick={() => setActiveTab("add-seat")}
-                className="h-20 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 flex-col gap-2"
-                variant="outline"
-              >
-                <Plus className="w-6 h-6" />
-                <span className="text-sm font-medium">Add New Seat</span>
-              </Button>
-
-              <Button
-                onClick={() => setActiveTab("members")}
-                className="h-20 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 flex-col gap-2"
-                variant="outline"
-              >
-                <Users className="w-6 h-6" />
-                <span className="text-sm font-medium">Manage Members</span>
-              </Button>
-
-              <Button
-                onClick={() => setActiveTab("shifts")}
-                className="h-20 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 flex-col gap-2"
-                variant="outline"
-              >
-                <Clock className="w-6 h-6" />
-                <span className="text-sm font-medium">Shift Planning</span>
-              </Button>
-
-              <Button
-                onClick={() => setActiveTab("manage")}
-                className="h-20 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 flex-col gap-2"
-                variant="outline"
-              >
-                <Settings className="w-6 h-6" />
-                <span className="text-sm font-medium">View All Seats</span>
-              </Button>
-            </div>
-
-            {/* Key Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Occupancy Rate</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                      {Math.round((mockSeats.filter((seat) => seat.status === "full").length / mockSeats.length) * 100)}
-                      %
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
-                    <BarChart3 className="w-6 h-6 text-green-600 dark:text-green-400" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Active Members</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                      {mockSeats.reduce((acc, seat) => acc + seat.shifts.filter((shift) => shift.member).length, 0)}
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-                    <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Available Seats</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                      {mockSeats.filter((seat) => seat.status === "empty").length}
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/20 rounded-lg flex items-center justify-center">
-                    <Building2 className="w-6 h-6 text-orange-600 dark:text-orange-400" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Statistics Section */}
-            <div>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">Detailed Analytics</h3> 
-              {/* @ts-ignore */}
-              <SeatStatistics seats={mockSeats} />
-            </div>
-          </div>
-        )}
-
+        {activeTab === "overview" && <Libraryoverview mockSeats={mockSeats} />}
         {activeTab === "add-seat" && (
           <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6">
             <AddSeatForm />
           </div>
         )}
-
-        {/* {activeTab === "members" && (
-          // <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6">
-          //   <MemberManagement />
-          // </div>
-        )} */}
 
         {activeTab === "shifts" && (
           <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6">
@@ -395,15 +308,14 @@ const Libdetailspage=({id}:{id:string})=> {
         )}
 
         {activeTab === "manage" && (
-          <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6"> 
-          {/* @ts-ignore */}
+          <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6">
+            {/* @ts-ignore */}
             <SeatManagementTable seats={mockSeattabledata} />
           </div>
         )}
       </main>
     </div>
-  )
-} 
-
+  );
+};
 
 export default Libdetailspage;
