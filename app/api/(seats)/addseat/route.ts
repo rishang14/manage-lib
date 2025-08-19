@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import authConfig from "@/lib/auth.config";
 import NextAuth from "next-auth";
 import { libroles, seatdetailsschema } from "@/common/types";
-import {createseat} from "@/lib/apihelper";
+import {createseat} from "@/lib/dbcalls";
 import { auth } from "@/auth";
 
 

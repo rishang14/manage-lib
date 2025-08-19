@@ -1,6 +1,6 @@
  "use client"
 
-import { revalidateHome } from "@/lib/api";
+import { revalidateHome } from "@/lib/serveraction";
 
 export default  function Page() {
    

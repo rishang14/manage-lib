@@ -6,7 +6,7 @@ import {
   CreateBookingInput,
   libroles,
 } from "@/common/types";
-import { createbooking, isbookingexist } from "@/lib/apihelper";
+import { createbooking, isbookingexist } from "@/lib/dbcalls";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(

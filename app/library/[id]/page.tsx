@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { libroles } from "@/common/types";
 import Libdetailspage from "@/components/Librarydetails";
-import { getlibrarydetails } from "@/lib/apihelper";
+import { getlibrarydetails } from "@/lib/dbcalls";
 import { makeQueryClient } from "@/lib/serverquery";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
