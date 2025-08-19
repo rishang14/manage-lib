@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Plus, MapPin } from "lucide-react";
 // import { useToast } from "@/hooks/use-toast"
 
-export function AddSeatForm({open,setopen}) {
+export function AddSeatForm({open,setopen}:any) {
   const [formData, setFormData] = useState({
     number: "",
     location: "",

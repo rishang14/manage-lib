@@ -291,18 +291,14 @@ const Libdetailspage = ({ id }: { id: string }) => {
           </div>
         </div>
       </nav>
-
-      <main className="max-w-7xl mx-auto px-6 py-6">
+       
         {activeTab === "shifts" && (
-          <div className="bg-white dark:bg-neutral-950 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6">
             <ShiftManagement />
-          </div>
         )}
 
         {activeTab === "manage" && ( 
          <Manage mockSeattabledata={mockSeattabledata}/>
         )}
-      </main>
         </>
   );
 };

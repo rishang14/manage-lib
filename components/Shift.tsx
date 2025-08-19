@@ -144,10 +144,10 @@ export function ShiftManagement() {
 
   return ( 
     <>
-    <div className="space-y-6">
+    <div className="bg-white dark:bg-neutral-950 max-w-7xl mx-auto px-6 py-6 mt-5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6">
       <Card className="shadow-lg  shadow-card  ">
         <CardHeader className="bg-gradient-to-r text-white rounded-t-lg">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center  md:flex-row flex-col  md:gap-0 gap-2 justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white/20 rounded-lg">
                 <Clock className="w-6 h-6" />
