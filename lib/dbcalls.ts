@@ -1,6 +1,8 @@
 import { Library ,Shift,Seat} from "@/prisma/zod";
 import prisma from "./prisma";
 import { apiResponse, bookingdetailsType, CreateBookingInput, seatdetails, shiftschemaInput ,shiftupdateschemainput,meberinfo, changeshift, addshift } from "@/common/types";
+import { tr } from "zod/v4/locales";
+import { unstable_cache } from "next/cache";
 export async function getuserID(email: string): Promise<string | undefined> {
   try {
     const user = await prisma.user.findUnique({
@@ -64,6 +66,27 @@ try {
 } catch (error) {
    console.log("error while getting libdetails",error)
 }
+} 
+
+
+export async function getstaticlibdetails(libid:string) {
+    try {
+       const details=await prisma.library.findUnique({
+        where:{id:libid}, 
+        include:{
+          owner:{
+            select:{
+              name:true, 
+              email:true,
+            }
+          }
+        }
+       }) 
+       
+       return details;
+    } catch (error) { 
+      console.log("got error while fetching the data")
+    }
 }
 
 export async function isuserexist(id: string): Promise<apiResponse> {
@@ -220,7 +243,19 @@ try {
 } catch (error) {
    console.log("error while getting seat ",error)
 }
-} 
+}  
+
+export const shifts =(libid:string)=> unstable_cache(
+  async () => {
+    return await prisma.shift.findMany({
+      where: { libraryId: libid },
+    });
+  },
+  ["shifts"], // base cache key
+  {
+    tags:  [`shifts:${libid}`], 
+  }
+)();
 
 
 export async function isbookingexist(data:bookingdetailsType){
