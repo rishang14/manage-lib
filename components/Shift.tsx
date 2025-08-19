@@ -1,3 +1,5 @@
+"use client";
+
 import type React from "react";
 import {
   Card,
@@ -10,68 +12,29 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Plus, Sun, Sunset, Moon, Edit, Trash2 } from "lucide-react";
 import Createnewshift from "./Createnewshift";
+import { Shift } from "@/common/types";
+import { useState } from "react";
+import { id } from "zod/v4/locales";
 
+type props = {
+  shifts: Shift[];
+};
 
-export async function ShiftManagement({ shifts }:any) { 
-  console.log(shifts,"shifts")
-  // const [openDialog,setOpenDialog]=useState<boolean>(false)
-  // const [shifts, setShifts] = useState<ShiftTemplate[]>(defaultShifts);
-  // const [formData, setFormData] = useState({
-  //   name: "",
-  //   type: "morning" as "morning" | "afternoon" | "evening",
-  //   startTime: "",
-  //   endTime: "",
-  // });
-  // const [isSubmitting, setIsSubmitting] = useState(false);
-  //   const { toast } = useToast()
+export function ShiftManagement({ shifts }: props) {
+  console.log(shifts, "shifts");
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [isedit, setIsEdit] = useState<boolean>(false);
+  const [editingShift, setEditingShift] = useState<Shift | null>(null);
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setIsSubmitting(true);
-
-  //   // Simulate API call
-  //   await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  //   const newShift: ShiftTemplate = {
-  //     id: Date.now().toString(),
-  //     ...formData,
-  //   };
-
-  //   setShifts((prev) => [...prev, newShift]);
-  //   setFormData({ name: "", type: "morning", startTime: "", endTime: "" });
-  //   setIsSubmitting(false);
-
-  // toast({
-  //   title: "Shift Created Successfully",
-  //   description: `${formData.name} has been added to the system`,
-  // })
-  // };
-
-
-
-  // const handleDeleteShift = (shiftId: string) => {
-  //   setShifts((prev) => prev.filter((shift) => shift.id !== shiftId));
-  //   // toast({
-  //   //   title: "Shift Deleted",
-  //   //   description: "Shift has been removed from the system",
-  //   // })
-  // };
-
-  // const handleEditShift = (shiftId: string) => {
-  //   const shift = shifts.find((s) => s.id === shiftId);
-  //   if (shift) {
-  //     setFormData({
-  //       name: shift.name,
-  //       type: shift.type,
-  //       startTime: shift.startTime,
-  //       endTime: shift.endTime,
-  //     });
-  //     //   toast({
-  //     //     title: "Edit Mode",
-  //     //     description: "Shift details loaded for editing",
-  //     //   })
-  //   }
-  // };
+  const handleEditShift = (shiftid: string) => {
+    const editingshiftdata = shifts.find((item: Shift) => item.id === shiftid); 
+    console.log(editingshiftdata)
+    if (editingshiftdata) {
+      setEditingShift(editingshiftdata);
+      setIsEdit(true);
+      setOpenDialog(true);
+    }
+  };
 
   return (
     <>
@@ -92,14 +55,17 @@ export async function ShiftManagement({ shifts }:any) {
                   </CardDescription>
                 </div>
               </div>
-              {/* <Button 
-              onClick={()=>setOpenDialog(true)}
-              variant="secondary"
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30 hover:border-white/50 transition-all duration-200"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              New Shift
-            </Button> */}
+              <Button
+                onClick={() => {
+                  setOpenDialog(true);
+                  setIsEdit(false);
+                }}
+                variant="secondary"
+                className="bg-white/20 hover:bg-white/30 flex items-center  text-white border-white/30 hover:border-white/50 transition-all duration-200"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                New Shift
+              </Button>
             </div>
           </CardHeader>
           <CardContent>
@@ -143,7 +109,7 @@ export async function ShiftManagement({ shifts }:any) {
                       variant="outline"
                       size="sm"
                       className="flex-1 bg-transparent"
-                      // onClick={() => handleEditShift(shift.id)}
+                      onClick={() => handleEditShift(shift.id)}
                     >
                       <Edit className="w-3 h-3 mr-1" />
                       Edit
@@ -164,7 +130,12 @@ export async function ShiftManagement({ shifts }:any) {
           </CardContent>
         </Card>
       </div>
-      {/* <Createnewshift open={openDialog} setopen={setOpenDialog}/>  */}
+      <Createnewshift
+        open={openDialog}
+        setopen={setOpenDialog}
+        isedit={isedit}
+        shift={editingShift as Shift}
+      />
     </>
   );
 }

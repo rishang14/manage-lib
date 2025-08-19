@@ -26,7 +26,10 @@ const Page = async ({
     redirect("/login");
   }
 
-  const libid = session?.user.libdetails.find((u: libroles) => u.libid === id);
+  const libid = session?.user.libdetails.find((u: libroles) => u.libid === id); 
+
+  const userrole= session?.user.libdetails.find((u:libroles)=>u.libid== id); 
+
 
   if (!libid) {
     redirect("/home");
@@ -45,7 +48,7 @@ const Page = async ({
               </div>
               <div>
                 <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-                  {data?.name.charAt(0).toUpperCase() + data?.name.slice(1)}
+                  { data &&  data.name.charAt(0).toUpperCase() + data?.name.slice(1)}
                 </h1>
                 <p className="text-xs text-slate-600 dark:text-slate-400">
                   Owner-Name : <span>{data?.owner.name}</span>
@@ -60,12 +63,16 @@ const Page = async ({
               >
                 Online
               </Badge>
-              <Link href={`/library/${id}/admin`}>
+              {
+                userrole.role === "ADMIN" && (
+                  <Link href={`/library/${id}/admin`}>
                 <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
                   <Shield className="w-4 h-4 mr-1" />
                   Admin
                 </Button>
               </Link>
+                )
+              }
             </div>
           </div>
         </div>

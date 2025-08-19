@@ -3,8 +3,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Plus } from "lucide-react";
 import { Label } from "./ui/label";
-import { Button } from "./ui/button";
-const Createnewshift = ({ open, setopen }: any) => {
+import { Button } from "./ui/button"; 
+import { Shift } from "@/common/types";
+
+type prop={
+    open:boolean, 
+    setopen:React.Dispatch<React.SetStateAction<boolean>>, 
+    isedit:boolean,
+    shift?:Shift
+}
+const Createnewshift = ({ open, setopen ,isedit,shift}: prop) => { 
+    console.log(shift,"editing shift data ")
   return (
     <Dialog open={open} onOpenChange={setopen}>
       <DialogContent className="sm:max-w-md">
@@ -15,10 +24,10 @@ const Createnewshift = ({ open, setopen }: any) => {
             </div>
             <div>
               <DialogTitle className="text-lg font-semibold">
-                Create New Shift
+              {isedit ? "Edit the shift"  :   "Create New Shift"}
               </DialogTitle>
               <p className="text-sm text-muted-foreground">
-                Define working hours and shift patterns
+                {isedit ? "You can edit anything" : "Define working hours and shift patterns"}
               </p>
             </div>
           </div>
