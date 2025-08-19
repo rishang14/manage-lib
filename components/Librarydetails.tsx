@@ -19,8 +19,10 @@ import {
   Settings,
   Shield,
   Building2,
+  Magnet,
 } from "lucide-react";
 import Libraryoverview from "./Libraryoverview";
+import Manage from "./Manage";
 // import type { Seat } from "@/common/types"
 
 // import type { Seat } from "@/types"
@@ -292,22 +294,13 @@ const Libdetailspage = ({ id }: { id: string }) => {
 
       <main className="max-w-7xl mx-auto px-6 py-6">
         {activeTab === "shifts" && (
-          <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6">
+          <div className="bg-white dark:bg-neutral-950 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6">
             <ShiftManagement />
           </div>
         )}
 
         {activeTab === "manage" && ( 
-          <> 
-             <div className="bg-white rounded-lg border flex  border-slate-200 dark:bg-zinc-950 dark:border-slate-700 shadow-sm p-6">
-            <AddSeatForm />
-          </div> 
-          <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6">
-            {/* @ts-ignore */}
-            <SeatManagementTable seats={mockSeattabledata} />
-          </div>
-          </>
-          
+         <Manage mockSeattabledata={mockSeattabledata}/>
         )}
       </main>
         </>

@@ -1,16 +1,21 @@
 "use client";
-
 import type React from "react";
-
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle,CardDescription } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogDescription,
+  DialogTitle,
+  DialogFooter,
+} from "./ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, MapPin } from "lucide-react";
 // import { useToast } from "@/hooks/use-toast"
 
-export function AddSeatForm() {
+export function AddSeatForm({open,setopen}) {
   const [formData, setFormData] = useState({
     number: "",
     location: "",
@@ -36,34 +41,38 @@ export function AddSeatForm() {
   };
 
   return (
-    <Card className="shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-lg font-semibold flex gap-2 items-center"> <Plus/>  Add New Seat</CardTitle>
-        <CardDescription className="text-sm text-muted-foreground ">
-           Create a new seat in your workspace
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex gap-2   items-center">
+    <Dialog open={open} onOpenChange={setopen}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle className="flex gap-2 items-center">
+            <Plus className="w-5 h-5" />
+            Add New Seat
+          </DialogTitle>
+          <DialogDescription>
+            Create a new seat in your workspace
+          </DialogDescription>
+        </DialogHeader>
+
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex flex-col justify-center">
-            <div className="space-y-2">
-              <Label htmlFor="seat-number">Seat Number</Label>
-              <Input
-                id="seat-number"
-                placeholder="e.g., A-001"
-                value={formData.number}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, number: e.target.value }))
-                }
-                required
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="seat-number">Seat Number</Label>
+            <Input
+              id="seat-number"
+              placeholder="e.g., A-001"
+              value={formData.number}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, number: e.target.value }))
+              }
+              required
+            />
           </div>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Adding Seat..." : "Add Seat"}
-          </Button>
+          <DialogFooter>
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Adding Seat..." : "Add Seat"}
+            </Button>
+          </DialogFooter>
         </form>
-      </CardContent>
-    </Card>
+      </DialogContent>
+    </Dialog>
   );
 }

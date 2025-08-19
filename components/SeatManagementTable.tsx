@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -11,14 +11,39 @@ import {
   type ColumnDef,
   type SortingState,
   type ColumnFiltersState,
-} from "@tanstack/react-table"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+} from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Search,
   Plus,
@@ -32,33 +57,36 @@ import {
   User,
   Calendar,
   CreditCard,
-} from "lucide-react"
-import { Seat } from "@/common/types"
-
+} from "lucide-react";
+import { Seat } from "@/common/types";
+import { AddSeatForm } from "./AddSeat";
 
 interface SeatManagementTableProps {
-  seats: Seat[]
+  seats: Seat[];
 }
 
-export function SeatManagementTable({ seats }: SeatManagementTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [globalFilter, setGlobalFilter] = useState("")
-  const [selectedSeat, setSelectedSeat] = useState<Seat | null>(null)
+export function SeatManagementTable({ seats }: SeatManagementTableProps) { 4
+  const [openDialog,setOpenDialog]=useState<boolean>(false)
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [selectedSeat, setSelectedSeat] = useState<Seat | null>(null);
 
   const columns: ColumnDef<Seat>[] = [
     {
       accessorKey: "seatNumber",
       header: "Seat #",
       cell: ({ row }) => (
-        <div className="font-semibold text-slate-900 dark:text-slate-100">#{row.getValue("seatNumber")}</div>
+        <div className="font-semibold text-slate-900 dark:text-slate-100">
+          #{row.getValue("seatNumber")}
+        </div>
       ),
     },
     {
       id: "shifts",
       header: "Shifts",
       cell: ({ row }) => {
-        const seat = row.original
+        const seat = row.original;
         return (
           <div className="flex flex-wrap gap-1.5">
             {seat.shifts.map((shift) => (
@@ -70,8 +98,8 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
                     ? shift.type === "morning"
                       ? "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
                       : shift.type === "afternoon"
-                        ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                        : "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
+                      ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                      : "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
                     : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
                 }`}
               >
@@ -86,67 +114,85 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
               </Badge>
             ))}
           </div>
-        )
+        );
       },
     },
     {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
-        const status = row.getValue("status") as string
-        const variant = status === "full" ? "default" : status === "partially_filled" ? "secondary" : "outline"
+        const status = row.getValue("status") as string;
+        const variant =
+          status === "full"
+            ? "default"
+            : status === "partially_filled"
+            ? "secondary"
+            : "outline";
         const colorClass =
           status === "full"
             ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
             : status === "partially_filled"
-              ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-              : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+            : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400";
         return (
           <Badge variant={variant} className={colorClass}>
             {status.replace("_", " ").toUpperCase()}
           </Badge>
-        )
+        );
       },
     },
     {
       id: "members",
       header: "Members",
       cell: ({ row }) => {
-        const seat = row.original
-        const members = seat.shifts.filter((s) => s.member)
+        const seat = row.original;
+        const members = seat.shifts.filter((s) => s.member);
         return (
           <div className="space-y-1">
             {members.map((shift) => (
               <div key={shift.id} className="text-sm">
-                <div className="font-medium text-slate-900 dark:text-slate-100">{shift.member?.name}</div>
+                <div className="font-medium text-slate-900 dark:text-slate-100">
+                  {shift.member?.name}
+                </div>
                 <div className="text-muted-foreground text-xs">
                   {shift.type} • {shift.member?.phone}
                 </div>
               </div>
             ))}
-            {members.length === 0 && <span className="text-muted-foreground text-sm">No members</span>}
+            {members.length === 0 && (
+              <span className="text-muted-foreground text-sm">No members</span>
+            )}
           </div>
-        )
+        );
       },
     },
     {
       id: "actions",
       header: "Actions",
       cell: ({ row }) => {
-        const seat = row.original
+        const seat = row.original;
         return (
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={() => setSelectedSeat(seat)} className="hover:bg-blue-50">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSelectedSeat(seat)}
+              className="hover:bg-blue-50"
+            >
               <Edit className="w-4 h-4" />
             </Button>
-            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
               <Trash2 className="w-4 h-4" />
             </Button>
           </div>
-        )
+        );
       },
     },
-  ]
+  ];
 
   const table = useReactTable({
     data: seats,
@@ -163,14 +209,32 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
       columnFilters,
       globalFilter,
     },
-  })
+  });
 
   return (
     <>
       <Card className="shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">Seat Management</CardTitle>
-          <CardDescription>Manage seat assignments, shifts, and member details</CardDescription>
+        <CardHeader className="bg-gradient-to-r text-white rounded-t-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div>
+                <CardTitle className="text-xl font-bold">
+                  Seat Management
+                </CardTitle>
+                <CardDescription>
+                  Manage seat assignments, shifts, and member details
+                </CardDescription>
+              </div>
+            </div>
+            <Button
+              onClick={() => setOpenDialog(true)}
+              variant="secondary"
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30 hover:border-white/50 transition-all duration-200"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              New Seat
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-4">
@@ -186,8 +250,14 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
               </div>
             </div>
             <Select
-              value={(table.getColumn("status")?.getFilterValue() as string) ?? ""}
-              onValueChange={(value) => table.getColumn("status")?.setFilterValue(value === "all" ? "" : value)}
+              value={
+                (table.getColumn("status")?.getFilterValue() as string) ?? ""
+              }
+              onValueChange={(value) =>
+                table
+                  .getColumn("status")
+                  ?.setFilterValue(value === "all" ? "" : value)
+              }
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by status" />
@@ -195,7 +265,9 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
               <SelectContent>
                 <SelectItem value="all">All Seats</SelectItem>
                 <SelectItem value="empty">Empty</SelectItem>
-                <SelectItem value="partially_filled">Partially Filled</SelectItem>
+                <SelectItem value="partially_filled">
+                  Partially Filled
+                </SelectItem>
                 <SelectItem value="full">Full</SelectItem>
               </SelectContent>
             </Select>
@@ -209,7 +281,12 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                       <TableHead key={header.id} className="font-semibold">
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                       </TableHead>
                     ))}
                   </TableRow>
@@ -224,13 +301,21 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
                       className="hover:bg-slate-50 dark:hover:bg-slate-800/50"
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
                       ))}
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                    >
                       No results.
                     </TableCell>
                   </TableRow>
@@ -242,10 +327,15 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
           {/* Pagination */}
           <div className="flex items-center justify-between space-x-2 py-4">
             <div className="text-sm text-muted-foreground">
-              Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to{" "}
+              Showing{" "}
+              {table.getState().pagination.pageIndex *
+                table.getState().pagination.pageSize +
+                1}{" "}
+              to{" "}
               {Math.min(
-                (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
-                table.getFilteredRowModel().rows.length,
+                (table.getState().pagination.pageIndex + 1) *
+                  table.getState().pagination.pageSize,
+                table.getFilteredRowModel().rows.length
               )}{" "}
               of {table.getFilteredRowModel().rows.length} seats
             </div>
@@ -259,7 +349,12 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
                 <ChevronLeft className="w-4 h-4" />
                 Previous
               </Button>
-              <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
                 Next
                 <ChevronRight className="w-4 h-4" />
               </Button>
@@ -272,8 +367,12 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
       <Dialog open={!!selectedSeat} onOpenChange={() => setSelectedSeat(null)}>
         <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
           <DialogHeader className="pb-6">
-            <DialogTitle className="text-xl font-bold">Seat #{selectedSeat?.seatNumber} Management</DialogTitle>
-            <DialogDescription>Manage shifts and member assignments for this seat</DialogDescription>
+            <DialogTitle className="text-xl font-bold">
+              Seat #{selectedSeat?.seatNumber} Management
+            </DialogTitle>
+            <DialogDescription>
+              Manage shifts and member assignments for this seat
+            </DialogDescription>
           </DialogHeader>
 
           {selectedSeat && (
@@ -287,8 +386,8 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
                         ? shift.type === "morning"
                           ? "border-l-4 border-l-amber-400 bg-gradient-to-br from-amber-50 to-white dark:from-amber-950/20 dark:to-slate-900"
                           : shift.type === "afternoon"
-                            ? "border-l-4 border-l-blue-400 bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/20 dark:to-slate-900"
-                            : "border-l-4 border-l-purple-400 bg-gradient-to-br from-purple-50 to-white dark:from-purple-950/20 dark:to-slate-900"
+                          ? "border-l-4 border-l-blue-400 bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/20 dark:to-slate-900"
+                          : "border-l-4 border-l-purple-400 bg-gradient-to-br from-purple-50 to-white dark:from-purple-950/20 dark:to-slate-900"
                         : "border-l-4 border-l-slate-300 bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-900"
                     }`}
                   >
@@ -300,14 +399,16 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
                               shift.type === "morning"
                                 ? "bg-amber-100 text-amber-600 dark:bg-amber-900 dark:text-amber-300"
                                 : shift.type === "afternoon"
-                                  ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
-                                  : "bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300"
+                                ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
+                                : "bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300"
                             }`}
                           >
                             <Clock className="w-5 h-5" />
                           </div>
                           <div>
-                            <CardTitle className="text-base font-semibold capitalize">{shift.type} Shift</CardTitle>
+                            <CardTitle className="text-base font-semibold capitalize">
+                              {shift.type} Shift
+                            </CardTitle>
                             <p className="text-sm text-muted-foreground">
                               {shift.startTime} - {shift.endTime}
                             </p>
@@ -335,26 +436,37 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
                                 <User className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                               </div>
                               <div>
-                                <p className="font-semibold text-slate-900 dark:text-slate-100">{shift.member.name}</p>
-                                <p className="text-xs text-muted-foreground">Member ID: {shift.member.id}</p>
+                                <p className="font-semibold text-slate-900 dark:text-slate-100">
+                                  {shift.member.name}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  Member ID: {shift.member.id}
+                                </p>
                               </div>
                             </div>
 
                             <div className="space-y-2">
                               <div className="flex items-center gap-2 text-sm">
                                 <Phone className="w-4 h-4 text-muted-foreground" />
-                                <span className="text-slate-700 dark:text-slate-300">{shift.member.phone}</span>
+                                <span className="text-slate-700 dark:text-slate-300">
+                                  {shift.member.phone}
+                                </span>
                               </div>
                               {shift.member.email && (
                                 <div className="flex items-center gap-2 text-sm">
                                   <Mail className="w-4 h-4 text-muted-foreground" />
-                                  <span className="text-slate-700 dark:text-slate-300">{shift.member.email}</span>
+                                  <span className="text-slate-700 dark:text-slate-300">
+                                    {shift.member.email}
+                                  </span>
                                 </div>
                               )}
                               <div className="flex items-center gap-2 text-sm">
                                 <Calendar className="w-4 h-4 text-muted-foreground" />
                                 <span className="text-slate-700 dark:text-slate-300">
-                                  Joined: {new Date(shift.member.joinedAt).toLocaleDateString()}
+                                  Joined:{" "}
+                                  {new Date(
+                                    shift.member.joinedAt
+                                  ).toLocaleDateString()}
                                 </span>
                               </div>
                             </div>
@@ -365,22 +477,24 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-2">
                                 <CreditCard className="w-4 h-4 text-muted-foreground" />
-                                <span className="text-sm font-medium">Payment Status</span>
+                                <span className="text-sm font-medium">
+                                  Payment Status
+                                </span>
                               </div>
                               <Badge
                                 variant={
                                   shift.member.paymentStatus === "paid"
                                     ? "default"
                                     : shift.member.paymentStatus === "pending"
-                                      ? "secondary"
-                                      : "destructive"
+                                    ? "secondary"
+                                    : "destructive"
                                 }
                                 className={
                                   shift.member.paymentStatus === "paid"
                                     ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                                     : shift.member.paymentStatus === "pending"
-                                      ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                                      : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                                    ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                                    : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
                                 }
                               >
                                 {shift.member.paymentStatus.toUpperCase()}
@@ -393,7 +507,11 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
 
                           {/* Action Buttons */}
                           <div className="flex gap-2">
-                            <Button size="sm" variant="outline" className="flex-1 bg-white/80 hover:bg-white">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="flex-1 bg-white/80 hover:bg-white"
+                            >
                               <Edit className="w-3 h-3 mr-1" />
                               Edit Member
                             </Button>
@@ -412,7 +530,9 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
                           <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
                             <User className="w-8 h-8 text-slate-400" />
                           </div>
-                          <p className="text-muted-foreground text-sm mb-4">No member assigned to this shift</p>
+                          <p className="text-muted-foreground text-sm mb-4">
+                            No member assigned to this shift
+                          </p>
                           <Button size="sm" className="w-full">
                             <Plus className="w-4 h-4 mr-2" />
                             Assign Member
@@ -426,7 +546,9 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) {
             </div>
           )}
         </DialogContent>
-      </Dialog>
+      </Dialog> 
+
+      <AddSeatForm open={openDialog} setopen={setOpenDialog}/>
     </>
-  )
+  );
 }
