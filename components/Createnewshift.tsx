@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Plus } from "lucide-react";
@@ -16,9 +16,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ShiftSchema, Shift } from "@/prisma/zod";
 import { addNewShift, updateshift } from "@/lib/serveraction";
 import { toast } from "sonner";
-import { addnewShift } from "@/lib/dbcalls";
-import { isDirty } from "zod";
-
 type prop = {
   open: boolean;
   setopen: React.Dispatch<React.SetStateAction<boolean>>;

@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Clock, Plus, Edit, Trash2 } from "lucide-react";
 import Createnewshift from "./Createnewshift";
-import { Shift } from "@prisma/client";
+import { Shift } from "@/prisma/zod";
 import { useState } from "react";
 import DeleteShiftDialog from "./DeleteShiftDialog";
 
@@ -116,7 +116,7 @@ export function ShiftManagement({ shifts, libraryId }: props) {
                       variant="outline"
                       size="sm"
                       className="flex-1 bg-transparent"
-                      onClick={() => handleEditShift(shift.id)}
+                      onClick={() => handleEditShift(shift.id as string)}
                     >
                       <Edit className="w-3 h-3 mr-1" />
                       Edit
@@ -125,7 +125,7 @@ export function ShiftManagement({ shifts, libraryId }: props) {
                       variant="outline"
                       size="sm"
                       className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
-                      onClick={() => handleDeleteShift(shift.id)}
+                      onClick={() => handleDeleteShift(shift.id as string)}
                     >
                       <Trash2 className="w-3 h-3 mr-1" />
                       Delete

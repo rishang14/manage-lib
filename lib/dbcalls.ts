@@ -240,17 +240,11 @@ try {
 }
 }  
 
-export const shifts =(libid:string)=> unstable_cache(
-  async () => {
+export const shifts =  async (libid: string) => {
     return await prisma.shift.findMany({
       where: { libraryId: libid },
     });
-  },
-  ["shifts"], // base cache key
-  {
-    tags:  [`shifts:${libid}`], 
-  }
-)();
+  };
 
 
 export async function isbookingexist(data:bookingdetailsType){
