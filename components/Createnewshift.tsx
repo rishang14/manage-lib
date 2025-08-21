@@ -154,7 +154,7 @@ const Createnewshift = ({
                           Start Time
                         </FormLabel>
                         <FormControl>
-                          <Input {...field} type="time" required   disabled={isSubmitting}/>
+                          <Input {...field} type="time"    disabled={isSubmitting}/>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
