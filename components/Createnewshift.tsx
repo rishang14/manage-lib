@@ -52,7 +52,7 @@ const Createnewshift = ({
     watch,
     formState: { errors, isDirty,isSubmitting },
   } = form;
-
+  console.log(errors,"errors")
   useEffect(() => {
     if (isedit && shifteditdata) {
       form.reset(shifteditdata);
@@ -123,7 +123,6 @@ const Createnewshift = ({
                 <FormField
                   control={control}
                   name="name"
-                  rules={{ required: "Shift name is required" }}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-sm font-medium">
@@ -172,7 +171,7 @@ const Createnewshift = ({
                           End Time
                         </FormLabel>
                         <FormControl>
-                          <Input {...field} type="time" required   disabled={isSubmitting}/>
+                          <Input {...field} type="time"   disabled={isSubmitting}/>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
