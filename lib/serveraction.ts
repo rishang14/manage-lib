@@ -3,7 +3,7 @@
 import { cache } from "react";
 import { getstaticlibdetails, shifts } from "./dbcalls";
 import { verifysession } from "./serverClienthelper";
-import { Shift } from "@/common/types";
+import { Shift } from "@prisma/client";
 
 export async function getssrlibdata(libid: string): Promise<
   | ({

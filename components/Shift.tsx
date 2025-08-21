@@ -9,26 +9,24 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Clock, Plus, Sun, Sunset, Moon, Edit, Trash2 } from "lucide-react";
+import { Clock, Plus, Edit, Trash2 } from "lucide-react";
 import Createnewshift from "./Createnewshift";
-import { Shift } from "@/common/types";
+import { Shift } from "@prisma/client";
 import { useState } from "react";
-import { id } from "zod/v4/locales";
 
 type props = {
   shifts: Shift[];
+  libraryId:string
 };
 
-export function ShiftManagement({ shifts }: props) {
-  console.log(shifts, "shifts");
+export function ShiftManagement({ shifts,libraryId }: props) { 
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [isedit, setIsEdit] = useState<boolean>(false);
   const [editingShift, setEditingShift] = useState<Shift | null>(null);
 
   const handleEditShift = (shiftid: string) => {
-    const editingshiftdata = shifts.find((item: Shift) => item.id === shiftid); 
-    console.log(editingshiftdata)
+    const editingshiftdata = shifts.find((item: Shift) => item.id === shiftid);  
+
     if (editingshiftdata) {
       setEditingShift(editingshiftdata);
       setIsEdit(true);
@@ -133,8 +131,9 @@ export function ShiftManagement({ shifts }: props) {
       <Createnewshift
         open={openDialog}
         setopen={setOpenDialog}
-        isedit={isedit}
-        shift={editingShift as Shift}
+        isedit={isedit} 
+        libraryId={libraryId}
+        shifteditdata={editingShift as Shift}
       />
     </>
   );

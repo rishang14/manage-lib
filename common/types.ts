@@ -122,7 +122,7 @@ export type bookingdetailsType<> = {
 };
 export type addshift = z.infer<typeof shiftdataschema>;
 
-export interface Shift {
+export type Shift= {
   id: string;
   name: string;
   startTime: string;

@@ -5,7 +5,7 @@ import { z } from 'zod';
 /////////////////////////////////////////
 
 export const ShiftSchema = z.object({
-  id: z.string().cuid(),
+  id: z.string().cuid().optional(),
   name: z.string(),
   startTime: z.string(),
   endTime: z.string(),

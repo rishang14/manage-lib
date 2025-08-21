@@ -80,7 +80,7 @@ const Page = async ({
       <TablibNavigation activeTab={tab} libraryId={id} />
       {tab === "shifts" && (
         <Suspense fallback={<div className="p-6">Loading shifts...</div>}>
-          <ShiftManagement shifts={shifts} />
+          <ShiftManagement shifts={shifts} libraryId={id}/>
         </Suspense>
       )}
 
