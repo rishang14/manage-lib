@@ -39,7 +39,8 @@ export const checkIdSchema = z.object({
   id: z.string().cuid(),
 });
 
-export const shiftschema = ShiftSchema.omit({ id: true }).extend({
+export const shiftschema = ShiftSchema.extend({ 
+  id:z.string().cuid().optional(),
   name: z.string().min(1, "Shift name is required"),
   startTime: z
     .string()

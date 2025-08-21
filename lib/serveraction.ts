@@ -8,10 +8,12 @@ import {
   addnewShift,
 } from "./dbcalls";
 import { verifysession } from "./serverClienthelper";
-import { ShiftSchema, Shift } from "@/prisma/zod";
+import {  Shift } from "@/prisma/zod"; 
+
 import { revalidatePath } from "next/cache";
 import prisma from "./prisma";
 import { Prisma } from "@prisma/client";
+import { shiftschema } from "@/common/types";
 
 
 export type apiResponse<T = unknown> = {
@@ -37,7 +39,6 @@ export async function getssrlibdata(libid: string): Promise<
 > {
   await verifysession(libid);
   const data = await getstaticlibdetails(libid);
-
   if (!data) {
     return;
   }
@@ -62,7 +63,7 @@ export const updateshift = async (data: Shift): Promise<apiResponse<Shift>> => {
     if (!user.role) {
       return { success: false, error: "you dont have a valid role" };
     }
-    const validatedata = ShiftSchema.safeParse(data);
+    const validatedata = shiftschema.safeParse(data);
     if (!validatedata.success) {
       return {
         success: false,
@@ -97,7 +98,7 @@ export const addNewShift = async (data: Shift): Promise<apiResponse<Shift>> => {
       return { success: false, error: "You dont have a role" };
     }
 
-    const validatedata = ShiftSchema.safeParse(data);
+    const validatedata = shiftschema.safeParse(data);
     if (!validatedata.success) {
       return {
         success: false,
