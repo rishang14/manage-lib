@@ -39,8 +39,9 @@ const Createnewshift = ({
   isedit,
   shifteditdata,
   libraryId,
-}: prop) => {
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+}: prop) => { 
+
+  // const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const form = useForm<Shift>({
     resolver: zodResolver(ShiftSchema),
     defaultValues: initialdata,
@@ -49,7 +50,7 @@ const Createnewshift = ({
     control,
     handleSubmit,
     watch,
-    formState: { errors, isLoading },
+    formState: { errors, isDirty,isSubmitting },
   } = form;
 
   useEffect(() => {
@@ -178,7 +179,7 @@ const Createnewshift = ({
               </div>
 
               <Button type="submit" className="w-full">
-                {isLoading
+                {isSubmitting
                   ? isedit
                     ? "Updating Shift..."
                     : "Creating Shift..."

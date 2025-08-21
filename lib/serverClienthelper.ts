@@ -27,14 +27,13 @@ export async function verifysession(libid: string) {
   if (!session?.user?.id) {
     throw new Error("Not logged in");
   }
-
   const lib = session?.user?.libdetails.find(
     (u: libroles) => u.libid === libid
   );
-
-  if (!lib) {
+  console.log(lib.role,"in session got the lib")
+  if(!lib) {
     throw new Error("Invalid access");
   }
 
-  return lib.role;
+  return lib;
 }
