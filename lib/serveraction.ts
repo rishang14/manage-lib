@@ -1,9 +1,18 @@
 "use server";
 
 import { cache } from "react";
-import { getstaticlibdetails, shifts } from "./dbcalls";
-import { verifysession } from "./serverClienthelper";
-import { Shift } from "@prisma/client";
+import { getstaticlibdetails, shifts, updateShift,addnewShift } from "./dbcalls";
+import { verifysession } from "./serverClienthelper"; 
+import { ShiftSchema ,Shift} from "@/prisma/zod";   
+import { json } from "stream/consumers";
+import { revalidatePath } from "next/cache";
+
+export type apiResponse<T = unknown> = {
+  success: boolean;
+  data?: T;
+  error?: string | Record<string, string[]>;
+};
+
 
 export async function getssrlibdata(libid: string): Promise<
   | ({
@@ -38,3 +47,62 @@ export const getshifts = async (libdid: string): Promise<Shift[]> => {
   if (!shiftdata) return [];
   return shiftdata;
 };
+ 
+
+export const updateshift=async(data:Shift):Promise<apiResponse<Shift>>=>{  
+
+  try {
+   const user=  await verifysession(data.libraryId);   
+
+   if(!user.role){
+     return {success:false,error:"you dont have a valid role"}
+   }
+ const validatedata = ShiftSchema.safeParse(data); 
+  if(!validatedata.success){
+    return {
+      success:false, 
+      error:JSON.stringify(validatedata.error.flatten())
+    };
+  }  
+
+  const updatedshiftdata= await updateShift(data); 
+
+  
+   revalidatePath(`/library/${data.libraryId}`);
+  return {success:true,data:updatedshiftdata}; 
+   
+  } catch (error:any) {
+     console.error("Failed to update shift:", error);
+
+    // Handle Prisma record not found error specifically
+    if (error.code === "P2025") {
+      return { success: false, error: "Shift not found" };
+    }
+
+    return { success: false, error: "Something went wrong while updating shift" };
+  }
+}
+
+
+export const addNewShift = async (data:Shift):Promise<apiResponse<Shift>>=>{
+  try {
+     const user= await verifysession(data.libraryId); 
+     
+     if(!user.role){
+      return {success:false,error:"You dont have a role"}; 
+     } 
+
+     const  validatedata= ShiftSchema.safeParse(data); 
+     if(!validatedata.success){
+      return {success:false,error:JSON.stringify(validatedata.error.flatten())};
+     } 
+
+     const createdshift= await addnewShift(data); 
+     revalidatePath(`/library/${data.libraryId}`)
+     return {success :true, data:createdshift }; 
+  } catch (error) {
+    console.error(error); 
+     return {success:false,error:"Internal server error"}
+
+  }
+}

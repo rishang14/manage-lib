@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Plus } from "lucide-react";
@@ -14,6 +14,10 @@ import {
 } from "./ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ShiftSchema, Shift } from "@/prisma/zod";
+import { addNewShift, updateshift } from "@/lib/serveraction";
+import { toast } from "sonner";
+import { addnewShift } from "@/lib/dbcalls";
+import { isDirty } from "zod";
 
 type prop = {
   open: boolean;
@@ -36,6 +40,7 @@ const Createnewshift = ({
   shifteditdata,
   libraryId,
 }: prop) => {
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const form = useForm<Shift>({
     resolver: zodResolver(ShiftSchema),
     defaultValues: initialdata,
@@ -44,22 +49,44 @@ const Createnewshift = ({
     control,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors, isLoading },
   } = form;
 
-  console.log(errors, "errors");
-  const onsubmit = async (data: Shift) => {
-    console.log(data, "data");
-    console.log(watch(), "watch");
-  };
-
   useEffect(() => {
-    if(isedit && shifteditdata) {
+    if (isedit && shifteditdata) {
       form.reset(shifteditdata);
-    }else{
+    } else {
       form.reset(initialdata);
     }
   }, [isedit, shifteditdata]);
+  const onsubmit = async (data: Shift) => {
+    try {
+      if (isedit) {
+        if (!isDirty) {
+          toast.message("pls change some data to update the field", {
+            duration: 2000,
+          });
+          return;
+        }
+        const updatedata = await updateshift(data);
+        if (updatedata) {
+          toast.success("Shift is updated", { duration: 2000 });
+          // form.reset(updatedata.data);
+        }
+        console.log(updatedata, "data in updateddata");
+      } else {
+        data.libraryId = libraryId;
+        console.log(data, "before submitting");
+        const Createnewshift = await addNewShift(data);
+        if (Createnewshift) {
+          toast.success("New shift is Added Successfully ", { duration: 3000 });
+        }
+      }
+    } catch (error) {
+      toast.error("something went wrong pls try again", { duration: 3000 });
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={setopen}>
       {open && (
@@ -151,7 +178,13 @@ const Createnewshift = ({
               </div>
 
               <Button type="submit" className="w-full">
-                {false ? "Creating Shift..." : "Create Shift"}
+                {isLoading
+                  ? isedit
+                    ? "Updating Shift..."
+                    : "Creating Shift..."
+                  : isedit
+                  ? "Edit Shift"
+                  : "Create Shift"}
               </Button>
             </form>
           </Form>

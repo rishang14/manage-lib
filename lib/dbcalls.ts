@@ -1,8 +1,9 @@
 import { Library ,Shift,Seat} from "@/prisma/zod";
 import prisma from "./prisma";
 import { apiResponse, bookingdetailsType, CreateBookingInput, seatdetails, shiftschemaInput ,shiftupdateschemainput,meberinfo, changeshift, addshift } from "@/common/types";
-import { tr } from "zod/v4/locales";
 import { unstable_cache } from "next/cache";
+
+
 export async function getuserID(email: string): Promise<string | undefined> {
   try {
     const user = await prisma.user.findUnique({
@@ -158,8 +159,7 @@ export async function isthisUserIsInLib(
 
 
 export async function addnewShift(shift: shiftschemaInput): Promise<Shift | undefined> {
-try {
-    const addedshift = await prisma.shift.create({
+return await prisma.shift.create({
     data: {
       startTime: shift.startTime,
       endTime: shift.endTime,
@@ -167,11 +167,6 @@ try {
       libraryId: shift.libraryId,
     },
   });
-
-  return addedshift;
-} catch (error) {
-  console.log(error,"while adding new seat")
-}
 }
 
 
@@ -399,4 +394,16 @@ export async function addnewShiftinmember(datas:addshift){
 if(!updatedshift){return undefined}
  
 return updatedshift;
-}
+} 
+
+
+export const updateShift = async (data: Shift) => {
+  return prisma.shift.update({
+    where: { id: data.id as string },
+    data: {
+      name: data.name,
+      startTime: data.startTime,
+      endTime: data.endTime,
+    },
+  });
+};
