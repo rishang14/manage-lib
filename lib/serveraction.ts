@@ -11,6 +11,9 @@ import { verifysession } from "./serverClienthelper";
 import { ShiftSchema, Shift } from "@/prisma/zod";
 import { json } from "stream/consumers";
 import { revalidatePath } from "next/cache";
+import prisma from "./prisma";
+import { Prisma } from "@prisma/client";
+import { tr } from "zod/v4/locales";
 
 export type apiResponse<T = unknown> = {
   success: boolean;
@@ -108,6 +111,37 @@ export const addNewShift = async (data: Shift): Promise<apiResponse<Shift>> => {
     return { success: true, data: createdshift };
   } catch (error) {
     console.error(error);
+    return { success: false, error: "Internal server error" };
+  }
+};
+
+export const DelteShift = async (
+  id: string,
+  libraryId: string
+): Promise<apiResponse<string>> => {
+  try {
+    const user = await verifysession(libraryId);
+
+    if (user.role !== "ADMIN") {
+      return { success: false, error: "You dont have valid permission" };
+    }
+
+    const shiftcount = await prisma.shift.count({ where: { libraryId } });
+
+    if (shiftcount <= 1) {
+      return { success: false, error: "Atleast one shift is required" };
+    }
+    const deletedshift = await prisma.shift.delete({ where: { id } });
+    revalidatePath(`/library/${libraryId}`);
+    return { success: true, data: "deleted successfully" };
+  } catch (error: any) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      console.log("Item not found for deletion.");
+      return { success: false, error: "Item not found for deletion" };
+    }
     return { success: false, error: "Internal server error" };
   }
 };
