@@ -13,26 +13,34 @@ import { Clock, Plus, Edit, Trash2 } from "lucide-react";
 import Createnewshift from "./Createnewshift";
 import { Shift } from "@prisma/client";
 import { useState } from "react";
+import DeleteShiftDialog from "./DeleteShiftDialog";
 
 type props = {
   shifts: Shift[];
-  libraryId:string
+  libraryId: string;
 };
 
-export function ShiftManagement({ shifts,libraryId }: props) { 
+export function ShiftManagement({ shifts, libraryId }: props) {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [isedit, setIsEdit] = useState<boolean>(false);
-  const [editingShift, setEditingShift] = useState<Shift | null>(null);
+  const [editingShift, setEditingShift] = useState<Shift | null>(null); 
+  const [openDeleteDialog,setOpenDeleteDialog]= useState<boolean>(false); 
+  const [shiftid,setShiftId]=useState<string>("");
 
   const handleEditShift = (shiftid: string) => {
-    const editingshiftdata = shifts.find((item: Shift) => item.id === shiftid);  
+    const editingshiftdata = shifts.find((item: Shift) => item.id === shiftid);
 
     if (editingshiftdata) {
       setEditingShift(editingshiftdata);
       setIsEdit(true);
       setOpenDialog(true);
     }
-  };
+  }; 
+
+  const handleDeleteShift=(shiftId:string)=>{
+    setShiftId(shiftId); 
+    setOpenDeleteDialog(true)
+  }
 
   return (
     <>
@@ -92,11 +100,12 @@ export function ShiftManagement({ shifts,libraryId }: props) {
                           const start = new Date(
                             `2000-01-01T${shift.startTime}`
                           );
-                          const end = new Date(`2000-01-01T${shift.endTime}`);
-                          const diff =
-                            (end.getTime() - start.getTime()) /
-                            (1000 * 60 * 60);
-                          return `${diff}h`;
+                          const end = new Date(`2000-01-01T${shift.endTime}`); 
+                          const diffMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
+                          const hours = Math.floor(diffMinutes / 60);
+                          const minutes = diffMinutes % 60;
+
+                          return `${hours}h ${minutes}min`;
                         })()}
                       </span>
                     </div>
@@ -116,7 +125,7 @@ export function ShiftManagement({ shifts,libraryId }: props) {
                       variant="outline"
                       size="sm"
                       className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
-                      // onClick={() => handleDeleteShift(shift.id)}
+                      onClick={() => handleDeleteShift(shift.id)}
                     >
                       <Trash2 className="w-3 h-3 mr-1" />
                       Delete
@@ -131,9 +140,15 @@ export function ShiftManagement({ shifts,libraryId }: props) {
       <Createnewshift
         open={openDialog}
         setopen={setOpenDialog}
-        isedit={isedit} 
+        isedit={isedit}
         libraryId={libraryId}
         shifteditdata={editingShift as Shift}
+      /> 
+      <DeleteShiftDialog 
+       isopen={openDeleteDialog}
+       onchangeopen={setOpenDeleteDialog}
+       shiftid={shiftid}
+       libid={libraryId}
       />
     </>
   );

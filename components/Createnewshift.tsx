@@ -64,7 +64,7 @@ const Createnewshift = ({
     try {
       if (isedit) {
         if (!isDirty) {
-          toast.message("pls change some data to update the field", {
+          toast.info("Pls change some data to update the field", {
             duration: 2000,
           });
           return;
@@ -72,7 +72,8 @@ const Createnewshift = ({
         const updatedata = await updateshift(data);
         if (updatedata) {
           toast.success("Shift is updated", { duration: 2000 });
-          // form.reset(updatedata.data);
+          form.reset(updatedata.data); 
+           setopen(false)
         }
         console.log(updatedata, "data in updateddata");
       } else {
@@ -80,7 +81,8 @@ const Createnewshift = ({
         console.log(data, "before submitting");
         const Createnewshift = await addNewShift(data);
         if (Createnewshift) {
-          toast.success("New shift is Added Successfully ", { duration: 3000 });
+          toast.success("New shift is Added Successfully ", { duration: 3000 }); 
+           setopen(false)
         }
       }
     } catch (error) {
@@ -132,7 +134,8 @@ const Createnewshift = ({
                           {...field}
                           type="text"
                           placeholder="Enter Shift name..."
-                          className="text-base"
+                          className="text-base" 
+                          disabled={isSubmitting}
                         />
                       </FormControl>
                       <FormMessage />
@@ -152,7 +155,7 @@ const Createnewshift = ({
                           Start Time
                         </FormLabel>
                         <FormControl>
-                          <Input {...field} type="time" required />
+                          <Input {...field} type="time" required   disabled={isSubmitting}/>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -169,7 +172,7 @@ const Createnewshift = ({
                           End Time
                         </FormLabel>
                         <FormControl>
-                          <Input {...field} type="time" required />
+                          <Input {...field} type="time" required   disabled={isSubmitting}/>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -178,7 +181,7 @@ const Createnewshift = ({
                 </div>
               </div>
 
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full"  disabled={isSubmitting}>
                 {isSubmitting
                   ? isedit
                     ? "Updating Shift..."
