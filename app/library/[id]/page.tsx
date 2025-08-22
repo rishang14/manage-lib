@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { libroles } from "@/common/types";
 import { Suspense } from "react";
 import TablibNavigation from "@/components/ChangeLibraryTab";
-import { getshifts, getssrlibdata } from "@/lib/serveraction";
+import { allbookingAndSeatdetails, getshifts, getssrlibdata } from "@/lib/serveraction";
 import { Building2, Shield } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +36,10 @@ const Page = async ({
   }
   const { tab = "shifts" } = await searchParams;
   const data = await getssrlibdata(id as string);
-  const shifts = await getshifts(id);
+  const shifts = await getshifts(id);   
+
+  const tabledata= await allbookingAndSeatdetails(id); 
+  console.log(tabledata,"data")
   return (
     <>
       <header className="bg-white dark:bg-neutral-950 border-b border-slate-200 dark:border-slate-700">

@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
-import { getLibdetails } from "./serverClienthelper";
+import { getLibdetails } from "./helper";
 
 export function makeQueryClient() {
   return new QueryClient({

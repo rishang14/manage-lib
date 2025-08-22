@@ -400,4 +400,21 @@ export const updateShift = async (data: Shift) => {
       endTime: data.endTime,
     },
   });
-};
+}; 
+
+
+
+export async function  libraryUserSeatWithshift(libid:string){
+  
+  return await prisma.seat.findMany({
+    where:{libraryId:libid}, 
+    include:{
+      bookings:{
+        include:{
+          member:true,
+          shift:true
+        }
+      }
+    }
+  })
+}

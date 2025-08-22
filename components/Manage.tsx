@@ -1,5 +1,4 @@
 import React from "react";
-import { AddSeatForm } from "./AddSeat";
 import { SeatManagementTable } from "./SeatManagementTable"; 
 const mockSeattabledata = Array.from({ length: 120 }, (_, i) => {
   const seatNumber = i + 1;

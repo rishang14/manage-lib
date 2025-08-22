@@ -1,6 +1,5 @@
 "use client";
 import type React from "react";
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,37 +11,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, MapPin } from "lucide-react";
-// import { useToast } from "@/hooks/use-toast"
+import { Plus} from "lucide-react"; 
 
-export function AddSeatForm({open,setopen}:any) {
-  const [formData, setFormData] = useState({
-    number: "",
-    location: "",
-    type: "standard",
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  //   const { toast } = useToast()
+type prop = {
+  open: boolean;
+  setopen: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // toast({
-    //   title: "Seat Added Successfully",
-    //   description: `Seat ${formData.number} has been added to ${formData.location}`,
-    // })
-
-    setFormData({ number: "", location: "", type: "standard" });
-    setIsSubmitting(false);
-  };
-
+export function AddSeatForm({open,setopen}:prop) {
   return (
     <Dialog open={open} onOpenChange={setopen}>
-      <DialogContent className="sm:max-w-[425px]">
+      {
+        open && (
+          <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="flex gap-2 items-center">
             <Plus className="w-5 h-5" />
@@ -53,26 +34,22 @@ export function AddSeatForm({open,setopen}:any) {
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="seat-number">Seat Number</Label>
             <Input
-              id="seat-number"
-              placeholder="e.g., A-001"
-              value={formData.number}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, number: e.target.value }))
-              }
               required
             />
           </div>
           <DialogFooter>
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "Adding Seat..." : "Add Seat"}
+            <Button type="submit" >
+              Add Seat
             </Button>
           </DialogFooter>
         </form>
       </DialogContent>
+        )
+      }
     </Dialog>
   );
 }

@@ -6,15 +6,18 @@ import {
   shifts,
   updateShift,
   addnewShift,
+  libraryUserSeatWithshift,
+  createseat,
 } from "./dbcalls";
-import { verifysession } from "./serverClienthelper";
-import {  Shift } from "@/prisma/zod"; 
+import { transfromintotabledata, verifysession } from "./helper";
+import { Shift } from "@/prisma/zod";
 
 import { revalidatePath } from "next/cache";
 import prisma from "./prisma";
-import { Prisma } from "@prisma/client";
-import { shiftschema } from "@/common/types";
-
+import { Prisma, Seat } from "@prisma/client";
+import { seatdetails, seatdetailsschema, shiftschema } from "@/common/types";
+import { promises } from "dns";
+import { error } from "console";
 
 export type apiResponse<T = unknown> = {
   success: boolean;
@@ -145,3 +148,45 @@ export const DelteShift = async (
     return { success: false, error: "Internal server error" };
   }
 };
+
+export const allbookingAndSeatdetails = async (libid: string) => {
+  try {
+    const user = await verifysession(libid);
+
+    if (!user.role) {
+      return { success: false, error: "Not valid request" };
+    }
+
+    const seats = await libraryUserSeatWithshift(libid);
+    const shift = await getshifts(libid as string);
+
+    console.log(seats, "seats");
+    console.log(shift, "shifts");
+    const data = transfromintotabledata(seats as any[], shift);
+
+    return data;
+  } catch (error) {
+    console.log(error, "something went wrong ");
+  }
+}; 
+
+
+
+export const addseat= async(data:seatdetails):Promise<apiResponse<Seat>>=>{
+ try {
+   const user = await verifysession(data.libraryId);  
+
+   if(!user.role){
+    return {success:false,error:"You dont have valid permission"} 
+   } 
+   const validatedata= seatdetailsschema.safeParse(data); 
+   if(!validatedata.success){
+    return {success:false,error:JSON.stringify(validatedata.error.flatten())};
+   }
+   const addedseat= await createseat(validatedata.data); 
+
+   return {success:true,data:addedseat}; 
+ } catch (error) {
+    return {success:false,error:"Something went wrong pls try again"}
+ }
+}

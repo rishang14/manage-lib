@@ -51,12 +51,6 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
-  Clock,
-  Phone,
-  Mail,
-  User,
-  Calendar,
-  CreditCard,
 } from "lucide-react";
 import { Seat } from "@/common/types";
 import { AddSeatForm } from "./AddSeat";
