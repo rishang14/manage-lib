@@ -52,8 +52,6 @@ const Page = async ({
 
   const dehydratedClinet = dehydrate(queryClient);
 
-  // @ts-ignore
-  console.log(tabledata[0].shifts, "data");
   return (
     <>
       <header className="bg-white dark:bg-neutral-950 border-b border-slate-200 dark:border-slate-700">

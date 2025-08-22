@@ -52,7 +52,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Seat } from "@/common/types";
+import { Seat, SeatShiftResult } from "@/common/types";
 import { AddSeatForm } from "./AddSeat";
 import AddMemberDialog from "./AddMemberDialog";
 import { useQuery } from "@tanstack/react-query";
@@ -60,17 +60,15 @@ import { allbookingAndSeatdetails } from "@/lib/serveraction";
 import { skip } from "node:test";
 import { useSearchParams } from "next/navigation";
 import { number } from "zod";
+import ManagementTable from "./TantstackTable";
 
 interface SeatManagementTableProps {
-  seats: Seat[];
   libid: string;
 }
 
 export function SeatManagementTable({
-  seats,
   libid,
 }: SeatManagementTableProps) {
-  4;
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -92,145 +90,145 @@ export function SeatManagementTable({
     queryKey: ["libbookingdetails", libid],
     queryFn: () => allbookingAndSeatdetails(libid, limit, skip),
   });
+   console.log(data,"data")
+  // const columns: ColumnDef<SeatShiftResult>[] = [
+  //   {
+  //     accessorKey: "seatNumber",
+  //     header: "Seat ",
+  //     cell: ({ row }) => (
+  //       <div className="font-semibold text-slate-900 dark:text-slate-100">
+  //         #{row.getValue("seatNumber")}
+  //       </div>
+  //     ),
+  //   },
+  //   {
+  //     id: "shifts",
+  //     header: "Shifts",
+  //     cell: ({ row }) => {
+  //       const seat = row.original;
+  //       return (
+  //         <div className="flex flex-wrap gap-1.5">
+  //           {seat.shifts.map((shift) => (
+  //             <Badge
+  //               key={shift.id}
+  //               variant={shift.member ? "default" : "secondary"}
+  //               className={`text-xs font-medium ${
+  //                 shift.member
+  //                   ? shift.type === "morning"
+  //                     ? "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
+  //                     : shift.type === "afternoon"
+  //                     ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+  //                     : "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
+  //                   : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+  //               }`}
+  //             >
+  //               {shift.type.charAt(0).toUpperCase() + shift.type.slice(1)}
+  //               {shift.member && (
+  //                 <span className="ml-1">
+  //                   {shift.member.paymentStatus === "overdue" && "⚠️"}
+  //                   {shift.member.paymentStatus === "pending" && "⏳"}
+  //                   {shift.member.paymentStatus === "paid" && "✅"}
+  //                 </span>
+  //               )}
+  //             </Badge>
+  //           ))}
+  //         </div>
+  //       );
+  //     },
+  //   },
+  //   {
+  //     accessorKey: "status",
+  //     header: "Status",
+  //     cell: ({ row }) => {
+  //       const status = row.getValue("status") as string;
+  //       const variant =
+  //         status === "full"
+  //           ? "default"
+  //           : status === "partially_filled"
+  //           ? "secondary"
+  //           : "outline";
+  //       const colorClass =
+  //         status === "full"
+  //           ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+  //           : status === "partially_filled"
+  //           ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+  //           : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400";
+  //       return (
+  //         <Badge variant={variant} className={colorClass}>
+  //           {status.replace("_", " ").toUpperCase()}
+  //         </Badge>
+  //       );
+  //     },
+  //   },
+  //   {
+  //     id: "members",
+  //     header: "Members",
+  //     cell: ({ row }) => {
+  //       const seat = row.original;
+  //       const members = seat.shifts.filter((s) => s.member);
+  //       return (
+  //         <div className="space-y-1">
+  //           {members.map((shift) => (
+  //             <div key={shift.id} className="text-sm">
+  //               <div className="font-medium text-slate-900 dark:text-slate-100">
+  //                 {shift.member?.name}
+  //               </div>
+  //               <div className="text-muted-foreground text-xs">
+  //                 {shift.type} • {shift.member?.phone}
+  //               </div>
+  //             </div>
+  //           ))}
+  //           {members.length === 0 && (
+  //             <span className="text-muted-foreground text-sm">No members</span>
+  //           )}
+  //         </div>
+  //       );
+  //     },
+  //   },
+  //   {
+  //     id: "actions",
+  //     header: "Actions",
+  //     cell: ({ row }) => {
+  //       const seat = row.original;
+  //       return (
+  //         <div className="flex items-center gap-2">
+  //           <Button
+  //             variant="ghost"
+  //             size="sm"
+  //             onClick={() => setSelectedSeat(seat)}
+  //             className="hover:bg-blue-50"
+  //           >
+  //             <Edit className="w-4 h-4" />
+  //           </Button>
+  //           <Button
+  //             variant="ghost"
+  //             size="sm"
+  //             className="text-red-600 hover:text-red-700 hover:bg-red-50"
+  //           >
+  //             <Trash2 className="w-4 h-4" />
+  //           </Button>
+  //         </div>
+  //       );
+  //     },
+  //   },
+  // ];
 
-  const columns: ColumnDef<Seat>[] = [
-    {
-      accessorKey: "seatNumber",
-      header: "Seat #",
-      cell: ({ row }) => (
-        <div className="font-semibold text-slate-900 dark:text-slate-100">
-          #{row.getValue("seatNumber")}
-        </div>
-      ),
-    },
-    {
-      id: "shifts",
-      header: "Shifts",
-      cell: ({ row }) => {
-        const seat = row.original;
-        return (
-          <div className="flex flex-wrap gap-1.5">
-            {seat.shifts.map((shift) => (
-              <Badge
-                key={shift.id}
-                variant={shift.member ? "default" : "secondary"}
-                className={`text-xs font-medium ${
-                  shift.member
-                    ? shift.type === "morning"
-                      ? "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
-                      : shift.type === "afternoon"
-                      ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                      : "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
-                    : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
-                }`}
-              >
-                {shift.type.charAt(0).toUpperCase() + shift.type.slice(1)}
-                {shift.member && (
-                  <span className="ml-1">
-                    {shift.member.paymentStatus === "overdue" && "⚠️"}
-                    {shift.member.paymentStatus === "pending" && "⏳"}
-                    {shift.member.paymentStatus === "paid" && "✅"}
-                  </span>
-                )}
-              </Badge>
-            ))}
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => {
-        const status = row.getValue("status") as string;
-        const variant =
-          status === "full"
-            ? "default"
-            : status === "partially_filled"
-            ? "secondary"
-            : "outline";
-        const colorClass =
-          status === "full"
-            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-            : status === "partially_filled"
-            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-            : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400";
-        return (
-          <Badge variant={variant} className={colorClass}>
-            {status.replace("_", " ").toUpperCase()}
-          </Badge>
-        );
-      },
-    },
-    {
-      id: "members",
-      header: "Members",
-      cell: ({ row }) => {
-        const seat = row.original;
-        const members = seat.shifts.filter((s) => s.member);
-        return (
-          <div className="space-y-1">
-            {members.map((shift) => (
-              <div key={shift.id} className="text-sm">
-                <div className="font-medium text-slate-900 dark:text-slate-100">
-                  {shift.member?.name}
-                </div>
-                <div className="text-muted-foreground text-xs">
-                  {shift.type} • {shift.member?.phone}
-                </div>
-              </div>
-            ))}
-            {members.length === 0 && (
-              <span className="text-muted-foreground text-sm">No members</span>
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => {
-        const seat = row.original;
-        return (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSelectedSeat(seat)}
-              className="hover:bg-blue-50"
-            >
-              <Edit className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-red-600 hover:text-red-700 hover:bg-red-50"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </div>
-        );
-      },
-    },
-  ];
-
-  const table = useReactTable({
-    data: seats,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      sorting,
-      columnFilters,
-      globalFilter,
-    },
-  });
+  // const table = useReactTable({
+  //   data,
+  //   columns,
+  //   onSortingChange: setSorting,
+  //   onColumnFiltersChange: setColumnFilters,
+  //   onGlobalFilterChange: setGlobalFilter,
+  //   getCoreRowModel: getCoreRowModel(),
+  //   getPaginationRowModel: getPaginationRowModel(),
+  //   getSortedRowModel: getSortedRowModel(),
+  //   getFilteredRowModel: getFilteredRowModel(),
+  //   state: {
+  //     sorting,
+  //     columnFilters,
+  //     globalFilter,
+  //   },
+  // });
 
   return (
     <>
@@ -270,7 +268,7 @@ export function SeatManagementTable({
                 />
               </div>
             </div>
-            <Select
+            {/* <Select
               value={
                 (table.getColumn("status")?.getFilterValue() as string) ?? ""
               }
@@ -291,12 +289,14 @@ export function SeatManagementTable({
                 </SelectItem>
                 <SelectItem value="full">Full</SelectItem>
               </SelectContent>
-            </Select>
+            </Select> */}
           </div>
 
           {/* Table */}
-          <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
-            <Table>
+          <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">  
+            <ManagementTable data={data}/>
+            {/* <Table> 
+
               <TableHeader className="bg-slate-50 dark:bg-slate-800">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
@@ -342,12 +342,12 @@ export function SeatManagementTable({
                   </TableRow>
                 )}
               </TableBody>
-            </Table>
+            </Table> */}
           </div>
 
           {/* Pagination */}
           <div className="flex items-center justify-between space-x-2 py-4">
-            <div className="text-sm text-muted-foreground">
+            {/* <div className="text-sm text-muted-foreground">
               Showing{" "}
               {table.getState().pagination.pageIndex *
                 table.getState().pagination.pageSize +
@@ -359,9 +359,9 @@ export function SeatManagementTable({
                 table.getFilteredRowModel().rows.length
               )}{" "}
               of {table.getFilteredRowModel().rows.length} seats
-            </div>
+            </div> */}
             <div className="flex items-center space-x-2">
-              <Button
+              {/* <Button
                 variant="outline"
                 size="sm"
                 onClick={() => table.previousPage()}
@@ -378,7 +378,7 @@ export function SeatManagementTable({
               >
                 Next
                 <ChevronRight className="w-4 h-4" />
-              </Button>
+              </Button> */}
             </div>
           </div>
         </CardContent>
