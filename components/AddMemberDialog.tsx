@@ -21,19 +21,20 @@ import {
   Plus,
 } from "lucide-react";
 
-const AddMemberDialog = ({ selectedSeat, setSelectedSeat }: any) => { 
+const AddMemberDialog = ({ selectedSeat, setSelectedSeat }: any) => {  
+  console.log(selectedSeat,"selectedseat")
   return (
     <Dialog open={!!selectedSeat} onOpenChange={() => setSelectedSeat(null)}> 
     { 
       
       !!selectedSeat && (
-       <DialogContent className="min-w-6xl max-h-[85vh] overflow-y-auto">
+       <DialogContent className="min-w-6xl max-h-[85vh]  overflow-y-auto">
         <DialogHeader className="pb-6">
           <DialogTitle className="text-xl font-bold">
-            Seat #{selectedSeat?.seatNumber} Management
+            Seat {selectedSeat?.seatNumber} 
           </DialogTitle>
           <DialogDescription>
-            Manage shifts and member assignments for this seat
+            Manage member assignments for this seat
           </DialogDescription>
         </DialogHeader>
 
@@ -43,33 +44,19 @@ const AddMemberDialog = ({ selectedSeat, setSelectedSeat }: any) => {
               {selectedSeat.shifts.map((shift :any) => (
                 <Card
                   key={shift.id}
-                  className={`relative overflow-hidden transition-all duration-200 hover:shadow-md ${
-                    shift.member
-                      ? shift.type === "morning"
-                        ? "border-l-4 border-l-amber-400 bg-gradient-to-br from-amber-50 to-white dark:from-amber-950/20 dark:to-slate-900"
-                        : shift.type === "afternoon"
-                        ? "border-l-4 border-l-blue-400 bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/20 dark:to-slate-900"
-                        : "border-l-4 border-l-purple-400 bg-gradient-to-br from-purple-50 to-white dark:from-purple-950/20 dark:to-slate-900"
-                      : "border-l-4 border-l-slate-300 bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-900"
-                  }`}
+                  className={`relative overflow-hidden transition-all duration-200 hover:shadow-md `}
                 >
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                            shift.type === "morning"
-                              ? "bg-amber-100 text-amber-600 dark:bg-amber-900 dark:text-amber-300"
-                              : shift.type === "afternoon"
-                              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
-                              : "bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300"
-                          }`}
+                          className={`w-10 h-10 rounded-full flex items-center justify-center `}
                         >
                           <Clock className="w-5 h-5" />
                         </div>
                         <div>
                           <CardTitle className="text-base font-semibold capitalize">
-                            {shift.type} Shift
+                            {shift.shifttype} 
                           </CardTitle>
                           <p className="text-sm text-muted-foreground">
                             {shift.startTime} - {shift.endTime}
@@ -88,7 +75,7 @@ const AddMemberDialog = ({ selectedSeat, setSelectedSeat }: any) => {
                       </Badge>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-4    bg-card">
                     {shift.member ? (
                       <div className="space-y-4">
                         {/* Member Info */}
@@ -134,38 +121,7 @@ const AddMemberDialog = ({ selectedSeat, setSelectedSeat }: any) => {
                           </div>
                         </div>
 
-                        {/* Payment Info */}
-                        <div className="bg-white/60 dark:bg-slate-800/60 rounded-lg p-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                              <CreditCard className="w-4 h-4 text-muted-foreground" />
-                              <span className="text-sm font-medium">
-                                Payment Status
-                              </span>
-                            </div>
-                            <Badge
-                              variant={
-                                shift.member.paymentStatus === "paid"
-                                  ? "default"
-                                  : shift.member.paymentStatus === "pending"
-                                  ? "secondary"
-                                  : "destructive"
-                              }
-                              className={
-                                shift.member.paymentStatus === "paid"
-                                  ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                                  : shift.member.paymentStatus === "pending"
-                                  ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                                  : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                              }
-                            >
-                              {shift.member.paymentStatus.toUpperCase()}
-                            </Badge>
-                          </div>
-                          <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
-                            ₹{shift.member.paymentAmount.toLocaleString()}
-                          </p>
-                        </div>
+                       
 
                         {/* Action Buttons */}
                         <div className="flex gap-2">
@@ -209,8 +165,7 @@ const AddMemberDialog = ({ selectedSeat, setSelectedSeat }: any) => {
         )}
       </DialogContent>
       )
-    }
-     
+    }  
     </Dialog>
   );
 };
