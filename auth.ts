@@ -46,7 +46,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             },
           });
 
-          // console.log("👤 DB User found:", !!dbUser, "Roles count:", dbUser?.userRoles?.length || 0);
 
           if (dbUser) {
             token.id = dbUser.id;
@@ -62,8 +61,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           console.error("❌ Error fetching user data:", error);
           // Keep existing token data if database query fails
         }
-      } else if (isEdgeRuntime) {
-        console.log("🌐 Running in Edge Runtime - skipping database query");
       }
 
       return token;

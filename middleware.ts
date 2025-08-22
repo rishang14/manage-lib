@@ -4,7 +4,6 @@ import { auth } from "@/auth";
 import { libroles } from "./common/types";
 export default async function middleware(req: NextRequest) {
   const session = await auth(); 
-  console.log(session,"session")
   const pathname = req.nextUrl.pathname;
 
   const isProtected = protectedRoutes.some((route) =>
@@ -26,7 +25,6 @@ export default async function middleware(req: NextRequest) {
 
   if (session?.user?.email && pathname.startsWith("/library")) {
     const libid = pathname.split("/")[2];
-    console.log("admin", pathname.split("/"));
     const isadminRoute= pathname.includes(`/library/${libid}/admin`);
     const check = session?.user?.libdetails.find(
       (item: libroles) => item.libid === libid );

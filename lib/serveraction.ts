@@ -1,6 +1,4 @@
 "use server";
-
-import { cache } from "react";
 import {
   getstaticlibdetails,
   shifts,
@@ -16,8 +14,6 @@ import { revalidatePath } from "next/cache";
 import prisma from "./prisma";
 import { Prisma, Seat } from "@prisma/client";
 import { seatdetails, seatdetailsschema, shiftschema } from "@/common/types";
-import { promises } from "dns";
-import { error } from "console";
 
 export type apiResponse<T = unknown> = {
   success: boolean;
@@ -61,8 +57,6 @@ export const getshifts = async (libdid: string): Promise<Shift[]> => {
 export const updateshift = async (data: Shift): Promise<apiResponse<Shift>> => {
   try {
     const user = await verifysession(data.libraryId);
-    console.log(user, "role here ");
-    console.log(data, "here data from the sever");
     if (!user.role) {
       return { success: false, error: "you dont have a valid role" };
     }
@@ -168,25 +162,40 @@ export const allbookingAndSeatdetails = async (libid: string) => {
   } catch (error) {
     console.log(error, "something went wrong ");
   }
-}; 
+};
 
+export const addseat = async (
+  libraryId: string,
+  formdata: FormData):Promise<void>=>{
+  try {
+    const user = await verifysession(libraryId);
+    const seatNumber = formdata.get("seatnumber") as string;
+    console.log(seatNumber, "data for the fomm");
+    if (!user.role) {
+      throw new Error ("You dont have valid permission");
+    }
+    const validatedata = seatdetailsschema.safeParse({
+      seatNumber,
+      libraryId,
+    });
+    if (!validatedata.success) {
+     throw new Error (JSON.stringify(validatedata.error.flatten()));
+    }
+    const alreadyexists = await prisma.seat.findFirst({
+      where: {
+        seatNumber,
+        libraryId,
+      },
+    });
 
-
-export const addseat= async(data:seatdetails):Promise<apiResponse<Seat>>=>{
- try {
-   const user = await verifysession(data.libraryId);  
-
-   if(!user.role){
-    return {success:false,error:"You dont have valid permission"} 
-   } 
-   const validatedata= seatdetailsschema.safeParse(data); 
-   if(!validatedata.success){
-    return {success:false,error:JSON.stringify(validatedata.error.flatten())};
-   }
-   const addedseat= await createseat(validatedata.data); 
-
-   return {success:true,data:addedseat}; 
- } catch (error) {
-    return {success:false,error:"Something went wrong pls try again"}
- }
-}
+    if (alreadyexists) {
+      throw new Error ("Seat already exists with this ");
+    }
+    const addedseat = await createseat(validatedata.data);
+     console.log(addedseat,"seat")
+    revalidatePath(`/library/${libraryId}?tab=manage`);
+  } catch (error) { 
+    console.log(error,"error")
+    throw new Error( "Something went wrong pls try again" );
+  }
+};

@@ -58,9 +58,10 @@ import AddMemberDialog from "./AddMemberDialog";
 
 interface SeatManagementTableProps {
   seats: Seat[];
+  libid:string
 }
 
-export function SeatManagementTable({ seats }: SeatManagementTableProps) { 4
+export function SeatManagementTable({ seats ,libid}: SeatManagementTableProps) { 4
   const [openDialog,setOpenDialog]=useState<boolean>(false)
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -359,7 +360,7 @@ export function SeatManagementTable({ seats }: SeatManagementTableProps) { 4
       </Card>
  
        <AddMemberDialog selectedSeat={selectedSeat} setSelectedSeat={setSelectedSeat}/>
-      <AddSeatForm open={openDialog} setopen={setOpenDialog}/>
+      <AddSeatForm open={openDialog} setopen={setOpenDialog} libId={libid}/>
     </>
   );
 }

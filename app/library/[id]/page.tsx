@@ -20,7 +20,6 @@ const Page = async ({
 }) => {
   const { id } = await params;
   const session = await auth();
-  console.log(session, "session");
 
   if (!session?.user) {
     redirect("/login");
@@ -38,8 +37,9 @@ const Page = async ({
   const data = await getssrlibdata(id as string);
   const shifts = await getshifts(id);   
 
-  const tabledata= await allbookingAndSeatdetails(id); 
-  console.log(tabledata,"data")
+  const tabledata= await allbookingAndSeatdetails(id);  
+  // @ts-ignore
+  console.log(tabledata[0].shifts,"data")
   return (
     <>
       <header className="bg-white dark:bg-neutral-950 border-b border-slate-200 dark:border-slate-700">
@@ -89,7 +89,7 @@ const Page = async ({
 
       {tab === "manage" && (
         <Suspense fallback={<div className="p-6">Loading management...</div>}>
-          <Manage />
+          <Manage  libid={id as string} />
         </Suspense>
       )}
     </>
