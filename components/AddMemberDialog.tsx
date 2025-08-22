@@ -21,10 +21,13 @@ import {
   Plus,
 } from "lucide-react";
 
-const AddMemberDialog = ({ selectedSeat, setSelectedSeat }: any) => {
+const AddMemberDialog = ({ selectedSeat, setSelectedSeat }: any) => { 
   return (
-    <Dialog open={!!selectedSeat} onOpenChange={() => setSelectedSeat(null)}>
-      <DialogContent className="min-w-6xl max-h-[85vh] overflow-y-auto">
+    <Dialog open={!!selectedSeat} onOpenChange={() => setSelectedSeat(null)}> 
+    { 
+      
+      !!selectedSeat && (
+       <DialogContent className="min-w-6xl max-h-[85vh] overflow-y-auto">
         <DialogHeader className="pb-6">
           <DialogTitle className="text-xl font-bold">
             Seat #{selectedSeat?.seatNumber} Management
@@ -37,7 +40,7 @@ const AddMemberDialog = ({ selectedSeat, setSelectedSeat }: any) => {
         {selectedSeat && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {selectedSeat.shifts.map((shift) => (
+              {selectedSeat.shifts.map((shift :any) => (
                 <Card
                   key={shift.id}
                   className={`relative overflow-hidden transition-all duration-200 hover:shadow-md ${
@@ -205,6 +208,9 @@ const AddMemberDialog = ({ selectedSeat, setSelectedSeat }: any) => {
           </div>
         )}
       </DialogContent>
+      )
+    }
+     
     </Dialog>
   );
 };

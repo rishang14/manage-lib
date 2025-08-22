@@ -50,6 +50,10 @@ const Page = async ({
     queryFn: () => allbookingAndSeatdetails(id, 10, 0),
   });
 
+
+   const table =await allbookingAndSeatdetails(id,10,0);  
+  //  @ts-ignore
+   console.log(table[0] ,"data for tbale serverside ")
   const dehydratedClinet = dehydrate(queryClient);
 
   return (

@@ -265,8 +265,10 @@ export interface LibraryStats {
 
 
 export type SeatShiftResult = {
-  id: string;          
-  shifttype: string;   
+  id: string;   
+  seatname:string,        
+  shifttype: string;  
+  shiftid:string  
   startTime: string;   
   endTime: string;    
   member?: Member;     

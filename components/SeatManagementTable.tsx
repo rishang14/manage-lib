@@ -90,7 +90,6 @@ export function SeatManagementTable({
     queryKey: ["libbookingdetails", libid],
     queryFn: () => allbookingAndSeatdetails(libid, limit, skip),
   });
-   console.log(data,"data")
   // const columns: ColumnDef<SeatShiftResult>[] = [
   //   {
   //     accessorKey: "seatNumber",
@@ -384,10 +383,6 @@ export function SeatManagementTable({
         </CardContent>
       </Card>
 
-      <AddMemberDialog
-        selectedSeat={selectedSeat}
-        setSelectedSeat={setSelectedSeat}
-      />
       <AddSeatForm open={openDialog} setopen={setOpenDialog} libId={libid} />
     </>
   );

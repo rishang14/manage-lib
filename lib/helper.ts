@@ -43,7 +43,8 @@ export function transfromintotabledata(seats:any[] , allShifts:any[]){
       
       return {
         id: `${seat.seatNumber}-${shift.name.toLowerCase()}`,
-        type: shift.name.toLowerCase(),
+        shifttype: shift.name.toLowerCase(), 
+        shiftid:shift.id,
         startTime: shift.startTime,
         endTime: shift.endTime,
         member: booking ? {
@@ -55,7 +56,8 @@ export function transfromintotabledata(seats:any[] , allShifts:any[]){
       };
     });
 
-    return {
+    return { 
+      id:seat.id,
       seatNumber: parseInt(seat.seatNumber),
       shifts
     };

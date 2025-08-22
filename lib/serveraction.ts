@@ -154,7 +154,7 @@ export const allbookingAndSeatdetails = async (libid: string,limit:number,skip:n
     const seats = await libraryUserSeatWithshift(libid,limit,skip);
     const shift = await getshifts(libid as string);
     const data = transfromintotabledata(seats as any[], shift);
-
+   console.log(data,"data") 
     return data;
   } catch (error) {
     console.log(error, "something went wrong ");

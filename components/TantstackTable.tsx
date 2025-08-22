@@ -7,7 +7,10 @@ import {
 } from "@tanstack/react-table"; 
 import { Table,TableHead,TableHeader,TableRow,TableBody,TableCell } from "./ui/table"; 
 import { Button } from "./ui/button";
-import { Edit ,Trash2} from "lucide-react";
+import { Clock, Edit ,Trash2, Users} from "lucide-react"; 
+import { Badge } from "./ui/badge";
+import AddMemberDialog from "./AddMemberDialog";
+import { useState } from "react";
 
 type Shift = {
   id: string;
@@ -21,124 +24,167 @@ type Seat = {
   shifts: Shift[];
 };
 
-const  ManagementTable=({data}:any)=> { 
-
+const ManagementTable=({data}:any)=>{
+   const [selectedSeat, setSelectedSeat] = useState(null);
   const columns: ColumnDef<Seat>[] = [
     {
       accessorKey: "seatNumber",
-      header: "Seat No ",
+      header: "Seat Number",
       cell: ({ row }) => (
-        <div className="font-semibold text-slate-900 dark:text-slate-100">
-          {row.getValue("seatNumber")}
+        <div className="flex items-center gap-2">
+          <span className="font-medium text-slate-900 dark:text-slate-100">Seat {row.getValue("seatNumber")}</span>
         </div>
       ),
     },
     {
       id: "totalShifts",
       header: "Total Shifts",
-       cell: ({ row }) => {
-        const seat = row.original.shifts.length;
+      cell: ({ row }) => {
+        const shiftCount = row.original.shifts.length
         return (
-          <div className="flex flex-wrap gap-1.5">
-           {seat}
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-slate-500" />
+            <Badge variant="secondary" className="font-medium">
+              {shiftCount} {shiftCount === 1 ? "Shift" : "Shifts"}
+            </Badge>
           </div>
-        );
-    } ,
-},
+        )
+      },
+    },
     {
       id: "filled",
-      header: "Filled",
-      cell: () => "—", // placeholder until you hook up bookings
+      header: "Occupancy",
+      cell: ({ row }) => {
+        // Placeholder logic - you can replace with actual booking data
+        // const filled = Math.floor(Math.random() * row.original.shifts.length)
+        // const total = row.original.shifts.length
+        // const percentage = total > 0 ? Math.round((filled / total) * 100) : 0
+
+        return (
+          <div className="flex items-center gap-2">
+            <Users className="w-4 h-4 text-slate-500" />
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                {/* {filled}/{total} */}
+              </span>
+              {/* <span className="text-xs text-slate-500">{percentage}% filled</span> */}
+            </div>
+          </div>
+        )
+      },
     },
     {
       id: "status",
       header: "Status",
-      cell: () => "Available", // derive later
+      cell: ({ row }) => {
+        // Placeholder logic - you can replace with actual status logic
+        const shiftCount = row.original.shifts.length
+        const status = shiftCount > 0 ? "Active" : "Inactive"
+        const variant = status === "Active" ? "default" : "secondary"
+
+        return (
+          <Badge variant={variant} className="font-medium">
+            {status}
+          </Badge>
+        )
+      },
     },
     {
       id: "actions",
       header: "Actions",
-      cell: ({ row }) => {
-        const seat = row.original;
+      cell: ({ row }) => { 
+         const seat = row.original; 
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <Button
               variant="ghost"
               size="sm"
-            //   onClick={() => setSelectedSeat(seat)}
-              className="hover:bg-blue-50"
+              className="h-8 w-8 p-0 hover:bg-blue-50 dark:hover:bg-blue-900/20 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+              title="Edit seat" 
+               onClick={() => {
+               setSelectedSeat(seat as any)
+           }}
             >
-              <Edit className="w-4 h-4" />
+              <Edit className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
-              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="h-8 w-8 p-0 hover:bg-red-50 dark:hover:bg-red-900/20 focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
+              title="Delete seat"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
             </Button>
           </div>
-        );
-    } ,}
-  ];
+        )
+      },
+    },
+  ]
 
   const table = useReactTable({ 
-    // @ts-ignore
     data, 
-    // @ts-ignore
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
   return ( 
     <> 
-    <Table>
-   <TableHeader className="bg-slate-50 dark:bg-slate-800">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id} className="font-semibold">
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    ))}
-                  </TableRow>
+       <div className="w-full">
+      <div className="rounded-lg border border-card  overflow-hidden bg-white dark:bg-card shadow-sm">
+        <Table>
+          <TableHeader className="">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id} className="hover:bg-transparent">
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className="font-semibold text-slate-700 dark:text-slate-300 py-4 px-6 text-left"
+                  >
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
                 ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                      className="hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
-                    >
-                      No results.
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row, index) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  className={`
+                    hover:bg-slate-50 dark:hover:bg-slate-800/30 
+                    transition-colors duration-150 ease-in-out
+                    focus-within:bg-slate-50 dark:focus-within:bg-slate-800/30
+                    ${index !== table.getRowModel().rows.length - 1 ? "border-b border-slate-100 dark:border-slate-800" : ""}
+                  `}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} className="py-4 px-6 align-middle">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-     </Table>  
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-32 text-center py-8">
+                  <div className="flex flex-col items-center gap-2 text-slate-500 dark:text-slate-400">
+                    <Users className="w-8 h-8" />
+                    <p className="text-sm font-medium">No seats found</p>
+                    <p className="text-xs">Add some seats to get started</p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </div> 
+      <AddMemberDialog
+            selectedSeat={selectedSeat}
+            setSelectedSeat={setSelectedSeat}
+          />
   </>
   );
 }
