@@ -404,9 +404,9 @@ export const updateShift = async (data: Shift) => {
 
 
 
-export async function  libraryUserSeatWithshift(libid:string){
+export async function  libraryUserSeatWithshift(libid:string, limit:number,skip:number){
   
-  return await prisma.seat.findMany({
+  const seat=  await prisma.seat.findMany({
     where:{libraryId:libid}, 
     include:{
       bookings:{
@@ -415,6 +415,13 @@ export async function  libraryUserSeatWithshift(libid:string){
           shift:true
         }
       }
-    }
+    },
+    take:1 * limit,
+    skip: 1 * skip,
+  }) 
+  return seat.sort((a,b)=>{
+    const aNum= parseInt(a.seatNumber); 
+    const bNum=parseInt(b.seatNumber);  
+    return aNum-bNum;
   })
 }

@@ -7,6 +7,7 @@ import {
   BookingSchema,
 } from "@/prisma/zod";
 import { PaymentSchema } from "@/prisma/zod";
+import { Member } from "@prisma/client";
 
 const ShiftCreateSchema = z.object({ 
   name: z.string().min(1, "Shift name is required"),
@@ -140,19 +141,6 @@ export interface Library {
   createdAt: string;
 }
 
-export interface Member {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  libraryId: string;
-  shiftId: string;
-  seatNumber: number;
-  paymentStatus: "paid" | "pending" | "overdue";
-  paymentAmount: number;
-  paymentDueDate: string;
-  joinedAt: string;
-}
 
 export interface Manager {
   id: string;
@@ -201,19 +189,6 @@ export interface Library {
   createdAt: string;
 }
 
-export interface Member {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  libraryId: string;
-  shiftId: string;
-  seatNumber: number;
-  paymentStatus: "paid" | "pending" | "overdue";
-  paymentAmount: number;
-  paymentDueDate: string;
-  joinedAt: string;
-}
 
 export interface Manager {
   id: string;
@@ -286,3 +261,13 @@ export interface LibraryStats {
   totalRevenue: number;
   pendingPayments: number;
 }
+
+
+
+export type SeatShiftResult = {
+  id: string;          
+  shifttype: string;   
+  startTime: string;   
+  endTime: string;    
+  member?: Member;     
+};

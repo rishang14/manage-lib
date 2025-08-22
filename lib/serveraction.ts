@@ -143,7 +143,7 @@ export const DelteShift = async (
   }
 };
 
-export const allbookingAndSeatdetails = async (libid: string) => {
+export const allbookingAndSeatdetails = async (libid: string,limit:number,skip:number) => {
   try {
     const user = await verifysession(libid);
 
@@ -151,11 +151,8 @@ export const allbookingAndSeatdetails = async (libid: string) => {
       return { success: false, error: "Not valid request" };
     }
 
-    const seats = await libraryUserSeatWithshift(libid);
+    const seats = await libraryUserSeatWithshift(libid,limit,skip);
     const shift = await getshifts(libid as string);
-
-    console.log(seats, "seats");
-    console.log(shift, "shifts");
     const data = transfromintotabledata(seats as any[], shift);
 
     return data;

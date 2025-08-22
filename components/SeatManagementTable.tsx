@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -55,18 +55,43 @@ import {
 import { Seat } from "@/common/types";
 import { AddSeatForm } from "./AddSeat";
 import AddMemberDialog from "./AddMemberDialog";
+import { useQuery } from "@tanstack/react-query";
+import { allbookingAndSeatdetails } from "@/lib/serveraction";
+import { skip } from "node:test";
+import { useSearchParams } from "next/navigation";
+import { number } from "zod";
 
 interface SeatManagementTableProps {
   seats: Seat[];
-  libid:string
+  libid: string;
 }
 
-export function SeatManagementTable({ seats ,libid}: SeatManagementTableProps) { 4
-  const [openDialog,setOpenDialog]=useState<boolean>(false)
+export function SeatManagementTable({
+  seats,
+  libid,
+}: SeatManagementTableProps) {
+  4;
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [selectedSeat, setSelectedSeat] = useState<Seat | null>(null);
+  const [limit, setLimit] = useState(10);
+  const [skip, setSkip] = useState(0);
+  const searchparams = useSearchParams();
+
+  useEffect(() => {
+    const perpagevalue = searchparams.get("limit");
+    const skipParam = searchparams.get("skip");
+
+    // if (perpagevalue &&  typeof Number(perpagevalue) === number) setLimit(Number(perpagevalue));
+    // if (skipParam) setSkip(Number(skipParam));
+  }, [searchparams]);
+
+  const { data } = useQuery({
+    queryKey: ["libbookingdetails", libid],
+    queryFn: () => allbookingAndSeatdetails(libid, limit, skip),
+  });
 
   const columns: ColumnDef<Seat>[] = [
     {
@@ -358,9 +383,12 @@ export function SeatManagementTable({ seats ,libid}: SeatManagementTableProps) {
           </div>
         </CardContent>
       </Card>
- 
-       <AddMemberDialog selectedSeat={selectedSeat} setSelectedSeat={setSelectedSeat}/>
-      <AddSeatForm open={openDialog} setopen={setOpenDialog} libId={libid}/>
+
+      <AddMemberDialog
+        selectedSeat={selectedSeat}
+        setSelectedSeat={setSelectedSeat}
+      />
+      <AddSeatForm open={openDialog} setopen={setOpenDialog} libId={libid} />
     </>
   );
 }

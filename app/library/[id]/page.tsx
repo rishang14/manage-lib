@@ -2,7 +2,11 @@ import { auth } from "@/auth";
 import { libroles } from "@/common/types";
 import { Suspense } from "react";
 import TablibNavigation from "@/components/ChangeLibraryTab";
-import { allbookingAndSeatdetails, getshifts, getssrlibdata } from "@/lib/serveraction";
+import {
+  allbookingAndSeatdetails,
+  getshifts,
+  getssrlibdata,
+} from "@/lib/serveraction";
 import { Building2, Shield } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { redirect } from "next/navigation";
 import { ShiftManagement } from "@/components/Shift";
 import Manage from "@/components/Manage";
+import { makeQueryClient } from "@/lib/serverquery";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 const Page = async ({
   params,
@@ -24,22 +30,30 @@ const Page = async ({
   if (!session?.user) {
     redirect("/login");
   }
+  const libid = session?.user.libdetails.find((u: libroles) => u.libid === id);
 
-  const libid = session?.user.libdetails.find((u: libroles) => u.libid === id); 
-
-  const userrole= session?.user.libdetails.find((u:libroles)=>u.libid== id); 
-
-
+  const userrole = session?.user.libdetails.find(
+    (u: libroles) => u.libid == id
+  );
+ 
   if (!libid) {
     redirect("/home");
   }
   const { tab = "shifts" } = await searchParams;
   const data = await getssrlibdata(id as string);
-  const shifts = await getshifts(id);   
+  const shifts = await getshifts(id);
 
-  const tabledata= await allbookingAndSeatdetails(id);  
+  const queryClient = makeQueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["libbookingdetails", id],
+    queryFn: () => allbookingAndSeatdetails(id, 10, 0),
+  });
+
+  const dehydratedClinet = dehydrate(queryClient);
+
   // @ts-ignore
-  console.log(tabledata[0].shifts,"data")
+  console.log(tabledata[0].shifts, "data");
   return (
     <>
       <header className="bg-white dark:bg-neutral-950 border-b border-slate-200 dark:border-slate-700">
@@ -51,7 +65,8 @@ const Page = async ({
               </div>
               <div>
                 <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-                  { data &&  data.name.charAt(0).toUpperCase() + data?.name.slice(1)}
+                  {data &&
+                    data.name.charAt(0).toUpperCase() + data?.name.slice(1)}
                 </h1>
                 <p className="text-xs text-slate-600 dark:text-slate-400">
                   Owner-Name : <span>{data?.owner.name}</span>
@@ -66,16 +81,14 @@ const Page = async ({
               >
                 Online
               </Badge>
-              {
-                userrole.role === "ADMIN" && (
-                  <Link href={`/library/${id}/admin`}>
-                <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                  <Shield className="w-4 h-4 mr-1" />
-                  Admin
-                </Button>
-              </Link>
-                )
-              }
+              {userrole.role === "ADMIN" && (
+                <Link href={`/library/${id}/admin`}>
+                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                    <Shield className="w-4 h-4 mr-1" />
+                    Admin
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -83,14 +96,14 @@ const Page = async ({
       <TablibNavigation activeTab={tab} libraryId={id} />
       {tab === "shifts" && (
         <Suspense fallback={<div className="p-6">Loading shifts...</div>}>
-          <ShiftManagement shifts={shifts} libraryId={id}/>
+          <ShiftManagement shifts={shifts} libraryId={id} />
         </Suspense>
       )}
 
       {tab === "manage" && (
-        <Suspense fallback={<div className="p-6">Loading management...</div>}>
-          <Manage  libid={id as string} />
-        </Suspense>
+        <HydrationBoundary state={dehydratedClinet}>
+          <Manage libid={id as string} />
+        </HydrationBoundary>
       )}
     </>
   );
