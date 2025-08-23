@@ -149,7 +149,8 @@ export function ShiftManagement({ shifts, libraryId }: props) {
        onchangeopen={setOpenDeleteDialog}
        shiftid={shiftid}
        libid={libraryId}
-      />
+      /> 
+      
     </>
   );
 }

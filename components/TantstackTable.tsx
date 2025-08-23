@@ -9,7 +9,7 @@ import { Table,TableHead,TableHeader,TableRow,TableBody,TableCell } from "./ui/t
 import { Button } from "./ui/button";
 import { Clock, Edit ,Trash2, Users} from "lucide-react"; 
 import { Badge } from "./ui/badge";
-import AddMemberDialog from "./AddMemberDialog";
+import ShowMemberDialog from "./ShowMemberDetailsDialog";
 import { useState } from "react";
 
 type Shift = {
@@ -181,10 +181,10 @@ const ManagementTable=({data}:any)=>{
         </Table>
       </div>
     </div> 
-      <AddMemberDialog
+      <ShowMemberDialog
             selectedSeat={selectedSeat}
             setSelectedSeat={setSelectedSeat}
-          />
+          /> 
   </>
   );
 }

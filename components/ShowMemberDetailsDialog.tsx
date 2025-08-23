@@ -24,7 +24,7 @@ import {
 import {  useQuery } from "@tanstack/react-query";
 import { getmemberdetailsasperTheseat } from "@/lib/serveraction";
 
-const AddMemberDialog = ({ selectedSeat, setSelectedSeat }: any) => {  
+const ShowMemberDialog = ({ selectedSeat, setSelectedSeat }: any) => {  
   console.log(selectedSeat,"selectedseat") 
 
  const {data}= useQuery({
@@ -179,4 +179,4 @@ const AddMemberDialog = ({ selectedSeat, setSelectedSeat }: any) => {
   );
 };
 
-export default AddMemberDialog;
+export default ShowMemberDialog;
