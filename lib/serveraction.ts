@@ -6,6 +6,7 @@ import {
   addnewShift,
   libraryUserSeatWithshift,
   createseat,
+  getseatdetails,
 } from "./dbcalls";
 import { transfromintotabledata, verifysession } from "./helper";
 import { Shift } from "@/prisma/zod";
@@ -14,6 +15,9 @@ import { revalidatePath } from "next/cache";
 import prisma from "./prisma";
 import { Prisma, Seat } from "@prisma/client";
 import { seatdetails, seatdetailsschema, shiftschema } from "@/common/types";
+import { _success } from "zod/v4/core";
+import { error } from "console";
+import { string } from "zod";
 
 export type apiResponse<T = unknown> = {
   success: boolean;
@@ -21,28 +25,10 @@ export type apiResponse<T = unknown> = {
   error?: string | Record<string, string[]>;
 };
 
-export async function getssrlibdata(libid: string): Promise<
-  | ({
-      owner: {
-        name: string | null;
-        email: string;
-      };
-    } & {
-      id: string;
-      name: string;
-      ownerId: string;
-      createdAt: Date;
-    })
-  | null
-  | undefined
-> {
+export const  getssrlibdata=async(libid: string) => {
   await verifysession(libid);
   const data = await getstaticlibdetails(libid);
-  if (!data) {
-    return;
-  }
-
-  return data;
+  return  data ?  data : undefined;
 }
 
 export const getshifts = async (libdid: string): Promise<Shift[]> => {
@@ -196,3 +182,21 @@ export const addseat = async (
     throw new Error( "Something went wrong pls try again" );
   }
 };
+
+
+
+export const getmemberdetailsasperTheseat= async(seatid:string,shiftid:string,libid:string)=>{
+   try {
+      //    const user=await  verifysession(libid); 
+
+      // if(!user){
+      //   return {success:false, error:"you dont have access "}
+      // } 
+      const data= await getseatdetails(seatid as string);
+      console.log(data,"seatdetails"); 
+      return data; 
+   } catch (error) {
+      return {success:false,error:"something went wrong "}; 
+
+   }
+}

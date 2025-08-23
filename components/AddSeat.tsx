@@ -42,7 +42,7 @@ export function AddSeatForm({ open, setopen, libId }: prop) {
     });
   };
   return (
-    <Dialog open={open} >
+    <Dialog open={open}  onOpenChange={setopen}  >
       {open && (
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

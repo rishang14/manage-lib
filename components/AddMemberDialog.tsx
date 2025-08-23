@@ -1,4 +1,5 @@
-import React from "react";
+"use client"
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -20,9 +21,17 @@ import {
   Trash2,
   Plus,
 } from "lucide-react";
+import {  useQuery } from "@tanstack/react-query";
+import { getmemberdetailsasperTheseat } from "@/lib/serveraction";
 
 const AddMemberDialog = ({ selectedSeat, setSelectedSeat }: any) => {  
-  console.log(selectedSeat,"selectedseat")
+  console.log(selectedSeat,"selectedseat") 
+
+ const {data}= useQuery({
+ queryKey:["seatdetails",selectedSeat], 
+ queryFn:async()=> await getmemberdetailsasperTheseat(selectedSeat.id,"", "")
+ }); 
+ console.log(data,"data of the clicled memeber")
   return (
     <Dialog open={!!selectedSeat} onOpenChange={() => setSelectedSeat(null)}> 
     { 

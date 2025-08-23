@@ -88,11 +88,6 @@ import { signOut } from "next-auth/react"
             <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
               {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button> 
-               <Button  className="w-fit text-white"  onClick={async()=>{
-                  await signOut()
-                }}>
-                  signOut
-              </Button>
           </motion.div>
         </div>
       </div>

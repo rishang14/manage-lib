@@ -230,7 +230,13 @@ try {
     const seat= await prisma.seat.findFirst({
     where:{id:seatId},
     include:{
-      bookings:true
+      bookings:{
+        include:{
+          member:true,
+          shift:true,
+          seat:true
+        }
+      }
     }
   }) 
 
