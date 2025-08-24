@@ -1,6 +1,6 @@
  "use client"
 
-import React, { SetStateAction, Suspense } from "react";
+import React from "react";
 import ShowMemberDialog from "./ShowMemberDetailsDialog";
 import { getmemberdetailsasperTheseat, getshifts } from "@/lib/serveraction";
 import { SeatShiftResult, shiftschemaInput } from "@/common/types";
@@ -11,35 +11,37 @@ type prop = {
   setSelectedSeat:  React.Dispatch<React.SetStateAction<string | null>>;
   libid: string; 
   shifts:shiftschemaInput[], 
-  seatNum:Number
+  seatNum:number
 }; 
 
-const ShowMemberDialogWrapper = async ({
+const ShowMemberDialogWrapper = ({
   selectedSeat,
   setSelectedSeat,
   libid, 
   shifts, 
   seatNum
-}: prop) => { 
+}: prop) => {  
+
+  if(!selectedSeat) return; 
+   console.log(selectedSeat,"seatdetails in the wrapper ") 
    const {data, isError ,error,isLoading ,}=useQuery({
     queryKey:["seatdetails",selectedSeat], 
     queryFn:()=>getmemberdetailsasperTheseat(selectedSeat,libid), 
     enabled:!!selectedSeat
    }) 
-
+  console.log(data,"data")
    if(isError){
     alert("something went wrong"); 
-
+    console.log(error)
    } 
-
+  console.log(data,"data")
    if(isLoading){
     return <p className="text-white">loading </p>
    }
   return ( 
       <ShowMemberDialog
-      selectedSeat={selectedSeat}
-      setSelectedSeat={setSelectedSeat}
-      member={data}
+      selectedSeatid={selectedSeat}
+      setSelectedSeatId={setSelectedSeat}
       shifts={shifts}
       libid={libid} 
       seatNum={seatNum}

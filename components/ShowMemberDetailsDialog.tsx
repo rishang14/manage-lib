@@ -21,22 +21,33 @@ import {
   Plus,
 } from "lucide-react";
 import {  useQuery } from "@tanstack/react-query";
-import { getmemberdetailsasperTheseat } from "@/lib/serveraction";
+import { getmemberdetailsasperTheseat } from "@/lib/serveraction"; 
+import { shiftschemaInput } from "@/common/types";
 
-const ShowMemberDialog = ({ selectedSeatid, setSelectedSeat ,seatNum,shifts}: any) => {  
-  console.log(selectedSeatid,"selectedseat") 
+type prop={
+  selectedSeatid:string, 
+  setSelectedSeatId: React.Dispatch<React.SetStateAction<string | null>>, 
+  seatNum:number, 
+  shifts:shiftschemaInput[], 
+  libid:string
+}
+
+const ShowMemberDialog = ({ selectedSeatid, setSelectedSeatId ,seatNum,shifts,libid}: prop) => {  
+  console.log(selectedSeatid,"selectedseat");  
+  console.log(setSelectedSeatId,"selectedseatid") 
 
  const {data}= useQuery({
  queryKey:["seatdetails",selectedSeatid], 
- queryFn:async()=> await getmemberdetailsasperTheseat(selectedSeatid,"")
+ queryFn:async()=> await getmemberdetailsasperTheseat(selectedSeatid,libid), 
+ enabled:!!selectedSeatid
  }); 
  console.log(data,"data of the clicled memeber")
   return (
-    <Dialog open={!!selectedSeatid} onOpenChange={() => setSelectedSeat(null)}> 
+    <Dialog open={!!selectedSeatid} onOpenChange={() => setSelectedSeatId(null)}> 
     { 
       
       !!selectedSeatid && (
-       <DialogContent className="min-w-6xl max-h-[85vh]  overflow-y-auto">
+        <DialogContent className="min-w-6xl max-h-[85vh]  overflow-y-auto">
         <DialogHeader className="pb-6">
           <DialogTitle className="text-xl font-bold">
             Seat {seatNum} 

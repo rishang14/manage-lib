@@ -14,34 +14,38 @@ import {
   TableCell,
 } from "./ui/table";
 import { Button } from "./ui/button";
-import { Clock, Edit, Trash2, Users } from "lucide-react";
+import { ChartNoAxesColumn, Clock, Edit, Trash2, Users } from "lucide-react";
 import { Badge } from "./ui/badge";
 import ShowMemberDialog from "./ShowMemberDetailsDialog";
 import { useState } from "react";
-import { SeatShiftResult, shiftschemaInput, } from "@/common/types";
-import ShowMemberDialogWrapper from "./ShowMemberDialogWrapper";
+import { SeatShiftResult, shiftschemaInput } from "@/common/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { getmemberdetailsasperTheseat } from "@/lib/serveraction";
+import ShowMemberDialogWrapper from "./ShowMemberDialogWrapper";
 
 type prop = {
-  data: SeatShiftResult[]; 
-  libid:string, 
-  shifts:shiftschemaInput[]
+  data: SeatShiftResult[];
+  libid: string;
+  shifts: shiftschemaInput[];
 };
 
-const ManagementTable = ({ data ,libid,shifts}: prop) => {
-  const [selectedSeat, setSelectedSeat] = useState<string | null>(null);  
-  const [selectedSeatNumber,setSeletectedSeatNumber]=useState<Number | null>(null)
-  const queryClinet= useQueryClient()
-  const handleSelectedSeat=(seatId:string,seatNum:Number )=>{ 
+const ManagementTable = ({ data, libid, shifts }: prop) => {
+  const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
+  const [selectedSeatNumber, setSeletectedSeatNumber] = useState<number | null>(
+    null
+  );
+  const queryClinet = useQueryClient();
+  const handleSelectedSeat = (seatId: string, seatNum: number) => {
     queryClinet.prefetchQuery({
-      queryKey:["seatdetails",seatId], 
-      queryFn:() =>getmemberdetailsasperTheseat(seatId,libid), 
-      staleTime:1000*5
-    }) 
-    setSeletectedSeatNumber(seatNum)
-    setSelectedSeat(seatId); 
-  }
+      queryKey: ["seatdetails", seatId],
+      queryFn: () => getmemberdetailsasperTheseat(seatId, libid),
+      staleTime: 1000 * 5,
+    }); 
+    console.log(seatId,"seatid") 
+    console.log(seatNum,"number")
+    setSelectedSeat(seatId);
+    setSeletectedSeatNumber(seatNum);
+  };
   const columns: ColumnDef<SeatShiftResult>[] = [
     {
       accessorKey: "seatNumber",
@@ -119,7 +123,7 @@ const ManagementTable = ({ data ,libid,shifts}: prop) => {
               className="h-8 w-8 p-0 hover:bg-blue-50 dark:hover:bg-blue-900/20 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
               title="Edit seat"
               onClick={() => {
-                handleSelectedSeat(seat.id,seat.seatNumber);
+                handleSelectedSeat(seat.id, seat.seatNumber);
               }}
             >
               <Edit className="w-4 h-4 text-blue-600 dark:text-blue-400" />
@@ -215,16 +219,16 @@ const ManagementTable = ({ data ,libid,shifts}: prop) => {
             </TableBody>
           </Table>
         </div>
-      </div> 
-      {
-        !!selectedSeat && <ShowMemberDialogWrapper
-        selectedSeat={selectedSeat} 
-        seatNum={selectedSeatNumber as number}
-        setSelectedSeat={setSelectedSeat} 
-        libid={libid} 
-      shifts={shifts}
-      />
-      } 
+      </div>
+      {!!selectedSeat && (
+        <ShowMemberDialogWrapper
+          selectedSeat={selectedSeat}
+          setSelectedSeat={setSelectedSeat}
+          shifts={shifts}
+          libid={libid}
+          seatNum={selectedSeatNumber as number}
+        />
+      )}
     </>
   );
 };

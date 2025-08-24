@@ -188,7 +188,9 @@ export const getmemberdetailsasperTheseat = async (
   seatid: string,
   libid: string
 ) => {
-  try {
+  try { 
+    console.log(seatid,"received") 
+    console.log(libid,"libid received")
     const user = await verifysession(libid);
    console.log(user,"user in memberpersseat")
     if (!user) {
