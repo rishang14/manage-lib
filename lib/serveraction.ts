@@ -10,26 +10,22 @@ import {
 } from "./dbcalls";
 import { transfromintotabledata, verifysession } from "./helper";
 import { Shift } from "@/prisma/zod";
-
 import { revalidatePath } from "next/cache";
 import prisma from "./prisma";
-import { Prisma, Seat } from "@prisma/client";
-import { seatdetails, seatdetailsschema, shiftschema } from "@/common/types";
-import { _success } from "zod/v4/core";
+import { Prisma } from "@prisma/client";
+import {
+  seatdetailsschema,
+  SeatShiftResult,
+  shiftschema,
+  Response,
+} from "@/common/types";
 import { error } from "console";
-import { string } from "zod";
 
-export type apiResponse<T = unknown> = {
-  success: boolean;
-  data?: T;
-  error?: string | Record<string, string[]>;
-};
-
-export const  getssrlibdata=async(libid: string) => {
+export const getssrlibdata = async (libid: string) => {
   await verifysession(libid);
   const data = await getstaticlibdetails(libid);
-  return  data ?  data : undefined;
-}
+  return data ? data : undefined;
+};
 
 export const getshifts = async (libdid: string): Promise<Shift[]> => {
   await verifysession(libdid);
@@ -40,7 +36,7 @@ export const getshifts = async (libdid: string): Promise<Shift[]> => {
   return shiftdata;
 };
 
-export const updateshift = async (data: Shift): Promise<apiResponse<Shift>> => {
+export const updateshift = async (data: Shift): Promise<Response<Shift>> => {
   try {
     const user = await verifysession(data.libraryId);
     if (!user.role) {
@@ -73,7 +69,7 @@ export const updateshift = async (data: Shift): Promise<apiResponse<Shift>> => {
   }
 };
 
-export const addNewShift = async (data: Shift): Promise<apiResponse<Shift>> => {
+export const addNewShift = async (data: Shift): Promise<Response<Shift>> => {
   try {
     const user = await verifysession(data.libraryId);
 
@@ -101,7 +97,7 @@ export const addNewShift = async (data: Shift): Promise<apiResponse<Shift>> => {
 export const DelteShift = async (
   id: string,
   libraryId: string
-): Promise<apiResponse<string>> => {
+): Promise<Response<string>> => {
   try {
     const user = await verifysession(libraryId);
 
@@ -129,40 +125,44 @@ export const DelteShift = async (
   }
 };
 
-export const allbookingAndSeatdetails = async (libid: string,limit:number,skip:number) => {
+export const allbookingAndSeatdetails = async (
+  libid: string,
+  limit: number,
+  skip: number
+): Promise<SeatShiftResult[]> => {
   try {
     const user = await verifysession(libid);
 
     if (!user.role) {
-      return { success: false, error: "Not valid request" };
+       throw new Error ("Not valid request" );
     }
 
-    const seats = await libraryUserSeatWithshift(libid,limit,skip);
+    const seats = await libraryUserSeatWithshift(libid, limit, skip);
     const shift = await getshifts(libid as string);
     const data = transfromintotabledata(seats as any[], shift);
-   console.log(data,"data") 
-    return data;
+    return   data as SeatShiftResult[] ;
   } catch (error) {
     console.log(error, "something went wrong ");
+    throw new Error ("Internal server error " );
   }
 };
 
 export const addseat = async (
   libraryId: string,
-  formdata: FormData):Promise<void>=>{
+  formdata: FormData
+): Promise<void> => {
   try {
     const user = await verifysession(libraryId);
     const seatNumber = formdata.get("seatnumber") as string;
-    console.log(seatNumber, "data for the fomm");
     if (!user.role) {
-      throw new Error ("You dont have valid permission");
+      throw new Error("You dont have valid permission");
     }
     const validatedata = seatdetailsschema.safeParse({
       seatNumber,
       libraryId,
     });
     if (!validatedata.success) {
-     throw new Error (JSON.stringify(validatedata.error.flatten()));
+      throw new Error(JSON.stringify(validatedata.error.flatten()));
     }
     const alreadyexists = await prisma.seat.findFirst({
       where: {
@@ -172,31 +172,32 @@ export const addseat = async (
     });
 
     if (alreadyexists) {
-      throw new Error ("Seat already exists with this ");
+      throw new Error("Seat already exists with this ");
     }
     const addedseat = await createseat(validatedata.data);
-     console.log(addedseat,"seat")
+    console.log(addedseat, "seat");
     revalidatePath(`/library/${libraryId}?tab=manage`);
-  } catch (error) { 
-    console.log(error,"error")
-    throw new Error( "Something went wrong pls try again" );
+  } catch (error) {
+    console.log(error, "error");
+    throw new Error("Something went wrong pls try again");
   }
 };
 
 
+export const getmemberdetailsasperTheseat = async (
+  seatid: string,
+  libid: string
+) => {
+  try {
+    const user = await verifysession(libid);
+   console.log(user,"user in memberpersseat")
+    if (!user) {
+      throw new Error("you dont have access")
+    }
+    const data = await getseatdetails(seatid as string);
 
-export const getmemberdetailsasperTheseat= async(seatid:string,shiftid:string,libid:string)=>{
-   try {
-      //    const user=await  verifysession(libid); 
-
-      // if(!user){
-      //   return {success:false, error:"you dont have access "}
-      // } 
-      const data= await getseatdetails(seatid as string);
-      console.log(data,"seatdetails"); 
-      return data; 
-   } catch (error) {
-      return {success:false,error:"something went wrong "}; 
-
-   }
-}
+    return data;
+  } catch (error) {
+    throw new Error( "something went wrong " );
+  }
+};

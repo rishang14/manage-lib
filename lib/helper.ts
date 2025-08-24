@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { libroles } from "@/common/types";
+import { libroles, SeatShiftResult } from "@/common/types";
 import axios from "axios";
 
 export async function getLibdetails(libid: string, signal?: AbortSignal) {
@@ -35,7 +35,7 @@ export async function verifysession(libid: string) {
 }
 
 
-export function transfromintotabledata(seats:any[] , allShifts:any[]){
+export function transfromintotabledata(seats:any[] , allShifts:any[]):SeatShiftResult[]{
   return seats.map(seat => {
     const shifts = allShifts.map(shift => {
       // Find booking for this seat and shift combination
@@ -51,7 +51,8 @@ export function transfromintotabledata(seats:any[] , allShifts:any[]){
           id: booking.member.id,
           name: booking.member.name,
           phone: booking.member.phone,
-          joinedAt: booking.member.joinedAt.toISOString().split('T')[0]
+          joinedAt: booking.member.joinedAt.toISOString().split('T')[0],
+          libraryId:booking.member.libraryId
         } : undefined
       };
     });

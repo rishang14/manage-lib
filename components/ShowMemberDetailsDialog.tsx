@@ -16,7 +16,6 @@ import {
   User,
   Phone,
   Mail,
-  CreditCard,
   Edit,
   Trash2,
   Plus,
@@ -24,33 +23,33 @@ import {
 import {  useQuery } from "@tanstack/react-query";
 import { getmemberdetailsasperTheseat } from "@/lib/serveraction";
 
-const ShowMemberDialog = ({ selectedSeat, setSelectedSeat }: any) => {  
-  console.log(selectedSeat,"selectedseat") 
+const ShowMemberDialog = ({ selectedSeatid, setSelectedSeat ,seatNum,shifts}: any) => {  
+  console.log(selectedSeatid,"selectedseat") 
 
  const {data}= useQuery({
- queryKey:["seatdetails",selectedSeat], 
- queryFn:async()=> await getmemberdetailsasperTheseat(selectedSeat.id,"", "")
+ queryKey:["seatdetails",selectedSeatid], 
+ queryFn:async()=> await getmemberdetailsasperTheseat(selectedSeatid,"")
  }); 
  console.log(data,"data of the clicled memeber")
   return (
-    <Dialog open={!!selectedSeat} onOpenChange={() => setSelectedSeat(null)}> 
+    <Dialog open={!!selectedSeatid} onOpenChange={() => setSelectedSeat(null)}> 
     { 
       
-      !!selectedSeat && (
+      !!selectedSeatid && (
        <DialogContent className="min-w-6xl max-h-[85vh]  overflow-y-auto">
         <DialogHeader className="pb-6">
           <DialogTitle className="text-xl font-bold">
-            Seat {selectedSeat?.seatNumber} 
+            Seat {seatNum} 
           </DialogTitle>
           <DialogDescription>
             Manage member assignments for this seat
           </DialogDescription>
         </DialogHeader>
 
-        {selectedSeat && (
+        {shifts && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {selectedSeat.shifts.map((shift :any) => (
+              {shifts.map((shift :any) => (
                 <Card
                   key={shift.id}
                   className={`relative overflow-hidden transition-all duration-200 hover:shadow-md `}

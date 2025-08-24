@@ -262,14 +262,23 @@ export interface LibraryStats {
   pendingPayments: number;
 }
 
-
+export type Shiftwithmember = {
+  id: string;
+  shifttype: string;
+  shiftid: string;
+  startTime: string;
+  endTime: string;
+  member?: Member;
+};
 
 export type SeatShiftResult = {
   id: string;   
-  seatname:string,        
-  shifttype: string;  
-  shiftid:string  
-  startTime: string;   
-  endTime: string;    
-  member?: Member;     
+  seatNumber:number,        
+  shifts: Shiftwithmember[];  
+};
+
+export type Response<T = unknown> = {
+  success: boolean;
+  data?: T;
+  error?: string | Record<string, string[]>;
 };

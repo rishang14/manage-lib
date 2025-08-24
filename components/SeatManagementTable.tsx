@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import {
   useReactTable,
@@ -23,28 +22,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   Search,
   Plus,
   Edit,
@@ -52,21 +29,21 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Seat, SeatShiftResult } from "@/common/types";
+import { Seat, SeatShiftResult, shiftschemaInput } from "@/common/types";
 import { AddSeatForm } from "./AddSeat";
 import { useQuery } from "@tanstack/react-query";
 import { allbookingAndSeatdetails } from "@/lib/serveraction";
-import { skip } from "node:test";
 import { useSearchParams } from "next/navigation";
-import { number } from "zod";
 import ManagementTable from "./TantstackTable";
 
 interface SeatManagementTableProps {
-  libid: string;
+  libid: string; 
+  shifts:shiftschemaInput[]
 }
 
 export function SeatManagementTable({
-  libid,
+  libid, 
+  shifts
 }: SeatManagementTableProps) {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -87,7 +64,7 @@ export function SeatManagementTable({
 
   const { data } = useQuery({
     queryKey: ["libbookingdetails", libid],
-    queryFn: () => allbookingAndSeatdetails(libid, limit, skip),
+    queryFn:()=> allbookingAndSeatdetails(libid, limit, skip)
   });
   // const columns: ColumnDef<SeatShiftResult>[] = [
   //   {
@@ -292,7 +269,7 @@ export function SeatManagementTable({
 
           {/* Table */}
           <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">  
-            <ManagementTable data={data}/>
+            <ManagementTable data={data as SeatShiftResult[] } libid={libid} shifts={shifts}/>
             {/* <Table> 
 
               <TableHeader className="bg-slate-50 dark:bg-slate-800">

@@ -35,26 +35,13 @@ const Page = async ({
   const userrole = session?.user.libdetails.find(
     (u: libroles) => u.libid == id
   );
- 
+
   if (!libid) {
     redirect("/home");
   }
   const { tab = "shifts" } = await searchParams;
   const data = await getssrlibdata(id as string);
   const shifts = await getshifts(id);
-
-  const queryClient = makeQueryClient();
-
-  await queryClient.prefetchQuery({
-    queryKey: ["libbookingdetails", id],
-    queryFn: () => allbookingAndSeatdetails(id, 10, 0),
-  });
-
-
-   const table =await allbookingAndSeatdetails(id,10,0);  
-  //  @ts-ignore
-   console.log(table[0] ,"data for tbale serverside ")
-  const dehydratedClinet = dehydrate(queryClient);
 
   return (
     <>
@@ -103,9 +90,9 @@ const Page = async ({
       )}
 
       {tab === "manage" && (
-        <HydrationBoundary state={dehydratedClinet}>
-          <Manage libid={id as string} />
-        </HydrationBoundary>
+        <Suspense fallback={<div className="p-6">Loading shifts...</div>}>
+          <Manage libid={id as string} shifts={shifts} />
+        </Suspense>
       )}
     </>
   );
