@@ -4,7 +4,7 @@ import React from "react";
 import ShowMemberDialog from "./ShowMemberDetailsDialog";
 import { getmemberdetailsasperTheseat, getshifts } from "@/lib/serveraction";
 import { SeatShiftResult, shiftschemaInput } from "@/common/types";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 type prop = {
   selectedSeat: string;
@@ -23,21 +23,14 @@ const ShowMemberDialogWrapper = ({
 }: prop) => {  
 
   if(!selectedSeat) return; 
-   console.log(selectedSeat,"seatdetails in the wrapper ") 
-   const {data, isError ,error,isLoading ,}=useQuery({
-    queryKey:["seatdetails",selectedSeat], 
+  const queryClient = useQueryClient(); 
+
+  queryClient.prefetchQuery({
+     queryKey:["seatdetails",selectedSeat], 
     queryFn:()=>getmemberdetailsasperTheseat(selectedSeat,libid), 
-    enabled:!!selectedSeat
-   }) 
-  console.log(data,"data")
-   if(isError){
-    alert("something went wrong"); 
-    console.log(error)
-   } 
-  console.log(data,"data")
-   if(isLoading){
-    return <p className="text-white">loading </p>
-   }
+    staleTime:6000*10
+  })
+
   return ( 
       <ShowMemberDialog
       selectedSeatid={selectedSeat}

@@ -281,4 +281,13 @@ export type Response<T = unknown> = {
   success: boolean;
   data?: T;
   error?: string | Record<string, string[]>;
+}; 
+
+
+export type AddMemberDialogParams = {
+  shiftId: string; 
+  seatNumber:string,
+  shiftName: string;
+  libraryId?: string;
+  selectedSeatId: string | null;
 };
