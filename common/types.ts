@@ -71,11 +71,22 @@ export const paymentmode = PaymentSchema.omit({
 export const Membereditinfo = MemberSchema.partial();
 
 export const BookingRequestSchema = z.object({
-  seatId: z.string(),
-  shiftIds: z.array(z.string()).min(1),
-  date: z.coerce.date(),
-  member: MemberdetailsData,
-  payment: paymentmode,
+ member: z.object({
+    name: z.string().min(1, "Name is required"),
+    phone: z.string().min(10, "Phone must be at least 10 digits"),
+    joinedAt: z.date().optional(), // handled on backend
+  }),
+  payment: z.object({
+    startMonth: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Invalid format (YYYY-MM)"),
+    duration: z.number().min(1).max(12),
+    amount: z.number().min(1, "Amount must be positive"),
+    paid: z.boolean(),
+    memberId: z.string().optional(), // backend fills this
+    validTill: z.date().optional(), // derived field
+  }),
+  date: z.date().optional(), // booking date (current date or user selected)
+  seatId: z.string().optional(), // from props
+  shifts: z.array(z.string()).nonempty("At least one shift must be selected"),
 });
 
 export const changeshiftSchema = z.object({
@@ -106,7 +117,41 @@ export type apiResponse<> = {
   success: boolean;
   message?: string;
   error?: string;
-};
+}; 
+
+
+
+export const MemberFormSchema = z.object({
+  member: z.object({
+    name: z
+      .string()
+      .min(1, { message: "Name is required" }),
+    phone: z
+      .string()
+      .min(10, { message: "Phone number must be at least 10 digits" })
+      .regex(/^\d+$/, { message: "Phone number must only contain digits" }),
+  }),
+  payment: z.object({
+    startMonth: z
+      .string()
+      .regex(/^\d{4}-(0[1-9]|1[0-2])$/, { message: "Invalid month format (YYYY-MM)" }),
+    duration: z
+      .number({ invalid_type_error: "Duration must be a number" })
+      .min(1, { message: "Duration must be at least 1 month" })
+      .max(24, { message: "Duration cannot exceed 24 months" }),
+    amount: z
+      .number({ invalid_type_error: "Amount must be a number" })
+      .min(1, { message: "Amount must be greater than 0" })
+      .max(1_000_000, { message: "Amount is too high" }),
+    paid: z.boolean({
+      required_error: "Paid status must be specified",
+      invalid_type_error: "Paid must be true or false",
+    }),
+  }),
+});
+
+export type MemberFormType = z.infer<typeof MemberFormSchema>;
+
 export type seatdetails = z.infer<typeof seatdetailsschema>;
 export type meberinfo = z.infer<typeof Membereditinfo>;
 export type CreateBookingInput = z.infer<typeof BookingRequestSchema>;

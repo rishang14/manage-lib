@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { AddMemberDialogParams } from "@/common/types";
+import { AddMemberDialogParams, BookingRequestSchema, CreateBookingInput, shiftschemaInput } from "@/common/types";
 import {
   ChevronLeft,
   ChevronRight,
@@ -44,7 +44,8 @@ import { Checkbox } from "./ui/checkbox";
 interface BookingDialogProps {
   open: boolean;
   onChange: React.Dispatch<React.SetStateAction<boolean>>;
-  props: AddMemberDialogParams;
+  props: AddMemberDialogParams; 
+  shifts:shiftschemaInput[]
 }
 
 interface BookingRequest {
@@ -64,28 +65,14 @@ interface BookingRequest {
 }
 
 // Declare BookingRequestSchema
-const BookingRequestSchema = z.object({
-  seatId: z.string(),
-  shiftIds: z.array(z.string()),
-  date: z.date(),
-  member: z.object({
-    name: z.string(),
-    phone: z.string(),
-  }),
-  payment: z.object({
-    amount: z.number(),
-    method: z.string(),
-    status: z.string(),
-    description: z.string(),
-  }),
-});
 
-export function AddMemberDialog({ open, onChange, props }: BookingDialogProps) {
+
+export function AddMemberDialog({ open, onChange, props ,shifts}: BookingDialogProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 2;
 
   const form = useForm({
-    // resolver: zodResolver(MemberFormSchema),
+    resolver: zodResolver(BookingRequestSchema),
     defaultValues: {
       member: {
         name: "",
@@ -97,6 +84,7 @@ export function AddMemberDialog({ open, onChange, props }: BookingDialogProps) {
         amount: 500,
         paid: false,
       },
+      shifts:[],
     },
   });
 
@@ -120,19 +108,9 @@ export function AddMemberDialog({ open, onChange, props }: BookingDialogProps) {
     }
   };
 
-  const onSubmit = (data: any) => {
-    const memberData = {
-      ...data,
-      booking: {
-        seatNumber: props.seatNumber,
-        shiftName: props.shiftName,
-        shiftId: props.shiftId,
-        selectedSeatId: props.selectedSeatId,
-        libraryId: props.libraryId,
-      },
-    };
-
-    console.log("Member registration data:", memberData);
+  const onSubmit = (data: CreateBookingInput) => {
+  
+    console.log("Member registration data:", data);
   };
 
   const handleopenchange = () => {
@@ -221,9 +199,52 @@ export function AddMemberDialog({ open, onChange, props }: BookingDialogProps) {
                           <FormMessage />
                         </FormItem>
                       )}
-                    />
+                    /> 
+
+                   <FormField
+  control={form.control}
+  name="shifts"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Select Shifts</FormLabel>
+      <div className="space-y-2 border rounded-lg p-3 bg-muted/20">
+        {shifts.map((shift:shiftschemaInput) => { 
+          // @ts-ignore
+          const isSelected =   field.value?.includes(shift?.id );
+
+          return (
+            <FormItem
+              key={shift.id}
+              className={`flex items-center gap-2 p-2 rounded-md ${
+                isSelected ? "bg-primary/10 border border-primary/20" : ""
+              }`}
+            >
+              <FormControl>
+                <Checkbox
+                  checked={isSelected}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      field.onChange([...(field.value || []), shift.id]);
+                    } else {
+                      field.onChange(
+                        field.value?.filter((id) => id !== shift.id)
+                      );
+                    }
+                  }}
+                />
+              </FormControl>
+              <FormLabel>{shift.name}</FormLabel>
+            </FormItem>
+          );
+        })}
+      </div>
+      <FormMessage />
+    </FormItem>
+  )}
+/> 
                   </div>
-                </div>
+                </div> 
+                
               )}
 
               {currentStep === 2 && (
