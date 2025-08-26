@@ -44,8 +44,8 @@ export async function POST(
       );
     }
     const bookingcheck: bookingdetailsType = {
-      seatId: validateddata.data.seatId,
-      shiftIds: validateddata.data.shiftIds,
+      seatId: validateddata.data.seatId as string,
+      shiftIds: validateddata.data.shiftsIds,
     };
 
     const bookingexist = await isbookingexist(bookingcheck);

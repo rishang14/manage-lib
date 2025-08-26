@@ -50,7 +50,6 @@ const ShowMemberDialog = ({
     queryFn: () => getmemberdetailsasperTheseat(selectedSeatid, libid),
     enabled: !!selectedSeatid,
   });
-  console.log(data, "data of the clicled memeber");
 
   const handleAddmemberdialogopen = (data: AddMemberDialogParams) => {
     setEssentialsdetails(data);
@@ -218,7 +217,8 @@ const ShowMemberDialog = ({
         onChange={setAddmemberdialogopen }
         open={addmemberdialogOpen}
         props={essentialdetails as AddMemberDialogParams} 
-        shifts={shifts}
+        shifts={shifts} 
+        libid={libid}
       />
     </>
   );

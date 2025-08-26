@@ -19,12 +19,12 @@ export async function getLibdetails(libid: string, signal?: AbortSignal) {
   }
 }
 
-export async function verifysession(libid: string) {
+export async function verifysession(libid: string):Promise<libroles> {
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error("Not logged in");
   }
-  const lib = session?.user?.libdetails.find(
+  const lib:libroles = session?.user?.libdetails.find(
     (u: libroles) => u.libid === libid
   );
   if(!lib) {

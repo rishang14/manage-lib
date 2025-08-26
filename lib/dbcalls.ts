@@ -1,6 +1,6 @@
 import { Library ,Shift,Seat} from "@/prisma/zod";
 import prisma from "./prisma";
-import { apiResponse, bookingdetailsType, CreateBookingInput, seatdetails, shiftschemaInput ,shiftupdateschemainput,meberinfo, changeshift, addshift } from "@/common/types";
+import { apiResponse, bookingdetailsType, CreateBookingInput, seatdetails, shiftschemaInput ,shiftupdateschemainput,meberinfo, changeshift, addshift, BookingBackendDbcheckInput } from "@/common/types";
 import { unstable_cache } from "next/cache";
 
 
@@ -275,19 +275,18 @@ export async function isbookingexist(data:bookingdetailsType){
 } 
 
 
-export  async function createbooking(datas:CreateBookingInput, libid:string){
- try {
-    const created= await prisma.member.create({
+export  async function createbooking(datas:BookingBackendDbcheckInput,libid:string){
+ return await prisma.member.create({
    data:{
     name:datas.member.name , 
     phone:datas.member.phone , 
     joinedAt:datas.member.joinedAt, 
-    libraryId:libid, 
+    libraryId:datas.libraryId ??libid, 
     bookings:{
-      create: datas.shiftIds.map((shiftId) => ({
-        shiftId:shiftId, 
-        seatId:datas.seatId, 
-        date:datas.date,
+      create: datas.shiftsIds.map((id:string) => ({
+        shiftId:id as string, 
+        seatId:datas.seatId ,  
+        date:datas.date ?? new Date()
       }))
     }, 
     payments:{
@@ -296,21 +295,13 @@ export  async function createbooking(datas:CreateBookingInput, libid:string){
         amount:datas.payment.amount,
         paidAt:datas.member.joinedAt, 
         validTill:datas.payment.validTill, 
-        duration:datas.payment.amount, 
+        duration:datas.payment.duration, 
         startMonth:datas.payment.startMonth
       }
     }
    }, 
-   }) 
-  if(!created ){
-    console.log("nothing got while booking ")
-  }
-   return created;
- } catch (error) {
-   console.log(error,"while creating booking")
- }
 
-}  
+ })}  
 
 
 export async function undatedmemberinfo(memberinfo:meberinfo){

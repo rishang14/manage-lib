@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { string } from "zod";
 import {
   ShiftSchema,
   LibrarySchema,
@@ -86,7 +86,8 @@ export const BookingRequestSchema = z.object({
   }),
   date: z.date().optional(), // booking date (current date or user selected)
   seatId: z.string().optional(), // from props
-  shifts: z.array(z.string()).nonempty("At least one shift must be selected"),
+  shiftsIds: z.array(z.string()).min(1), 
+  libraryId:z.string().cuid().optional()
 });
 
 export const changeshiftSchema = z.object({
@@ -121,36 +122,38 @@ export type apiResponse<> = {
 
 
 
-export const MemberFormSchema = z.object({
+export const BookingRequestBackendSchema = z.object({
   member: z.object({
-    name: z
-      .string()
-      .min(1, { message: "Name is required" }),
-    phone: z
-      .string()
-      .min(10, { message: "Phone number must be at least 10 digits" })
-      .regex(/^\d+$/, { message: "Phone number must only contain digits" }),
+    name: z.string(),
+    phone: z.string(),
+    joinedAt: z.date().optional(), // can let backend default to now
   }),
+  libraryId: z.string().optional(), // injected from server
+  seatId: z.string().optional(), // injected from server
+  shiftsIds: z.array(z.string()),
+  date: z.date().optional(),
+
   payment: z.object({
-    startMonth: z
-      .string()
-      .regex(/^\d{4}-(0[1-9]|1[0-2])$/, { message: "Invalid month format (YYYY-MM)" }),
-    duration: z
-      .number({ invalid_type_error: "Duration must be a number" })
-      .min(1, { message: "Duration must be at least 1 month" })
-      .max(24, { message: "Duration cannot exceed 24 months" }),
-    amount: z
-      .number({ invalid_type_error: "Amount must be a number" })
-      .min(1, { message: "Amount must be greater than 0" })
-      .max(1_000_000, { message: "Amount is too high" }),
-    paid: z.boolean({
-      required_error: "Paid status must be specified",
-      invalid_type_error: "Paid must be true or false",
-    }),
+    amount: z.number(),
+    duration: z.number(), // in months
+    startMonth: z.string(), // e.g. "2025-08"
+    paid: z.boolean(), 
   }),
 });
 
-export type MemberFormType = z.infer<typeof MemberFormSchema>;
+export const BookingBackendSchema = BookingRequestSchema.extend({
+  libraryId: z.string(),  // required in backend
+  seatId: z.string(),     // required in backend
+  payment: BookingRequestSchema.shape.payment.extend({
+    paidAt: z.date().nullable().default(null),
+    validTill: z.date(), // always required in backend
+  }),
+}); 
+
+export type BookingBackendDbcheckInput= z.infer<typeof BookingBackendSchema>
+
+export type BookingRequestbackendInput = z.infer<typeof BookingRequestBackendSchema>;
+
 
 export type seatdetails = z.infer<typeof seatdetailsschema>;
 export type meberinfo = z.infer<typeof Membereditinfo>;

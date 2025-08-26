@@ -29,7 +29,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { AddMemberDialogParams, BookingRequestSchema, CreateBookingInput, shiftschemaInput } from "@/common/types";
+import {
+  AddMemberDialogParams,
+  BookingRequestSchema,
+  CreateBookingInput,
+  shiftschemaInput,
+} from "@/common/types";
 import {
   ChevronLeft,
   ChevronRight,
@@ -40,40 +45,31 @@ import {
 } from "lucide-react";
 import { Progress } from "./ui/progress";
 import { Checkbox } from "./ui/checkbox";
+import { addmember } from "@/lib/serveraction";
 
 interface BookingDialogProps {
   open: boolean;
   onChange: React.Dispatch<React.SetStateAction<boolean>>;
-  props: AddMemberDialogParams; 
-  shifts:shiftschemaInput[]
+  props: AddMemberDialogParams;
+  shifts: shiftschemaInput[]; 
+  libid:string
 }
 
-interface BookingRequest {
-  seatId: string;
-  shiftIds: string[];
-  date: Date;
-  member: {
-    name: string;
-    phone: string;
-  };
-  payment: {
-    amount: number;
-    method: string;
-    status: string;
-    description: string;
-  };
-}
-
-// Declare BookingRequestSchema
 
 
-export function AddMemberDialog({ open, onChange, props ,shifts}: BookingDialogProps) {
+export function AddMemberDialog({
+  open,
+  onChange,
+  props,
+  shifts, 
+  libid
+}: BookingDialogProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 2;
 
   const form = useForm({
     resolver: zodResolver(BookingRequestSchema),
-    defaultValues: {
+    defaultValues: {  
       member: {
         name: "",
         phone: "",
@@ -84,9 +80,16 @@ export function AddMemberDialog({ open, onChange, props ,shifts}: BookingDialogP
         amount: 500,
         paid: false,
       },
-      shifts:[],
+      shiftsIds: [],
     },
   });
+ 
+    const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors, isDirty,isSubmitting },
+  } = form; 
 
   const validateCurrentStep = async () => {
     if (currentStep === 1) {
@@ -108,9 +111,16 @@ export function AddMemberDialog({ open, onChange, props ,shifts}: BookingDialogP
     }
   };
 
-  const onSubmit = (data: CreateBookingInput) => {
-  
-    console.log("Member registration data:", data);
+  const onSubmit = async(data: CreateBookingInput) => {
+   try {
+      data.libraryId=props.libraryId as string, 
+      data.seatId=props.selectedSeatId as string ,  
+     console.log(data,"data for the lib")
+      const res= await addmember(data,libid) ;
+      console.log(res,"res"); 
+   } catch (error) {
+    
+   }
   };
 
   const handleopenchange = () => {
@@ -158,7 +168,7 @@ export function AddMemberDialog({ open, onChange, props ,shifts}: BookingDialogP
           </DialogHeader>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {currentStep === 1 && (
                 <div className="space-y-6">
                   <div className="flex items-center gap-2 pb-2">
@@ -199,52 +209,60 @@ export function AddMemberDialog({ open, onChange, props ,shifts}: BookingDialogP
                           <FormMessage />
                         </FormItem>
                       )}
-                    /> 
+                    />
 
-                   <FormField
-  control={form.control}
-  name="shifts"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Select Shifts</FormLabel>
-      <div className="space-y-2 border rounded-lg p-3 bg-muted/20">
-        {shifts.map((shift:shiftschemaInput) => { 
-          // @ts-ignore
-          const isSelected =   field.value?.includes(shift?.id );
+                    <FormField
+                      control={form.control}
+                      name="shiftsIds"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Select Shifts</FormLabel>
+                          <div className="space-y-2 border rounded-lg p-3 bg-muted/20">
+                            {shifts.map((shift: shiftschemaInput) => {
+                              // @ts-ignore
+                              const isSelected = field.value?.includes(
+                                shift?.id as string
+                              );
 
-          return (
-            <FormItem
-              key={shift.id}
-              className={`flex items-center gap-2 p-2 rounded-md ${
-                isSelected ? "bg-primary/10 border border-primary/20" : ""
-              }`}
-            >
-              <FormControl>
-                <Checkbox
-                  checked={isSelected}
-                  onCheckedChange={(checked) => {
-                    if (checked) {
-                      field.onChange([...(field.value || []), shift.id]);
-                    } else {
-                      field.onChange(
-                        field.value?.filter((id) => id !== shift.id)
-                      );
-                    }
-                  }}
-                />
-              </FormControl>
-              <FormLabel>{shift.name}</FormLabel>
-            </FormItem>
-          );
-        })}
-      </div>
-      <FormMessage />
-    </FormItem>
-  )}
-/> 
+                              return (
+                                <FormItem
+                                  key={shift.id}
+                                  className={`flex items-center gap-2 p-2 rounded-md ${
+                                    isSelected
+                                      ? "bg-primary/10 border border-primary/20"
+                                      : ""
+                                  }`}
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={isSelected}
+                                      onCheckedChange={(checked) => {
+                                        if (checked) {
+                                          field.onChange([
+                                            ...(field.value || []),
+                                            shift.id,
+                                          ]);
+                                        } else {
+                                          field.onChange(
+                                            field.value?.filter(
+                                              (id) => id !== shift.id
+                                            )
+                                          );
+                                        }
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel>{shift.name}</FormLabel>
+                                </FormItem>
+                              );
+                            })}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                </div> 
-                
+                </div>
               )}
 
               {currentStep === 2 && (

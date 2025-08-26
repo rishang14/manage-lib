@@ -7,6 +7,7 @@ import {
   libraryUserSeatWithshift,
   createseat,
   getseatdetails,
+  createbooking,
 } from "./dbcalls";
 import { transfromintotabledata, verifysession } from "./helper";
 import { Shift } from "@/prisma/zod";
@@ -18,6 +19,8 @@ import {
   SeatShiftResult,
   shiftschema,
   Response,
+  CreateBookingInput,
+  BookingRequestSchema,
 } from "@/common/types";
 import { error } from "console";
 
@@ -203,3 +206,32 @@ export const getmemberdetailsasperTheseat = async (
     throw new Error( "something went wrong " );
   }
 };
+
+
+
+export const addmember = async(bookingdetails:CreateBookingInput,libid:string)=>{ 
+  try {
+   const user= await verifysession(libid); 
+  if(!user){
+    return {error:"Invalid request "}; 
+  }  
+  
+  
+  const validatedata= BookingRequestSchema.safeParse(bookingdetails);  
+  if(bookingdetails.libraryId !== user.libid){
+    return {error:"Invalid libid"}
+  }
+ 
+  //  const bookingecheckexist 
+  if(!validatedata.success){
+    return {error:validatedata.error.flatten()}; 
+  } 
+
+//  const createdbooking = await createbooking(validatedata.data); 
+   
+
+  revalidatePath(`/library/${libid}?tab=manage`);
+  } catch (error) {
+    return {error:"Internal server Error"}
+  }
+}
