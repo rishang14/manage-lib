@@ -14,9 +14,8 @@ import {
   TableCell,
 } from "./ui/table";
 import { Button } from "./ui/button";
-import { ChartNoAxesColumn, Clock, Edit, Trash2, Users } from "lucide-react";
+import {  Clock, Edit, Trash2, Users } from "lucide-react";
 import { Badge } from "./ui/badge";
-import ShowMemberDialog from "./ShowMemberDetailsDialog";
 import { useState } from "react";
 import { SeatShiftResult, shiftschemaInput } from "@/common/types";
 import { useQueryClient } from "@tanstack/react-query";

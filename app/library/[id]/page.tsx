@@ -14,8 +14,6 @@ import { Button } from "@/components/ui/button";
 import { redirect } from "next/navigation";
 import { ShiftManagement } from "@/components/Shift";
 import Manage from "@/components/Manage";
-import { makeQueryClient } from "@/lib/serverquery";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 const Page = async ({
   params,

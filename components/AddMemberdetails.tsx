@@ -1,16 +1,9 @@
 "use client";
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { CalendarIcon, User, CreditCard, MapPin, Clock } from "lucide-react";
 import { z } from "zod";
-
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -29,11 +22,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -41,12 +29,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { AddMemberDialogParams } from "@/common/types";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  CreditCard,
+  MapPin,
+  User,
+} from "lucide-react";
+import { Progress } from "./ui/progress";
+import { Checkbox } from "./ui/checkbox";
 
 interface BookingDialogProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onChange: React.Dispatch<React.SetStateAction<boolean>>;
   props: AddMemberDialogParams;
 }
 
@@ -66,19 +63,6 @@ interface BookingRequest {
   };
 }
 
-// Mock data - replace with your actual data
-const availableSeats = [
-  { id: "1", name: "Seat A1" },
-  { id: "2", name: "Seat A2" },
-  { id: "3", name: "Seat B1" },
-];
-
-const availableShifts = [
-  { id: "1", name: "Morning (6:00 AM - 12:00 PM)", price: 500 },
-  { id: "2", name: "Afternoon (12:00 PM - 6:00 PM)", price: 400 },
-  { id: "3", name: "Evening (6:00 PM - 10:00 PM)", price: 300 },
-];
-
 // Declare BookingRequestSchema
 const BookingRequestSchema = z.object({
   seatId: z.string(),
@@ -96,148 +80,125 @@ const BookingRequestSchema = z.object({
   }),
 });
 
-export function AddMemberDialog({
-  open,
-  onOpenChange,
-  props,
-}: BookingDialogProps) {
-  const [selectedShifts, setSelectedShifts] = useState<string[]>([]);
+export function AddMemberDialog({ open, onChange, props }: BookingDialogProps) {
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 2;
 
-  const form = useForm<BookingRequest>({
-    resolver: zodResolver(BookingRequestSchema),
+  const form = useForm({
+    // resolver: zodResolver(MemberFormSchema),
     defaultValues: {
-      seatId: "",
-      shiftIds: [],
-      date: new Date(),
       member: {
         name: "",
         phone: "",
       },
       payment: {
-        amount: 0,
-        method: "cash",
-        status: "pending",
-        description: "",
+        startMonth: "", // Current month in YYYY-MM format
+        duration: 1,
+        amount: 500,
+        paid: false,
       },
     },
   });
 
-  const selectedSeat = availableSeats.find(
-    (seat) => seat.id === form.watch("seatId")
-  );
-  const selectedShiftDetails = availableShifts.filter((shift) =>
-    selectedShifts.includes(shift.id)
-  );
-  const totalAmount = selectedShiftDetails.reduce(
-    (sum, shift) => sum + shift.price,
-    0
-  );
-
-  const handleShiftToggle = (shiftId: string) => {
-    const updatedShifts = selectedShifts.includes(shiftId)
-      ? selectedShifts.filter((id) => id !== shiftId)
-      : [...selectedShifts, shiftId];
-
-    setSelectedShifts(updatedShifts);
-    form.setValue("shiftIds", updatedShifts);
-    form.setValue(
-      "payment.amount",
-      availableShifts
-        .filter((shift) => updatedShifts.includes(shift.id))
-        .reduce((sum, shift) => sum + shift.price, 0)
-    );
+  const validateCurrentStep = async () => {
+    if (currentStep === 1) {
+      return await form.trigger(["member.name", "member.phone"]);
+    }
+    return true;
   };
 
-  const onSubmit = (data: BookingRequest) => {
-    console.log("Booking data:", data);
-    onOpenChange(false);
+  const handleNext = async () => {
+    const isValid = await validateCurrentStep();
+    if (isValid && currentStep < totalSteps) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const onSubmit = (data: any) => {
+    const memberData = {
+      ...data,
+      booking: {
+        seatNumber: props.seatNumber,
+        shiftName: props.shiftName,
+        shiftId: props.shiftId,
+        selectedSeatId: props.selectedSeatId,
+        libraryId: props.libraryId,
+      },
+    };
+
+    console.log("Member registration data:", memberData);
+  };
+
+  const handleopenchange = () => {
+    onChange(false);
     form.reset();
-    setSelectedShifts([]);
   };
 
   return (
-   <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="space-y-3">
-          <DialogTitle className="text-2xl font-semibold">Add New Member</DialogTitle>
-          <DialogDescription>Register a new member for the selected seat and shift</DialogDescription>
+    <Dialog open={open} onOpenChange={handleopenchange}>
+      {open && (
+        <DialogContent className="max-w-md">
+          <DialogHeader className="space-y-3">
+            <DialogTitle className="text-2xl font-semibold">
+              Add New Member
+            </DialogTitle>
+            <DialogDescription>
+              {currentStep === 1
+                ? "Enter member details"
+                : "Configure payment information"}
+            </DialogDescription>
 
-          <div className="flex flex-wrap gap-2 pt-2">
-            <Badge variant="secondary" className="flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
-              Seat {props.seatNumber}
-            </Badge>
-            <Badge variant="outline" className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              {props.shiftName}
-            </Badge>
-          </div>
-        </DialogHeader>
+            <div className="flex flex-wrap gap-2 pt-2">
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <MapPin className="h-3 w-3" />
+                Seat {props.seatNumber}
+              </Badge>
+              <Badge variant="outline" className="flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                {props.shiftName}
+              </Badge>
+            </div>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-6">
-              {/* Member Details Section */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 pb-2">
-                  <User className="h-5 w-5 text-primary" />
-                  <h3 className="text-lg font-semibold">Member Details</h3>
-                </div>
-
-                <div className="space-y-4 pl-7">
-                  <FormField
-                    control={form.control}
-                    name="member.name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Full Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter member's full name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="member.phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter phone number" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>
+                  Step {currentStep} of {totalSteps}
+                </span>
+                <span>{Math.round((currentStep / totalSteps) * 100)}%</span>
               </div>
+              <Progress
+                value={(currentStep / totalSteps) * 100}
+                className="h-2"
+              />
+            </div>
+          </DialogHeader>
 
-              <Separator />
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {currentStep === 1 && (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 pb-2">
+                    <User className="h-5 w-5 text-primary" />
+                    <h3 className="text-lg font-semibold">Member Details</h3>
+                  </div>
 
-              {/* Payment Details Section */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 pb-2">
-                  <CreditCard className="h-5 w-5 text-primary" />
-                  <h3 className="text-lg font-semibold">Payment Details</h3>
-                </div>
-
-                <div className="space-y-4 pl-7">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-4">
                     <FormField
                       control={form.control}
-                      name="payment.amount"
+                      name="member.name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Amount</FormLabel>
+                          <FormLabel>Full Name</FormLabel>
                           <FormControl>
                             <Input
-                              type="number"
-                              placeholder="Enter amount"
+                              placeholder="Enter member's full name"
                               {...field}
-                              onChange={(e) => field.onChange(Number(e.target.value))}
                             />
                           </FormControl>
                           <FormMessage />
@@ -247,81 +208,159 @@ export function AddMemberDialog({
 
                     <FormField
                       control={form.control}
-                      name="payment.method"
+                      name="member.phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Payment Method</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select method" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="cash">Cash</SelectItem>
-                              <SelectItem value="card">Credit/Debit Card</SelectItem>
-                              <SelectItem value="upi">UPI</SelectItem>
-                              <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <FormLabel>Phone Number</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter phone number"
+                              {...field}
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                   </div>
-
-                  <FormField
-                    control={form.control}
-                    name="payment.status"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Payment Status</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select status" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="completed">Completed</SelectItem>
-                            <SelectItem value="failed">Failed</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="payment.description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Description (Optional)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Payment notes or description" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </div>
+              )}
+
+              {currentStep === 2 && (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 pb-2">
+                    <CreditCard className="h-5 w-5 text-primary" />
+                    <h3 className="text-lg font-semibold">Payment Details</h3>
+                  </div>
+
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="payment.startMonth"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Start Month</FormLabel>
+                          <FormControl>
+                            <Input type="month" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="payment.duration"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Duration (Months)</FormLabel>
+                            <Select
+                              onValueChange={(value) =>
+                                field.onChange(Number(value))
+                              }
+                              value={field.value?.toString()}
+                              defaultValue={field.value?.toString()}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select duration" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="1">1 Month</SelectItem>
+                                <SelectItem value="3">3 Months</SelectItem>
+                                <SelectItem value="6">6 Months</SelectItem>
+                                <SelectItem value="12">12 Months</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="payment.amount"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Amount</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="Enter amount"
+                                {...field}
+                                onChange={(e) =>
+                                  field.onChange(Number(e.target.value))
+                                }
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <FormField
+                      control={form.control}
+                      name="payment.paid"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={(checked) =>
+                                field.onChange(checked === true)
+                              }
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>Payment Completed</FormLabel>
+                            <p className="text-sm text-muted-foreground">
+                              Check if the payment has been received
+                            </p>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-between">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={currentStep > 1 ? handlePrevious : handleopenchange}
+                  className="flex items-center gap-2"
+                >
+                  {currentStep === 1 ? (
+                    "Cancel"
+                  ) : (
+                    <>
+                      <ChevronLeft className="h-4 w-4" />
+                      Previous
+                    </>
+                  )}
+                </Button>
+
+                {currentStep < totalSteps ? (
+                  <Button
+                    type="button"
+                    onClick={handleNext}
+                    className="flex items-center gap-2"
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                ) : (
+                  <Button type="submit">Register Member</Button>
+                )}
               </div>
-            </div>
-
-            <Separator />
-
-            <div className="flex justify-end gap-3">
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                Cancel
-              </Button>
-              <Button type="submit">Register Member</Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
+            </form>
+          </Form>
+        </DialogContent>
+      )}
     </Dialog>
-  )
+  );
 }
-

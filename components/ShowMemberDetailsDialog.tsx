@@ -215,7 +215,7 @@ const ShowMemberDialog = ({
         )}
       </Dialog>
       <AddMemberDialog
-        onOpenChange={setAddmemberdialogopen}
+        onChange={setAddmemberdialogopen }
         open={addmemberdialogOpen}
         props={essentialdetails as AddMemberDialogParams}
       />
