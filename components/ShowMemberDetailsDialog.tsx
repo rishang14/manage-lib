@@ -45,7 +45,7 @@ const ShowMemberDialog = ({
   const [essentialdetails, setEssentialsdetails] = useState<
     AddMemberDialogParams | {}
   >({});
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["seatdetails", selectedSeatid],
     queryFn: () => getmemberdetailsasperTheseat(selectedSeatid, libid),
     enabled: !!selectedSeatid,
@@ -53,10 +53,10 @@ const ShowMemberDialog = ({
 
   const handleAddmemberdialogopen = (data: AddMemberDialogParams) => {
     setEssentialsdetails(data);
-    setAddmemberdialogopen(true); 
+    setAddmemberdialogopen(true);
   };
 
-  console.log(data,'data for the seat')
+  console.log(data, "data for the seat");
   if (isLoading) return <p>loading screen</p>;
   return (
     <>
@@ -64,20 +64,29 @@ const ShowMemberDialog = ({
         open={!!selectedSeatid}
         onOpenChange={() => setSelectedSeatId(null)}
       >
-          <DialogContent className={` ${addmemberdialogOpen ? "hidden" : "block"}  md:min-w-6xl min-w-xl max-h-[85vh]    overflow-y-auto`}>
-            <DialogHeader className="pb-6  ">
-              <DialogTitle className="text-xl font-bold">
-                Seat {data?.seatNumber}
-              </DialogTitle>
-              <DialogDescription>
-                Manage member assignments for this seat
-              </DialogDescription>
-            </DialogHeader>
+        <DialogContent
+          className={` ${
+            addmemberdialogOpen ? "hidden" : "block"
+          }  md:min-w-6xl min-w-xl max-h-[85vh]    overflow-y-auto`}
+        >
+          <DialogHeader className="pb-6  ">
+            <DialogTitle className="text-xl font-bold">
+              Seat {data?.seatNumber}
+            </DialogTitle>
+            <DialogDescription>
+              Manage member assignments for this seat
+            </DialogDescription>
+          </DialogHeader>
 
-            {shifts && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {shifts.map((shift: any) => (
+          {shifts && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {shifts.map((shift: any) => {
+                  const memberdetails = data?.bookings.find(
+                    (item) => item.shiftId === shift.id
+                  );
+                  console.log(memberdetails, "for this shifts");
+                  return (
                     <Card
                       key={shift.id}
                       className={`relative overflow-hidden transition-all duration-200 hover:shadow-md `}
@@ -112,7 +121,7 @@ const ShowMemberDialog = ({
                         </div>
                       </CardHeader>
                       <CardContent className="space-y-4    bg-card">
-                        {shift.member ? (
+                        {memberdetails?.memberId ? (
                           <div className="space-y-4">
                             {/* Member Info */}
                             <div className="bg-white/60 dark:bg-slate-800/60 rounded-lg p-4 space-y-3">
@@ -122,10 +131,10 @@ const ShowMemberDialog = ({
                                 </div>
                                 <div>
                                   <p className="font-semibold text-slate-900 dark:text-slate-100">
-                                    {shift.member.name}
+                                    {memberdetails.member.name}
                                   </p>
                                   <p className="text-xs text-muted-foreground">
-                                    Member ID: {shift.member.id}
+                                    {/* Member ID: {shift.member.id} */}
                                   </p>
                                 </div>
                               </div>
@@ -134,23 +143,15 @@ const ShowMemberDialog = ({
                                 <div className="flex items-center gap-2 text-sm">
                                   <Phone className="w-4 h-4 text-muted-foreground" />
                                   <span className="text-slate-700 dark:text-slate-300">
-                                    {shift.member.phone}
+                                    {memberdetails.member.phone}
                                   </span>
                                 </div>
-                                {shift.member.email && (
-                                  <div className="flex items-center gap-2 text-sm">
-                                    <Mail className="w-4 h-4 text-muted-foreground" />
-                                    <span className="text-slate-700 dark:text-slate-300">
-                                      {shift.member.email}
-                                    </span>
-                                  </div>
-                                )}
                                 <div className="flex items-center gap-2 text-sm">
                                   <Calendar className="w-4 h-4 text-muted-foreground" />
                                   <span className="text-slate-700 dark:text-slate-300">
                                     Joined:{" "}
                                     {new Date(
-                                      shift.member.joinedAt
+                                      memberdetails.member.joinedAt
                                     ).toLocaleDateString()}
                                   </span>
                                 </div>
@@ -205,17 +206,18 @@ const ShowMemberDialog = ({
                         )}
                       </CardContent>
                     </Card>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
-            )}
-          </DialogContent>
+            </div>
+          )}
+        </DialogContent>
       </Dialog>
       <AddMemberDialog
-        onChange={setAddmemberdialogopen }
+        onChange={setAddmemberdialogopen}
         open={addmemberdialogOpen}
-        props={essentialdetails as AddMemberDialogParams} 
-        shifts={shifts} 
+        props={essentialdetails as AddMemberDialogParams}
+        shifts={shifts}
         libid={libid}
       />
     </>

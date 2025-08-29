@@ -19,8 +19,12 @@ import { Badge } from "./ui/badge";
 import { useState } from "react";
 import { SeatShiftResult, shiftschemaInput } from "@/common/types";
 import { useQueryClient } from "@tanstack/react-query";
-import { getmemberdetailsasperTheseat } from "@/lib/serveraction";
+import { deleteSeat, getmemberdetailsasperTheseat } from "@/lib/serveraction";
 import ShowMemberDialogWrapper from "./ShowMemberDialogWrapper";
+import { toast } from "sonner";
+import { Duru_Sans } from "next/font/google";
+import DeleteSeatDialog from "./DeleteSeatDialog";
+import { id } from "date-fns/locale";
 
 type prop = {
   data: SeatShiftResult[];
@@ -32,7 +36,9 @@ const ManagementTable = ({ data, libid, shifts }: prop) => {
   const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
   const [selectedSeatNumber, setSeletectedSeatNumber] = useState<number | null>(
     null
-  );
+  );  
+  const [seatid,setseatId]= useState<string>("")
+  const [openDeleteDialog,setOpenDeleteDialog]=useState<boolean>(false)
   const queryClinet = useQueryClient();
   const handleSelectedSeat = (seatId: string, seatNum: number) => {
     if (seatId) {
@@ -46,6 +52,8 @@ const ManagementTable = ({ data, libid, shifts }: prop) => {
     setSelectedSeat(seatId);
     setSeletectedSeatNumber(seatNum);
   };
+
+
   const columns: ColumnDef<SeatShiftResult>[] = [
     {
       accessorKey: "seatNumber",
@@ -62,7 +70,7 @@ const ManagementTable = ({ data, libid, shifts }: prop) => {
       id: "totalShifts",
       header: "Total Shifts",
       cell: ({ row }) => {
-        const shiftCount = row.original.shifts.length;
+        const shiftCount = shifts.length;
         return (
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-slate-500" />
@@ -77,17 +85,16 @@ const ManagementTable = ({ data, libid, shifts }: prop) => {
       id: "filled",
       header: "Occupancy",
       cell: ({ row }) => {
-        // Placeholder logic - you can replace with actual booking data
-        // const filled = Math.floor(Math.random() * row.original.shifts.length)
-        // const total = row.original.shifts.length
-        // const percentage = total > 0 ? Math.round((filled / total) * 100) : 0
+        console.log(row, "row");
+        const filled = row.original._count.bookings;
+        const Totalshifts = shifts.length;
 
         return (
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4 text-slate-500" />
             <div className="flex flex-col">
               <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                {/* {filled}/{total} */}
+                {filled}/{Totalshifts}
               </span>
               {/* <span className="text-xs text-slate-500">{percentage}% filled</span> */}
             </div>
@@ -99,7 +106,7 @@ const ManagementTable = ({ data, libid, shifts }: prop) => {
       id: "status",
       header: "Status",
       cell: ({ row }) => {
-        const shiftCount = row.original.shifts.length;
+        const shiftCount = shifts.length;
         const status = shiftCount > 0 ? "Active" : "Inactive";
         const variant = status === "Active" ? "default" : "secondary";
 
@@ -123,7 +130,7 @@ const ManagementTable = ({ data, libid, shifts }: prop) => {
               className="h-8 w-8 p-0 hover:bg-blue-50 dark:hover:bg-blue-900/20 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
               title="Edit seat"
               onClick={() => {
-                handleSelectedSeat(seat.id, seat.seatNumber);
+                handleSelectedSeat(seat.id, +seat.seatNumber);
               }}
             >
               <Edit className="w-4 h-4 text-blue-600 dark:text-blue-400" />
@@ -133,6 +140,10 @@ const ManagementTable = ({ data, libid, shifts }: prop) => {
               size="sm"
               className="h-8 w-8 p-0 hover:bg-red-50 dark:hover:bg-red-900/20 focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
               title="Delete seat"
+              onClick={() =>{ 
+                setseatId(seat.id)
+                setOpenDeleteDialog(true); 
+              }}
             >
               <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
             </Button>
@@ -228,7 +239,8 @@ const ManagementTable = ({ data, libid, shifts }: prop) => {
           libid={libid}
           seatNum={selectedSeatNumber as number}
         />
-      )}
+      )} 
+      <DeleteSeatDialog seatId={seatid}  libid={libid as string} onchangeopen={setOpenDeleteDialog} isopen={openDeleteDialog}/>
     </>
   );
 };

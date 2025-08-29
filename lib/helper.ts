@@ -35,40 +35,31 @@ export async function verifysession(libid: string): Promise<libroles> {
   return lib;
 }
 
-export function transfromintotabledata(
-  seats: any[],
-  allShifts: any[]
-): SeatShiftResult[] {
-  return seats.map((seat) => {
-    const shifts = allShifts.map((shift) => {
-      // Find booking for this seat and shift combination
-      const booking = seat.bookings.find((b: any) => b.shiftId === shift.id);
+// export function transfromintotabledata(
+//   seats: any[],
+//   allShifts: any[]
+// ): SeatShiftResult[] {
+//   return seats.map((seat) => {
+//     const shifts = allShifts.map((shift) => {
+//       // Find booking for this seat and shift combination
+//       const booking = seat.bookings.find((b: any) => b.shiftId === shift.id);
 
-      return {
-        id: `${seat.seatNumber}-${shift.name.toLowerCase()}`,
-        shifttype: shift.name.toLowerCase(),
-        shiftid: shift.id,
-        startTime: shift.startTime,
-        endTime: shift.endTime,
-        member: booking
-          ? {
-              id: booking.member.id,
-              name: booking.member.name,
-              phone: booking.member.phone,
-              joinedAt: booking.member.joinedAt.toISOString().split("T")[0],
-              libraryId: booking.member.libraryId,
-            }
-          : undefined,
-      };
-    });
+//       return {
+//         id: `${seat.seatNumber}-${shift.name.toLowerCase()}`,
+//         shifttype: shift.name.toLowerCase(),
+//         shiftid: shift.id,
+//         startTime: shift.startTime,
+//         endTime: shift.endTime, 
+//        };
+//     });
 
-    return {
-      id: seat.id,
-      seatNumber: parseInt(seat.seatNumber),
-      shifts,
-    };
-  });
-}
+//     return {
+//       id: seat.id,
+//       seatNumber: parseInt(seat.seatNumber),
+//       shifts,  
+//     };
+//   });
+// }
 
 export function getValidTillDateAfterAddingDuration(joinedAt=new Date(), duration: number) {
   let currmonth = joinedAt.getMonth() + 1;

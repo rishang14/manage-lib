@@ -10,35 +10,39 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { DelteShift } from "@/lib/serveraction";
+import { deleteSeat } from "@/lib/serveraction";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+
 
 type prop = {
   isopen: boolean;
   onchangeopen: (val: boolean) => void;
-  shiftid: string;
+  seatId: string;
   libid: string;
 };
 
-const DeleteSpaceDialog = ({ isopen, onchangeopen, shiftid, libid }: prop) => { 
-    const [pending,setpending]=useState<boolean>(false); 
-  const handleDelete = async (id: string) => { 
+const DeleteSpaceDialog = ({ isopen, onchangeopen, seatId, libid }: prop) => {
+  const [pending, setpending] = useState<boolean>(false);
+  const queryClinet = useQueryClient();
+  const handleDelete = async (seatid: string,) => { 
     setpending(true)
-    try {  
-        const del= await DelteShift(shiftid,libid); 
-        
-        if(del.success){
-            toast.success("shift is delted successfully",{duration:2000})
-            onchangeopen(false)
-        }else if(!del.success){ 
-            // @ts-ignore
-            toast.error(del?.error ?? "Uncatched error ")  
-        } 
-    } catch (error) {
-      toast.error("Unexpected error");
+    try {
+      const res = await deleteSeat(seatid, libid);
 
+      if (res.success) {
+        toast.success("seat Deleted Successfully", {
+          duration: 2000,
+        });
+        queryClinet.invalidateQueries({
+          queryKey: ["libbookingdetails", libid],
+        }); 
+        onchangeopen(false)
+      }
+    } catch (error) {
+      toast.error("something went wrong ", { duration: 3000 });
     }finally{
-         setpending(false)
+        setpending(false)
     }
   };
   return (
@@ -49,19 +53,23 @@ const DeleteSpaceDialog = ({ isopen, onchangeopen, shiftid, libid }: prop) => {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete your
-              Shift and remove your data from our servers.
+              Seat and remove your data from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel
               className="text-white bg-blue-500  hover:bg-blue-600"
-              onClick={() => onchangeopen(false)} 
+              onClick={() => onchangeopen(false)}
               disabled={pending}
             >
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction className="text-white  bg-red-500" disabled={pending} onClick={()=>handleDelete(shiftid)}>
-              {pending ? "Deleting Space" : "Delete Space"}
+            <AlertDialogAction
+              className="text-white  bg-red-500"
+              disabled={pending}
+              onClick={() => handleDelete(seatId)}
+            >
+              {pending ? "Deleting Seat" : "Delete Seat"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

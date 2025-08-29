@@ -36,7 +36,7 @@ export function SeatManagementTable({
   libid, 
   shifts
 }: SeatManagementTableProps) {
-  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [openDialog, setOpenDialog] = useState<boolean>(false); 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -57,7 +57,8 @@ export function SeatManagementTable({
     queryKey: ["libbookingdetails", libid],
     queryFn:()=> allbookingAndSeatdetails(libid, limit, skip), 
     enabled:!!libid,
-  });
+  }); 
+  console.log(data,"data of the table")
   // const columns: ColumnDef<SeatShiftResult>[] = [
   //   {
   //     accessorKey: "seatNumber",

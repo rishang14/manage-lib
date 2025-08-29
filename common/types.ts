@@ -320,9 +320,12 @@ export type Shiftwithmember = {
 };
 
 export type SeatShiftResult = {
-  id: string;   
-  seatNumber:number,        
-  shifts: Shiftwithmember[];  
+  id: string;
+  libraryId: string;
+  seatNumber: string;
+  _count: {
+    bookings: number;
+  };
 };
 
 export type Response<T = unknown> = {

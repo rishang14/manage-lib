@@ -4,12 +4,12 @@ import {
   shifts,
   updateShift,
   addnewShift,
-  libraryUserSeatWithshift,
+  libraryUserSeatWithShift,
   createseat,
   getseatdetails,
   createbooking,
 } from "./dbcalls";
-import { getfullDataAftervalidation, transfromintotabledata, verifysession } from "./helper";
+import { getfullDataAftervalidation, verifysession } from "./helper";
 import { Shift } from "@/prisma/zod";
 import { revalidatePath } from "next/cache";
 import prisma from "./prisma";
@@ -23,6 +23,9 @@ import {
   BookingRequestSchema,
 } from "@/common/types";
 import { use } from "react";
+import { string } from "zod";
+import { error } from "console";
+import { _success } from "zod/v4/core";
 
 export const getssrlibdata = async (libid: string) => {
   await verifysession(libid);
@@ -137,16 +140,17 @@ export const allbookingAndSeatdetails = async (
     const user = await verifysession(libid);
 
     if (!user.role) {
-       throw new Error ("Not valid request" );
+      throw new Error("Not valid request");
     }
 
-    const seats = await libraryUserSeatWithshift(libid, limit, skip);
+    const seats = await libraryUserSeatWithShift(libid, limit, skip);
+    console.log(seats, "seatsdetails");
     const shift = await getshifts(libid as string);
-    const data = transfromintotabledata(seats as any[], shift);
-    return   data as SeatShiftResult[] ;
+    // const data = transfromintotabledata(seats as any[], shift);
+    return seats as SeatShiftResult[];
   } catch (error) {
     console.log(error, "something went wrong ");
-    throw new Error ("Internal server error " );
+    throw new Error("Internal server error ");
   }
 };
 
@@ -186,62 +190,75 @@ export const addseat = async (
   }
 };
 
-
 export const getmemberdetailsasperTheseat = async (
   seatid: string,
   libid: string
 ) => {
-  try { 
-    console.log(seatid,"received") 
-    console.log(libid,"libid received")
+  try {
+    console.log(seatid, "received");
+    console.log(libid, "libid received");
     const user = await verifysession(libid);
-   console.log(user,"user in memberpersseat")
     if (!user) {
-      throw new Error("you dont have access")
+      throw new Error("you dont have access");
     }
     const data = await getseatdetails(seatid as string);
 
     return data;
   } catch (error) {
-    throw new Error( "something went wrong " );
+    throw new Error("something went wrong ");
   }
 };
 
-
-
-export const addmember = async(bookingdetails:CreateBookingInput,libid:string)=>{ 
+export const addmember = async (
+  bookingdetails: CreateBookingInput,
+  libid: string
+) => {
   try {
-   const user= await verifysession(libid); 
-  if(!user){
-    return {error:"Invalid request "}; 
-  }  
-  
-  
-  const validatedata= BookingRequestSchema.safeParse(bookingdetails);  
-  if(bookingdetails.libraryId !== user.libid){
-    return {error:"Invalid libid"}
-  }
- 
-  //  const bookingecheckexist 
-  if(!validatedata.success){
-    return {error:validatedata.error.flatten()}; 
-  } 
- 
-  const getNewData= getfullDataAftervalidation(validatedata.data); 
-  const createdbooking = await createbooking(getNewData,libid as string);  
-  console.log(createbooking,"booking");  
+    const user = await verifysession(libid);
+    if (!user) {
+      return { error: "Invalid request " };
+    }
 
-  // todos if member is not admin You have to send the notification to the admin of this lib with the created
-  // member details    
-  if(user.role !=="ADMIN"){
+    const validatedata = BookingRequestSchema.safeParse(bookingdetails);
+    if (bookingdetails.libraryId !== user.libid) {
+      return { error: "Invalid libid" };
+    }
 
-  }
+    //  const bookingecheckexist
+    if (!validatedata.success) {
+      return { error: validatedata.error.flatten() };
+    }
 
-   if(createdbooking){
-    return {success:true, msg:"member is created"} 
-   };
-  revalidatePath(`/library/${libid}?tab=manage`);
+    const getNewData = getfullDataAftervalidation(validatedata.data);
+    const createdbooking = await createbooking(getNewData, libid as string);
+    console.log(createbooking, "booking");
+
+    // todos if member is not admin You have to send the notification to the admin of this lib with the created
+    // member details
+    if (user.role !== "ADMIN") {
+    }
+
+    if (createdbooking) {
+      return { success: true, msg: "member is created" };
+    }
+    revalidatePath(`/library/${libid}?tab=manage`);
   } catch (error) {
-    return {error:"Internal server Error"}
+    return { error: "Internal server Error" };
   }
-}
+};
+
+export const deleteSeat = async (seatid: string, libid: string) => {
+  try {
+    const user = await verifysession(libid as string);
+
+    if (user.role !== "ADMIN") {
+      return { success: false, error: "Only Admin can do this" };
+    }
+
+    await prisma.seat.delete({ where: { id: seatid } });
+    revalidatePath(`/library/${libid}?tab=manage`);
+    return { success: true, message: "Deleted successfully" };
+  } catch (error) {
+    return { success: false, error: "Something went wrong" };
+  }
+};
