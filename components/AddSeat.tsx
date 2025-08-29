@@ -43,7 +43,6 @@ export function AddSeatForm({ open, setopen, libId }: prop) {
   };
   return (
     <Dialog open={open}  onOpenChange={setopen}  >
-      {open && (
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="flex gap-2 items-center">
@@ -66,7 +65,6 @@ export function AddSeatForm({ open, setopen, libId }: prop) {
             </DialogFooter>
           </form>
         </DialogContent>
-      )}
     </Dialog>
   );
 }

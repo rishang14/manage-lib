@@ -56,7 +56,7 @@ const ShowMemberDialog = ({
     setAddmemberdialogopen(true); 
   };
 
-
+  console.log(data,'data for the seat')
   if (isLoading) return <p>loading screen</p>;
   return (
     <>
@@ -64,7 +64,6 @@ const ShowMemberDialog = ({
         open={!!selectedSeatid}
         onOpenChange={() => setSelectedSeatId(null)}
       >
-        {!!selectedSeatid && (
           <DialogContent className={` ${addmemberdialogOpen ? "hidden" : "block"}  md:min-w-6xl min-w-xl max-h-[85vh]    overflow-y-auto`}>
             <DialogHeader className="pb-6  ">
               <DialogTitle className="text-xl font-bold">
@@ -211,7 +210,6 @@ const ShowMemberDialog = ({
               </div>
             )}
           </DialogContent>
-        )}
       </Dialog>
       <AddMemberDialog
         onChange={setAddmemberdialogopen }

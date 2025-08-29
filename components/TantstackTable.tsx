@@ -14,7 +14,7 @@ import {
   TableCell,
 } from "./ui/table";
 import { Button } from "./ui/button";
-import {  Clock, Edit, Trash2, Users } from "lucide-react";
+import { Clock, Edit, Trash2, Users } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { useState } from "react";
 import { SeatShiftResult, shiftschemaInput } from "@/common/types";
@@ -35,13 +35,14 @@ const ManagementTable = ({ data, libid, shifts }: prop) => {
   );
   const queryClinet = useQueryClient();
   const handleSelectedSeat = (seatId: string, seatNum: number) => {
-    queryClinet.prefetchQuery({
-      queryKey: ["seatdetails", seatId],
-      queryFn: () => getmemberdetailsasperTheseat(seatId, libid),
-      staleTime: 1000 * 5,
-    }); 
-    console.log(seatId,"seatid") 
-    console.log(seatNum,"number")
+    if (seatId) {
+      queryClinet.prefetchQuery({
+        queryKey: ["seatdetails", seatId],
+        queryFn: () => getmemberdetailsasperTheseat(seatId, libid),
+        staleTime: 1000 * 5,
+      });
+    }
+
     setSelectedSeat(seatId);
     setSeletectedSeatNumber(seatNum);
   };

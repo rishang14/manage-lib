@@ -59,17 +59,17 @@ export async function POST(
         { status: 409 }
       );
     }
-    const createdbooking = await createbooking(
-      validateddata.data as CreateBookingInput,
-      id
-    );
+    // const createdbooking = await createbooking(
+    //   validateddata.data as CreateBookingInput,
+    //   id
+    // );
 
-    if (createdbooking == undefined) {
-      return NextResponse.json(
-        { error: "Somethig went wrong while creating booking" },
-        { status: 500 }
-      );
-    }
+    // if (createdbooking == undefined) {
+    //   return NextResponse.json(
+    //     { error: "Somethig went wrong while creating booking" },
+    //     { status: 500 }
+    //   );
+    // }
 
     return NextResponse.json(
       { message: "Booking created", createbooking },

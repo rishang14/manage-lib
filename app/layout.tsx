@@ -38,7 +38,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${rubik.variable}  antialiased`}
+        className={`${rubik.variable}  antialiased`} 
+        suppressHydrationWarning
       >
         <Provider
           attribute="class"

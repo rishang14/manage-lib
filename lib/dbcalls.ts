@@ -233,8 +233,6 @@ try {
       bookings:{
         include:{
           member:true,
-          shift:true,
-          seat:true
         }
       }
     }
@@ -293,14 +291,13 @@ export  async function createbooking(datas:BookingBackendDbcheckInput,libid:stri
       create:{
         paid:datas.payment.paid,
         amount:datas.payment.amount,
-        paidAt:datas.member.joinedAt, 
+        paidAt:datas.payment.paidAt, 
         validTill:datas.payment.validTill, 
         duration:datas.payment.duration, 
         startMonth:datas.payment.startMonth
       }
     }
    }, 
-
  })}  
 
 

@@ -1,12 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import {
-  useReactTable,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  getPaginationRowModel,
-  flexRender,
+
   type ColumnDef,
   type SortingState,
   type ColumnFiltersState,
@@ -24,10 +19,6 @@ import {
 import {
   Search,
   Plus,
-  Edit,
-  Trash2,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 import { Seat, SeatShiftResult, shiftschemaInput } from "@/common/types";
 import { AddSeatForm } from "./AddSeat";
@@ -64,7 +55,8 @@ export function SeatManagementTable({
 
   const { data } = useQuery({
     queryKey: ["libbookingdetails", libid],
-    queryFn:()=> allbookingAndSeatdetails(libid, limit, skip)
+    queryFn:()=> allbookingAndSeatdetails(libid, limit, skip), 
+    enabled:!!libid,
   });
   // const columns: ColumnDef<SeatShiftResult>[] = [
   //   {
@@ -270,6 +262,7 @@ export function SeatManagementTable({
           {/* Table */}
           <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">  
             <ManagementTable data={data as SeatShiftResult[] } libid={libid} shifts={shifts}/>
+
             {/* <Table> 
 
               <TableHeader className="bg-slate-50 dark:bg-slate-800">

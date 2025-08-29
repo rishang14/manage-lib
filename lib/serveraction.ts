@@ -9,7 +9,7 @@ import {
   getseatdetails,
   createbooking,
 } from "./dbcalls";
-import { transfromintotabledata, verifysession } from "./helper";
+import { getfullDataAftervalidation, transfromintotabledata, verifysession } from "./helper";
 import { Shift } from "@/prisma/zod";
 import { revalidatePath } from "next/cache";
 import prisma from "./prisma";
@@ -22,7 +22,7 @@ import {
   CreateBookingInput,
   BookingRequestSchema,
 } from "@/common/types";
-import { error } from "console";
+import { use } from "react";
 
 export const getssrlibdata = async (libid: string) => {
   await verifysession(libid);
@@ -226,10 +226,20 @@ export const addmember = async(bookingdetails:CreateBookingInput,libid:string)=>
   if(!validatedata.success){
     return {error:validatedata.error.flatten()}; 
   } 
+ 
+  const getNewData= getfullDataAftervalidation(validatedata.data); 
+  const createdbooking = await createbooking(getNewData,libid as string);  
+  console.log(createbooking,"booking");  
 
-//  const createdbooking = await createbooking(validatedata.data); 
-   
+  // todos if member is not admin You have to send the notification to the admin of this lib with the created
+  // member details    
+  if(user.role !=="ADMIN"){
 
+  }
+
+   if(createdbooking){
+    return {success:true, msg:"member is created"} 
+   };
   revalidatePath(`/library/${libid}?tab=manage`);
   } catch (error) {
     return {error:"Internal server Error"}

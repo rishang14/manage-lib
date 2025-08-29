@@ -46,30 +46,47 @@ import {
 import { Progress } from "./ui/progress";
 import { Checkbox } from "./ui/checkbox";
 import { addmember } from "@/lib/serveraction";
+import { toast } from "sonner";
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 interface BookingDialogProps {
   open: boolean;
   onChange: React.Dispatch<React.SetStateAction<boolean>>;
   props: AddMemberDialogParams;
-  shifts: shiftschemaInput[]; 
-  libid:string
+  shifts: shiftschemaInput[];
+  libid: string;
 }
-
-
 
 export function AddMemberDialog({
   open,
   onChange,
   props,
-  shifts, 
-  libid
+  shifts,
+  libid,
 }: BookingDialogProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 2;
+  const queryClient = useQueryClient();
+  const addmemberMutation = useMutation({
+    mutationFn: (data: CreateBookingInput) => addmember(data, libid),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["seatdetails", props.selectedSeatId],
+      });
+      handleopenchange();
+    },
+    onError(error, variables, context) {
+      toast.error("Something went Wrong Pls try again", { duration: 2000 });
+    },
+  });
 
   const form = useForm({
     resolver: zodResolver(BookingRequestSchema),
-    defaultValues: {  
+    defaultValues: {
       member: {
         name: "",
         phone: "",
@@ -77,19 +94,19 @@ export function AddMemberDialog({
       payment: {
         startMonth: "", // Current month in YYYY-MM format
         duration: 1,
-        amount: 500,
+        amount: 100,
         paid: false,
       },
       shiftsIds: [],
     },
   });
- 
-    const {
+
+  const {
     control,
     handleSubmit,
     watch,
-    formState: { errors, isDirty,isSubmitting },
-  } = form; 
+    formState: { errors, isDirty },
+  } = form;
 
   const validateCurrentStep = async () => {
     if (currentStep === 1) {
@@ -110,296 +127,304 @@ export function AddMemberDialog({
       setCurrentStep(currentStep - 1);
     }
   };
-
-  const onSubmit = async(data: CreateBookingInput) => {
-   try {
-      data.libraryId=props.libraryId as string, 
-      data.seatId=props.selectedSeatId as string ,  
-     console.log(data,"data for the lib")
-      const res= await addmember(data,libid) ;
-      console.log(res,"res"); 
-   } catch (error) {
-    
-   }
-  };
-
   const handleopenchange = () => {
     onChange(false);
+    setCurrentStep(1);
     form.reset();
+  };
+
+  const onSubmit = (data: CreateBookingInput) => {
+    (data.libraryId = props.libraryId as string),
+      (data.seatId = props.selectedSeatId as string),
+      addmemberMutation.mutate(data);
   };
 
   return (
     <Dialog open={open} onOpenChange={handleopenchange}>
-      {open && (
-        <DialogContent className="max-w-md">
-          <DialogHeader className="space-y-3">
-            <DialogTitle className="text-2xl font-semibold">
-              Add New Member
-            </DialogTitle>
-            <DialogDescription>
-              {currentStep === 1
-                ? "Enter member details"
-                : "Configure payment information"}
-            </DialogDescription>
+      <DialogContent className="max-w-md">
+        <DialogHeader className="space-y-3">
+          <DialogTitle className="text-2xl font-semibold">
+            Add New Member
+          </DialogTitle>
+          <DialogDescription>
+            {currentStep === 1
+              ? "Enter member details"
+              : "Configure payment information"}
+          </DialogDescription>
 
-            <div className="flex flex-wrap gap-2 pt-2">
-              <Badge variant="secondary" className="flex items-center gap-1">
-                <MapPin className="h-3 w-3" />
-                Seat {props.seatNumber}
-              </Badge>
-              <Badge variant="outline" className="flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                {props.shiftName}
-              </Badge>
+          <div className="flex flex-wrap gap-2 pt-2">
+            <Badge variant="secondary" className="flex items-center gap-1">
+              <MapPin className="h-3 w-3" />
+              Seat {props.seatNumber}
+            </Badge>
+            <Badge variant="outline" className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              {props.shiftName}
+            </Badge>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm text-muted-foreground">
+              <span>
+                Step {currentStep} of {totalSteps}
+              </span>
+              <span>{Math.round((currentStep / totalSteps) * 100)}%</span>
             </div>
+            <Progress
+              value={(currentStep / totalSteps) * 100}
+              className="h-2"
+            />
+          </div>
+        </DialogHeader>
 
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>
-                  Step {currentStep} of {totalSteps}
-                </span>
-                <span>{Math.round((currentStep / totalSteps) * 100)}%</span>
+        <Form {...form}>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {currentStep === 1 && (
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 pb-2">
+                  <User className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-semibold">Member Details</h3>
+                </div>
+
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="member.name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Full Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter member's full name"
+                            {...field}
+                            disabled={addmemberMutation.isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="member.phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Phone Number</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter phone number"
+                            {...field}
+                            disabled={addmemberMutation.isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="shiftsIds"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Select Shifts</FormLabel>
+                        <div className="space-y-2 border rounded-lg p-3 bg-muted/20">
+                          {shifts.map((shift: shiftschemaInput) => {
+                            // @ts-ignore
+                            const isSelected = field.value?.includes(
+                              shift?.id as string
+                            );
+
+                            return (
+                              <FormItem
+                                key={shift.id}
+                                className={`flex items-center gap-2 p-2 rounded-md ${
+                                  isSelected
+                                    ? "bg-primary/10 border border-primary/20"
+                                    : ""
+                                }`}
+                              >
+                                <FormControl>
+                                  <Checkbox
+                                    checked={isSelected}
+                                    onCheckedChange={(checked) => {
+                                      if (checked) {
+                                        field.onChange([
+                                          ...(field.value || []),
+                                          shift.id,
+                                        ]);
+                                      } else {
+                                        field.onChange(
+                                          field.value?.filter(
+                                            (id) => id !== shift.id
+                                          )
+                                        );
+                                      }
+                                    }}
+                                    disabled={addmemberMutation.isPending}
+                                  />
+                                </FormControl>
+                                <FormLabel>{shift.name}</FormLabel>
+                              </FormItem>
+                            );
+                          })}
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
-              <Progress
-                value={(currentStep / totalSteps) * 100}
-                className="h-2"
-              />
-            </div>
-          </DialogHeader>
+            )}
 
-          <Form {...form}>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {currentStep === 1 && (
-                <div className="space-y-6">
-                  <div className="flex items-center gap-2 pb-2">
-                    <User className="h-5 w-5 text-primary" />
-                    <h3 className="text-lg font-semibold">Member Details</h3>
-                  </div>
-
-                  <div className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="member.name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Full Name</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter member's full name"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="member.phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Phone Number</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter phone number"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="shiftsIds"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Select Shifts</FormLabel>
-                          <div className="space-y-2 border rounded-lg p-3 bg-muted/20">
-                            {shifts.map((shift: shiftschemaInput) => {
-                              // @ts-ignore
-                              const isSelected = field.value?.includes(
-                                shift?.id as string
-                              );
-
-                              return (
-                                <FormItem
-                                  key={shift.id}
-                                  className={`flex items-center gap-2 p-2 rounded-md ${
-                                    isSelected
-                                      ? "bg-primary/10 border border-primary/20"
-                                      : ""
-                                  }`}
-                                >
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={isSelected}
-                                      onCheckedChange={(checked) => {
-                                        if (checked) {
-                                          field.onChange([
-                                            ...(field.value || []),
-                                            shift.id,
-                                          ]);
-                                        } else {
-                                          field.onChange(
-                                            field.value?.filter(
-                                              (id) => id !== shift.id
-                                            )
-                                          );
-                                        }
-                                      }}
-                                    />
-                                  </FormControl>
-                                  <FormLabel>{shift.name}</FormLabel>
-                                </FormItem>
-                              );
-                            })}
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+            {currentStep === 2 && (
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 pb-2">
+                  <CreditCard className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-semibold">Payment Details</h3>
                 </div>
-              )}
 
-              {currentStep === 2 && (
-                <div className="space-y-6">
-                  <div className="flex items-center gap-2 pb-2">
-                    <CreditCard className="h-5 w-5 text-primary" />
-                    <h3 className="text-lg font-semibold">Payment Details</h3>
-                  </div>
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="payment.startMonth"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Start Month</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="month"
+                            {...field}
+                            disabled={addmemberMutation.isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                  <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="payment.startMonth"
+                      name="payment.duration"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Start Month</FormLabel>
-                          <FormControl>
-                            <Input type="month" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="payment.duration"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Duration (Months)</FormLabel>
-                            <Select
-                              onValueChange={(value) =>
-                                field.onChange(Number(value))
-                              }
-                              value={field.value?.toString()}
-                              defaultValue={field.value?.toString()}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select duration" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="1">1 Month</SelectItem>
-                                <SelectItem value="3">3 Months</SelectItem>
-                                <SelectItem value="6">6 Months</SelectItem>
-                                <SelectItem value="12">12 Months</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="payment.amount"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Amount</FormLabel>
+                          <FormLabel>Duration (Months)</FormLabel>
+                          <Select
+                            onValueChange={(value) =>
+                              field.onChange(Number(value))
+                            }
+                            value={field.value?.toString()}
+                            defaultValue={field.value?.toString()}
+                            disabled={addmemberMutation.isPending}
+                          >
                             <FormControl>
-                              <Input
-                                type="number"
-                                placeholder="Enter amount"
-                                {...field}
-                                onChange={(e) =>
-                                  field.onChange(Number(e.target.value))
-                                }
-                              />
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select duration" />
+                              </SelectTrigger>
                             </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                            <SelectContent>
+                              <SelectItem value="1">1 Month</SelectItem>
+                              <SelectItem value="3">3 Months</SelectItem>
+                              <SelectItem value="6">6 Months</SelectItem>
+                              <SelectItem value="12">12 Months</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
                     <FormField
                       control={form.control}
-                      name="payment.paid"
+                      name="payment.amount"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                        <FormItem>
+                          <FormLabel>Amount</FormLabel>
                           <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={(checked) =>
-                                field.onChange(checked === true)
+                            <Input
+                              type="number"
+                              placeholder="Enter amount"
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(Number(e.target.value))
                               }
+                              disabled={addmemberMutation.isPending}
                             />
                           </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel>Payment Completed</FormLabel>
-                            <p className="text-sm text-muted-foreground">
-                              Check if the payment has been received
-                            </p>
-                          </div>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
                   </div>
-                </div>
-              )}
 
-              <div className="flex justify-between">
+                  <FormField
+                    control={form.control}
+                    name="payment.paid"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={(checked) =>
+                              field.onChange(checked === true)
+                            }
+                            disabled={addmemberMutation.isPending}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>Payment Completed</FormLabel>
+                          <p className="text-sm text-muted-foreground">
+                            Check if the payment has been received
+                          </p>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-between">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={currentStep > 1 ? handlePrevious : handleopenchange}
+                className="flex items-center gap-2"
+                disabled={addmemberMutation.isPending}
+              >
+                {currentStep === 1 ? (
+                  "Cancel"
+                ) : (
+                  <>
+                    <ChevronLeft className="h-4 w-4" />
+                    Previous
+                  </>
+                )}
+              </Button>
+
+              {currentStep < totalSteps ? (
                 <Button
                   type="button"
-                  variant="outline"
-                  onClick={currentStep > 1 ? handlePrevious : handleopenchange}
+                  onClick={handleNext}
                   className="flex items-center gap-2"
+                  disabled={addmemberMutation.isPending}
                 >
-                  {currentStep === 1 ? (
-                    "Cancel"
-                  ) : (
-                    <>
-                      <ChevronLeft className="h-4 w-4" />
-                      Previous
-                    </>
-                  )}
+                  Next
+                  <ChevronRight className="h-4 w-4" />
                 </Button>
-
-                {currentStep < totalSteps ? (
-                  <Button
-                    type="button"
-                    onClick={handleNext}
-                    className="flex items-center gap-2"
-                  >
-                    Next
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                ) : (
-                  <Button type="submit">Register Member</Button>
-                )}
-              </div>
-            </form>
-          </Form>
-        </DialogContent>
-      )}
+              ) : (
+                <Button type="submit" disabled={addmemberMutation.isPending}>
+                  {addmemberMutation.isPending
+                    ? "Registering Member"
+                    : "Regiester Member"}
+                </Button>
+              )}
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
     </Dialog>
   );
 }
