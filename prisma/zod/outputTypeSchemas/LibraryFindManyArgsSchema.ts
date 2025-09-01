@@ -10,6 +10,7 @@ import { UserRoleFindManyArgsSchema } from "../outputTypeSchemas/UserRoleFindMan
 import { SeatFindManyArgsSchema } from "../outputTypeSchemas/SeatFindManyArgsSchema"
 import { MemberFindManyArgsSchema } from "../outputTypeSchemas/MemberFindManyArgsSchema"
 import { ShiftFindManyArgsSchema } from "../outputTypeSchemas/ShiftFindManyArgsSchema"
+import { NotificationFindManyArgsSchema } from "../outputTypeSchemas/NotificationFindManyArgsSchema"
 import { LibraryCountOutputTypeArgsSchema } from "../outputTypeSchemas/LibraryCountOutputTypeArgsSchema"
 // Select schema needs to be in file to prevent circular imports
 //------------------------------------------------------
@@ -24,6 +25,7 @@ export const LibrarySelectSchema: z.ZodType<Prisma.LibrarySelect> = z.object({
   seats: z.union([z.boolean(),z.lazy(() => SeatFindManyArgsSchema)]).optional(),
   members: z.union([z.boolean(),z.lazy(() => MemberFindManyArgsSchema)]).optional(),
   shifts: z.union([z.boolean(),z.lazy(() => ShiftFindManyArgsSchema)]).optional(),
+  notifications: z.union([z.boolean(),z.lazy(() => NotificationFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => LibraryCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 

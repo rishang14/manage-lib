@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { UserRoleUncheckedCreateNestedManyWithoutLibraryInputSchema } from './UserRoleUncheckedCreateNestedManyWithoutLibraryInputSchema';
 import { SeatUncheckedCreateNestedManyWithoutLibraryInputSchema } from './SeatUncheckedCreateNestedManyWithoutLibraryInputSchema';
 import { MemberUncheckedCreateNestedManyWithoutLibraryInputSchema } from './MemberUncheckedCreateNestedManyWithoutLibraryInputSchema';
+import { NotificationUncheckedCreateNestedManyWithoutLibraryInputSchema } from './NotificationUncheckedCreateNestedManyWithoutLibraryInputSchema';
 
 export const LibraryUncheckedCreateWithoutShiftsInputSchema: z.ZodType<Prisma.LibraryUncheckedCreateWithoutShiftsInput> = z.object({
   id: z.string().cuid().optional(),
@@ -12,7 +13,8 @@ export const LibraryUncheckedCreateWithoutShiftsInputSchema: z.ZodType<Prisma.Li
   createdAt: z.coerce.date().optional(),
   userRoles: z.lazy(() => UserRoleUncheckedCreateNestedManyWithoutLibraryInputSchema).optional(),
   seats: z.lazy(() => SeatUncheckedCreateNestedManyWithoutLibraryInputSchema).optional(),
-  members: z.lazy(() => MemberUncheckedCreateNestedManyWithoutLibraryInputSchema).optional()
+  members: z.lazy(() => MemberUncheckedCreateNestedManyWithoutLibraryInputSchema).optional(),
+  notifications: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLibraryInputSchema).optional()
 }).strict();
 
 export default LibraryUncheckedCreateWithoutShiftsInputSchema;

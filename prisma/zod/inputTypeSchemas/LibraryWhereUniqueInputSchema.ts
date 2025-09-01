@@ -10,6 +10,7 @@ import { UserRoleListRelationFilterSchema } from './UserRoleListRelationFilterSc
 import { SeatListRelationFilterSchema } from './SeatListRelationFilterSchema';
 import { MemberListRelationFilterSchema } from './MemberListRelationFilterSchema';
 import { ShiftListRelationFilterSchema } from './ShiftListRelationFilterSchema';
+import { NotificationListRelationFilterSchema } from './NotificationListRelationFilterSchema';
 
 export const LibraryWhereUniqueInputSchema: z.ZodType<Prisma.LibraryWhereUniqueInput> = z.object({
   id: z.string().cuid()
@@ -26,7 +27,8 @@ export const LibraryWhereUniqueInputSchema: z.ZodType<Prisma.LibraryWhereUniqueI
   userRoles: z.lazy(() => UserRoleListRelationFilterSchema).optional(),
   seats: z.lazy(() => SeatListRelationFilterSchema).optional(),
   members: z.lazy(() => MemberListRelationFilterSchema).optional(),
-  shifts: z.lazy(() => ShiftListRelationFilterSchema).optional()
+  shifts: z.lazy(() => ShiftListRelationFilterSchema).optional(),
+  notifications: z.lazy(() => NotificationListRelationFilterSchema).optional()
 }).strict());
 
 export default LibraryWhereUniqueInputSchema;

@@ -9,3 +9,4 @@ export * from './MemberSchema';
 export * from './ShiftSchema';
 export * from './BookingSchema';
 export * from './PaymentSchema';
+export * from './NotificationSchema';

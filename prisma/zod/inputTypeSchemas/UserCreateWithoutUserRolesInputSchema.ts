@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { AccountCreateNestedManyWithoutUserInputSchema } from './AccountCreateNestedManyWithoutUserInputSchema';
 import { SessionCreateNestedManyWithoutUserInputSchema } from './SessionCreateNestedManyWithoutUserInputSchema';
 import { LibraryCreateNestedManyWithoutOwnerInputSchema } from './LibraryCreateNestedManyWithoutOwnerInputSchema';
+import { NotificationCreateNestedManyWithoutSenderInputSchema } from './NotificationCreateNestedManyWithoutSenderInputSchema';
+import { NotificationCreateNestedManyWithoutReceiverInputSchema } from './NotificationCreateNestedManyWithoutReceiverInputSchema';
 
 export const UserCreateWithoutUserRolesInputSchema: z.ZodType<Prisma.UserCreateWithoutUserRolesInput> = z.object({
   id: z.string().cuid().optional(),
@@ -15,7 +17,9 @@ export const UserCreateWithoutUserRolesInputSchema: z.ZodType<Prisma.UserCreateW
   updatedAt: z.coerce.date().optional(),
   accounts: z.lazy(() => AccountCreateNestedManyWithoutUserInputSchema).optional(),
   sessions: z.lazy(() => SessionCreateNestedManyWithoutUserInputSchema).optional(),
-  Library: z.lazy(() => LibraryCreateNestedManyWithoutOwnerInputSchema).optional()
+  Library: z.lazy(() => LibraryCreateNestedManyWithoutOwnerInputSchema).optional(),
+  sentNotifications: z.lazy(() => NotificationCreateNestedManyWithoutSenderInputSchema).optional(),
+  receivedNotifications: z.lazy(() => NotificationCreateNestedManyWithoutReceiverInputSchema).optional()
 }).strict();
 
 export default UserCreateWithoutUserRolesInputSchema;

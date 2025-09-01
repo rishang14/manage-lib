@@ -7,6 +7,7 @@ import { UserUpdateOneRequiredWithoutLibraryNestedInputSchema } from './UserUpda
 import { UserRoleUpdateManyWithoutLibraryNestedInputSchema } from './UserRoleUpdateManyWithoutLibraryNestedInputSchema';
 import { MemberUpdateManyWithoutLibraryNestedInputSchema } from './MemberUpdateManyWithoutLibraryNestedInputSchema';
 import { ShiftUpdateManyWithoutLibraryNestedInputSchema } from './ShiftUpdateManyWithoutLibraryNestedInputSchema';
+import { NotificationUpdateManyWithoutLibraryNestedInputSchema } from './NotificationUpdateManyWithoutLibraryNestedInputSchema';
 
 export const LibraryUpdateWithoutSeatsInputSchema: z.ZodType<Prisma.LibraryUpdateWithoutSeatsInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -15,7 +16,8 @@ export const LibraryUpdateWithoutSeatsInputSchema: z.ZodType<Prisma.LibraryUpdat
   owner: z.lazy(() => UserUpdateOneRequiredWithoutLibraryNestedInputSchema).optional(),
   userRoles: z.lazy(() => UserRoleUpdateManyWithoutLibraryNestedInputSchema).optional(),
   members: z.lazy(() => MemberUpdateManyWithoutLibraryNestedInputSchema).optional(),
-  shifts: z.lazy(() => ShiftUpdateManyWithoutLibraryNestedInputSchema).optional()
+  shifts: z.lazy(() => ShiftUpdateManyWithoutLibraryNestedInputSchema).optional(),
+  notifications: z.lazy(() => NotificationUpdateManyWithoutLibraryNestedInputSchema).optional()
 }).strict();
 
 export default LibraryUpdateWithoutSeatsInputSchema;

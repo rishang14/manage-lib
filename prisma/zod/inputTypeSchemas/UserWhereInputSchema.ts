@@ -9,6 +9,7 @@ import { AccountListRelationFilterSchema } from './AccountListRelationFilterSche
 import { SessionListRelationFilterSchema } from './SessionListRelationFilterSchema';
 import { UserRoleListRelationFilterSchema } from './UserRoleListRelationFilterSchema';
 import { LibraryListRelationFilterSchema } from './LibraryListRelationFilterSchema';
+import { NotificationListRelationFilterSchema } from './NotificationListRelationFilterSchema';
 
 export const UserWhereInputSchema: z.ZodType<Prisma.UserWhereInput> = z.object({
   AND: z.union([ z.lazy(() => UserWhereInputSchema),z.lazy(() => UserWhereInputSchema).array() ]).optional(),
@@ -24,7 +25,9 @@ export const UserWhereInputSchema: z.ZodType<Prisma.UserWhereInput> = z.object({
   accounts: z.lazy(() => AccountListRelationFilterSchema).optional(),
   sessions: z.lazy(() => SessionListRelationFilterSchema).optional(),
   userRoles: z.lazy(() => UserRoleListRelationFilterSchema).optional(),
-  Library: z.lazy(() => LibraryListRelationFilterSchema).optional()
+  Library: z.lazy(() => LibraryListRelationFilterSchema).optional(),
+  sentNotifications: z.lazy(() => NotificationListRelationFilterSchema).optional(),
+  receivedNotifications: z.lazy(() => NotificationListRelationFilterSchema).optional()
 }).strict();
 
 export default UserWhereInputSchema;

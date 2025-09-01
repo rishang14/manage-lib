@@ -7,6 +7,7 @@ import { UserRoleOrderByRelationAggregateInputSchema } from './UserRoleOrderByRe
 import { SeatOrderByRelationAggregateInputSchema } from './SeatOrderByRelationAggregateInputSchema';
 import { MemberOrderByRelationAggregateInputSchema } from './MemberOrderByRelationAggregateInputSchema';
 import { ShiftOrderByRelationAggregateInputSchema } from './ShiftOrderByRelationAggregateInputSchema';
+import { NotificationOrderByRelationAggregateInputSchema } from './NotificationOrderByRelationAggregateInputSchema';
 
 export const LibraryOrderByWithRelationInputSchema: z.ZodType<Prisma.LibraryOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
@@ -17,7 +18,8 @@ export const LibraryOrderByWithRelationInputSchema: z.ZodType<Prisma.LibraryOrde
   userRoles: z.lazy(() => UserRoleOrderByRelationAggregateInputSchema).optional(),
   seats: z.lazy(() => SeatOrderByRelationAggregateInputSchema).optional(),
   members: z.lazy(() => MemberOrderByRelationAggregateInputSchema).optional(),
-  shifts: z.lazy(() => ShiftOrderByRelationAggregateInputSchema).optional()
+  shifts: z.lazy(() => ShiftOrderByRelationAggregateInputSchema).optional(),
+  notifications: z.lazy(() => NotificationOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
 export default LibraryOrderByWithRelationInputSchema;

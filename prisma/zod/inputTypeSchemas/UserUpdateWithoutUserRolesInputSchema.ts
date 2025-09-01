@@ -8,6 +8,8 @@ import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateO
 import { AccountUpdateManyWithoutUserNestedInputSchema } from './AccountUpdateManyWithoutUserNestedInputSchema';
 import { SessionUpdateManyWithoutUserNestedInputSchema } from './SessionUpdateManyWithoutUserNestedInputSchema';
 import { LibraryUpdateManyWithoutOwnerNestedInputSchema } from './LibraryUpdateManyWithoutOwnerNestedInputSchema';
+import { NotificationUpdateManyWithoutSenderNestedInputSchema } from './NotificationUpdateManyWithoutSenderNestedInputSchema';
+import { NotificationUpdateManyWithoutReceiverNestedInputSchema } from './NotificationUpdateManyWithoutReceiverNestedInputSchema';
 
 export const UserUpdateWithoutUserRolesInputSchema: z.ZodType<Prisma.UserUpdateWithoutUserRolesInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -19,7 +21,9 @@ export const UserUpdateWithoutUserRolesInputSchema: z.ZodType<Prisma.UserUpdateW
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   accounts: z.lazy(() => AccountUpdateManyWithoutUserNestedInputSchema).optional(),
   sessions: z.lazy(() => SessionUpdateManyWithoutUserNestedInputSchema).optional(),
-  Library: z.lazy(() => LibraryUpdateManyWithoutOwnerNestedInputSchema).optional()
+  Library: z.lazy(() => LibraryUpdateManyWithoutOwnerNestedInputSchema).optional(),
+  sentNotifications: z.lazy(() => NotificationUpdateManyWithoutSenderNestedInputSchema).optional(),
+  receivedNotifications: z.lazy(() => NotificationUpdateManyWithoutReceiverNestedInputSchema).optional()
 }).strict();
 
 export default UserUpdateWithoutUserRolesInputSchema;

@@ -6,6 +6,7 @@ import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateO
 import { UserRoleUncheckedUpdateManyWithoutLibraryNestedInputSchema } from './UserRoleUncheckedUpdateManyWithoutLibraryNestedInputSchema';
 import { MemberUncheckedUpdateManyWithoutLibraryNestedInputSchema } from './MemberUncheckedUpdateManyWithoutLibraryNestedInputSchema';
 import { ShiftUncheckedUpdateManyWithoutLibraryNestedInputSchema } from './ShiftUncheckedUpdateManyWithoutLibraryNestedInputSchema';
+import { NotificationUncheckedUpdateManyWithoutLibraryNestedInputSchema } from './NotificationUncheckedUpdateManyWithoutLibraryNestedInputSchema';
 
 export const LibraryUncheckedUpdateWithoutSeatsInputSchema: z.ZodType<Prisma.LibraryUncheckedUpdateWithoutSeatsInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -14,7 +15,8 @@ export const LibraryUncheckedUpdateWithoutSeatsInputSchema: z.ZodType<Prisma.Lib
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   userRoles: z.lazy(() => UserRoleUncheckedUpdateManyWithoutLibraryNestedInputSchema).optional(),
   members: z.lazy(() => MemberUncheckedUpdateManyWithoutLibraryNestedInputSchema).optional(),
-  shifts: z.lazy(() => ShiftUncheckedUpdateManyWithoutLibraryNestedInputSchema).optional()
+  shifts: z.lazy(() => ShiftUncheckedUpdateManyWithoutLibraryNestedInputSchema).optional(),
+  notifications: z.lazy(() => NotificationUncheckedUpdateManyWithoutLibraryNestedInputSchema).optional()
 }).strict();
 
 export default LibraryUncheckedUpdateWithoutSeatsInputSchema;

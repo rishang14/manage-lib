@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { AccountUncheckedCreateNestedManyWithoutUserInputSchema } from './AccountUncheckedCreateNestedManyWithoutUserInputSchema';
 import { SessionUncheckedCreateNestedManyWithoutUserInputSchema } from './SessionUncheckedCreateNestedManyWithoutUserInputSchema';
 import { LibraryUncheckedCreateNestedManyWithoutOwnerInputSchema } from './LibraryUncheckedCreateNestedManyWithoutOwnerInputSchema';
+import { NotificationUncheckedCreateNestedManyWithoutSenderInputSchema } from './NotificationUncheckedCreateNestedManyWithoutSenderInputSchema';
+import { NotificationUncheckedCreateNestedManyWithoutReceiverInputSchema } from './NotificationUncheckedCreateNestedManyWithoutReceiverInputSchema';
 
 export const UserUncheckedCreateWithoutUserRolesInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutUserRolesInput> = z.object({
   id: z.string().cuid().optional(),
@@ -15,7 +17,9 @@ export const UserUncheckedCreateWithoutUserRolesInputSchema: z.ZodType<Prisma.Us
   updatedAt: z.coerce.date().optional(),
   accounts: z.lazy(() => AccountUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
   sessions: z.lazy(() => SessionUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  Library: z.lazy(() => LibraryUncheckedCreateNestedManyWithoutOwnerInputSchema).optional()
+  Library: z.lazy(() => LibraryUncheckedCreateNestedManyWithoutOwnerInputSchema).optional(),
+  sentNotifications: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutSenderInputSchema).optional(),
+  receivedNotifications: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutReceiverInputSchema).optional()
 }).strict();
 
 export default UserUncheckedCreateWithoutUserRolesInputSchema;

@@ -8,6 +8,7 @@ import { AccountFindManyArgsSchema } from "../outputTypeSchemas/AccountFindManyA
 import { SessionFindManyArgsSchema } from "../outputTypeSchemas/SessionFindManyArgsSchema"
 import { UserRoleFindManyArgsSchema } from "../outputTypeSchemas/UserRoleFindManyArgsSchema"
 import { LibraryFindManyArgsSchema } from "../outputTypeSchemas/LibraryFindManyArgsSchema"
+import { NotificationFindManyArgsSchema } from "../outputTypeSchemas/NotificationFindManyArgsSchema"
 import { UserCountOutputTypeArgsSchema } from "../outputTypeSchemas/UserCountOutputTypeArgsSchema"
 // Select schema needs to be in file to prevent circular imports
 //------------------------------------------------------
@@ -24,6 +25,8 @@ export const UserSelectSchema: z.ZodType<Prisma.UserSelect> = z.object({
   sessions: z.union([z.boolean(),z.lazy(() => SessionFindManyArgsSchema)]).optional(),
   userRoles: z.union([z.boolean(),z.lazy(() => UserRoleFindManyArgsSchema)]).optional(),
   Library: z.union([z.boolean(),z.lazy(() => LibraryFindManyArgsSchema)]).optional(),
+  sentNotifications: z.union([z.boolean(),z.lazy(() => NotificationFindManyArgsSchema)]).optional(),
+  receivedNotifications: z.union([z.boolean(),z.lazy(() => NotificationFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => UserCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 

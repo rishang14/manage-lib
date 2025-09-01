@@ -88,7 +88,7 @@ const Page = async ({
       )}
 
       {tab === "manage" && (
-        <Suspense fallback={<div className="p-6">Loading shifts...</div>}>
+        <Suspense fallback={<div className="p-6">Loading table...</div>}>
           <Manage libid={id as string} shifts={shifts} />
         </Suspense>
       )}

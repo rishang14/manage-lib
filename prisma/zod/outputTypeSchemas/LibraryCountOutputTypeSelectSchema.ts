@@ -6,6 +6,7 @@ export const LibraryCountOutputTypeSelectSchema: z.ZodType<Prisma.LibraryCountOu
   seats: z.boolean().optional(),
   members: z.boolean().optional(),
   shifts: z.boolean().optional(),
+  notifications: z.boolean().optional(),
 }).strict();
 
 export default LibraryCountOutputTypeSelectSchema;

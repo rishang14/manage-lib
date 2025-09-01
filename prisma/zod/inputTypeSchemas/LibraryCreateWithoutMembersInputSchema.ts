@@ -5,6 +5,7 @@ import { UserCreateNestedOneWithoutLibraryInputSchema } from './UserCreateNested
 import { UserRoleCreateNestedManyWithoutLibraryInputSchema } from './UserRoleCreateNestedManyWithoutLibraryInputSchema';
 import { SeatCreateNestedManyWithoutLibraryInputSchema } from './SeatCreateNestedManyWithoutLibraryInputSchema';
 import { ShiftCreateNestedManyWithoutLibraryInputSchema } from './ShiftCreateNestedManyWithoutLibraryInputSchema';
+import { NotificationCreateNestedManyWithoutLibraryInputSchema } from './NotificationCreateNestedManyWithoutLibraryInputSchema';
 
 export const LibraryCreateWithoutMembersInputSchema: z.ZodType<Prisma.LibraryCreateWithoutMembersInput> = z.object({
   id: z.string().cuid().optional(),
@@ -13,7 +14,8 @@ export const LibraryCreateWithoutMembersInputSchema: z.ZodType<Prisma.LibraryCre
   owner: z.lazy(() => UserCreateNestedOneWithoutLibraryInputSchema),
   userRoles: z.lazy(() => UserRoleCreateNestedManyWithoutLibraryInputSchema).optional(),
   seats: z.lazy(() => SeatCreateNestedManyWithoutLibraryInputSchema).optional(),
-  shifts: z.lazy(() => ShiftCreateNestedManyWithoutLibraryInputSchema).optional()
+  shifts: z.lazy(() => ShiftCreateNestedManyWithoutLibraryInputSchema).optional(),
+  notifications: z.lazy(() => NotificationCreateNestedManyWithoutLibraryInputSchema).optional()
 }).strict();
 
 export default LibraryCreateWithoutMembersInputSchema;
