@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { UserCheck, Plus, Edit, Trash2, Search, Shield, Building2, Activity } from "lucide-react"
-import type { Manager } from "@/types"
+import { Manager } from "@/common/types"
 
 // Mock manager data
 const mockManagers: Manager[] = [

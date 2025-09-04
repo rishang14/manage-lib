@@ -51,7 +51,7 @@ export const shiftschema = ShiftSchema.extend({
     .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "HH:mm format required"),
 });
 
-export const shiftupdateschema = ShiftSchema.partial();
+export const shiftupdateschema = ShiftSchema.partial(); 
 
 export interface dialogopenprops {
   open: boolean;
@@ -173,7 +173,7 @@ export type bookingdetailsType<> = {
 export type addshift = z.infer<typeof shiftdataschema>;
 
 export type Shift= {
-  id: string;
+  id?: string;
   name: string;
   startTime: string;
   endTime: string;

@@ -13,10 +13,10 @@ import {
   FormControl,
 } from "./ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {  Shift } from "@/prisma/zod";
+import {  Shift ,ShiftSchema} from "@/prisma/zod";
 import { addNewShift, updateshift } from "@/lib/serveraction";
 import { toast } from "sonner";
-import { shiftschema } from "@/common/types";
+// import { shiftschema } from "@/common/types";
 type prop = {
   open: boolean;
   setopen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -42,7 +42,7 @@ const Createnewshift = ({
 
   // const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const form = useForm<Shift>({
-    resolver: zodResolver(shiftschema),
+    resolver: zodResolver(ShiftSchema),
     defaultValues: initialdata,
   });
   const {
