@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Users,
@@ -12,20 +12,28 @@ import {
 import { AdminOverview } from "./AdminOverview";
 import { MemberManagement } from "./MemberManage";
 import { PaymentManagement } from "./PaymentManagement";
-import { ManagerControls } from "./ManagerControl";
 import { NotificationCenter } from "./NotificationCenter"; 
 import { Session } from "next-auth";
 type LibraryDetail = {
   libid: string;
   role: "ADMIN" | "MEMBER" | "MANAGER"; // add other roles if needed
-};
+}; 
+
+type  AdminTabs = {
+  // overview: React.ReactNode;
+  // members: React.ReactNode;
+  managers: React.ReactNode;
+  // payments: React.ReactNode;
+  // notifications?: React.ReactNode; // Optional tabs
+}
 
 type prop ={
-  userinfo: Session
+  userinfo: Session , 
+  tabs:AdminTabs
 }
 
 
-export default function AdminDashboard({ userinfo }: prop) {
+export default function AdminDashboard({ userinfo,tabs }: prop) {
   console.log(userinfo, "info");
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -47,9 +55,7 @@ export default function AdminDashboard({ userinfo }: prop) {
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <NotificationCenter />
-            </div>
+            
           </div>
         </div>
       </div>
@@ -93,8 +99,10 @@ export default function AdminDashboard({ userinfo }: prop) {
             <PaymentManagement />
           </TabsContent>
 
-          <TabsContent value="managers" className="space-y-6">
-            <ManagerControls />
+          <TabsContent value="managers" className="space-y-6"> 
+            <Suspense fallback={<div>loading managers details</div>}>
+           { tabs.managers}
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="notifications" className="space-y-6">

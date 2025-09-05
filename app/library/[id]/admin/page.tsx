@@ -2,7 +2,7 @@
 import { auth } from '@/auth'
 import { libroles } from '@/common/types'
 import AdminDashboard from '@/components/adminpage/Admin'
-import { setEngine } from 'crypto'
+import { ManagerControls } from '@/components/adminpage/ManagerControl'
 import { Session } from 'next-auth'
 import { redirect } from 'next/navigation'
 import React from 'react'
@@ -22,8 +22,12 @@ const Page = async ({
     return redirect(`/library/${id}`);
   }
    
-  return (
-   <AdminDashboard userinfo={session as Session} />
+  const Managercontrol=<ManagerControls libid={id} admin={session as Session}/>
+  return ( 
+    
+   <AdminDashboard userinfo={session as Session} tabs={{
+    managers:Managercontrol
+   }} />
   )
 }
 

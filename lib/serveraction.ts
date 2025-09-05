@@ -8,6 +8,7 @@ import {
   createseat,
   getseatdetails,
   createbooking,
+  notificationexist,
 } from "./dbcalls";
 import { getfullDataAftervalidation, verifysession } from "./helper";
 import { Shift } from "@/prisma/zod";
@@ -21,11 +22,13 @@ import {
   Response,
   CreateBookingInput,
   BookingRequestSchema,
+  emailSchema,
 } from "@/common/types";
 import { use } from "react";
 import { string } from "zod";
 import { error } from "console";
 import { _success } from "zod/v4/core";
+import { Session } from "next-auth";
 
 export const getssrlibdata = async (libid: string) => {
   await verifysession(libid);
@@ -260,5 +263,60 @@ export const deleteSeat = async (seatid: string, libid: string) => {
     return { success: true, message: "Deleted successfully" };
   } catch (error) {
     return { success: false, error: "Something went wrong" };
+  }
+};
+
+export const addmanager = async (
+  data: FormData,
+  libid: string,
+  admin: Session
+) => {
+  try {
+    const user = await verifysession(libid);
+    if (!user) {
+      return { error: "You are not allowed " };
+    }
+    const email = data.get("email");
+
+    const validatedata = emailSchema.safeParse(email);
+    if (!validatedata.success) {
+      return { error: "Invalid Email Format" };
+    }
+    const manager = await prisma.user.findFirst({
+      where: { email: validatedata.data },
+    });
+    console.log(manager, "manager");
+    if (!manager) {
+      return { error: "No user found with this id" };
+    }
+    // lets create the notification
+    const isnotificationalreadysent = await notificationexist(
+      libid,
+      admin.user.id as string
+    );
+    console.log(isnotificationalreadysent, "sent or not ");
+
+    if (!isnotificationalreadysent) {
+      const notify = await prisma.notification.create({
+        data: {
+          senderId: admin.user.id,
+          receiverId: manager.id,
+          type: "INVITE_MANAGER",
+          message: `you are invited to join library as a manager`,
+          status: "PENDING",
+          libraryId: libid,
+          data: {
+            invitedby: admin.user.name,
+            libraryid: libid,
+          },
+        },
+      });
+      console.log(notify, "notify");
+    }
+
+    return { success: "Invvite send to  him" };
+  } catch (error) {
+    console.log(error, "error");
+    return { error: "Internal Server Error" };
   }
 };

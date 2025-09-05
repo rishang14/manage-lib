@@ -1,108 +1,53 @@
 "use client"
 
 import { useState } from "react"
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Textarea } from "@/components/ui/textarea"
 import {
+  Info,
+  CheckCircle,
+  AlertCircle,
   Bell,
-  Check,
-  CheckCheck,
-  Trash2,
   Plus,
   Search,
   Filter,
-  Settings,
+  CheckCheck,
+  Trash2,
   Send,
-  AlertCircle,
-  Info,
-  CheckCircle,
+  Check,
+  Settings,
 } from "lucide-react"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import type { Notification } from "@/types"
 
-// Enhanced mock notifications with more variety
+type Notification = {
+  id: string
+  title: string
+  message: string
+  type: string
+  libraryId: string
+  isRead: boolean
+  createdAt: string
+}
+
 const mockNotifications: Notification[] = [
-  {
-    id: "1",
-    type: "member_added",
-    title: "New Member Added",
-    message: "John Smith joined Central Library - Morning Shift",
-    managerId: "1",
-    libraryId: "1",
-    isRead: false,
-    createdAt: "2024-01-15T10:30:00Z",
-  },
-  {
-    id: "2",
-    type: "payment_received",
-    title: "Payment Received",
-    message: "₹2,500 payment received from Sarah Johnson",
-    memberId: "2",
-    libraryId: "1",
-    isRead: false,
-    createdAt: "2024-01-15T09:15:00Z",
-  },
-  {
-    id: "3",
-    type: "seat_changed",
-    title: "Seat Assignment Changed",
-    message: "Mike Davis moved from Seat 15 to Seat 22",
-    managerId: "2",
-    memberId: "3",
-    libraryId: "2",
-    isRead: true,
-    createdAt: "2024-01-14T16:45:00Z",
-  },
-  {
-    id: "4",
-    type: "manager_action",
-    title: "Manager Permission Updated",
-    message: "Jane Smith's permissions were modified",
-    managerId: "1",
-    libraryId: "1",
-    isRead: true,
-    createdAt: "2024-01-14T14:20:00Z",
-  },
-  {
-    id: "5",
-    type: "member_removed",
-    title: "Member Removed",
-    message: "Alex Wilson was removed from North Branch",
-    managerId: "1",
-    libraryId: "2",
-    isRead: false,
-    createdAt: "2024-01-13T11:30:00Z",
-  },
+  // Mock notifications data here
 ]
 
-const mockLibraries = [
-  { id: "1", name: "Central Library" },
-  { id: "2", name: "North Branch" },
-  { id: "3", name: "South Branch" },
-]
-
-const mockMembers = [
-  { id: "1", name: "John Smith" },
-  { id: "2", name: "Sarah Johnson" },
-  { id: "3", name: "Mike Davis" },
-]
-
-// Notification settings
 const notificationSettings = {
   emailNotifications: true,
   smsNotifications: false,
@@ -113,6 +58,10 @@ const notificationSettings = {
   systemAlerts: true,
 }
 
+const mockLibraries = [
+  // Mock libraries data here
+]
+
 export function NotificationCenter() {
   const [notifications, setNotifications] = useState<Notification[]>(mockNotifications)
   const [searchTerm, setSearchTerm] = useState("")
@@ -121,7 +70,7 @@ export function NotificationCenter() {
   const [selectedNotifications, setSelectedNotifications] = useState<string[]>([])
   const [isComposing, setIsComposing] = useState(false)
   const [settings, setSettings] = useState(notificationSettings)
-  const [viewMode, setViewMode] = useState<"dropdown" | "full">("dropdown")
+  const [viewMode, setViewMode] = useState<"dropdown" | "full">("full")
 
   // New notification form
   const [newNotification, setNewNotification] = useState({
@@ -225,98 +174,86 @@ export function NotificationCenter() {
   }
 
   // Dropdown version (existing functionality)
-  if (viewMode === "dropdown") {
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" className="relative bg-transparent">
-            <Bell className="w-4 h-4" />
-            {unreadCount > 0 && (
-              <Badge
-                variant="destructive"
-                className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
-              >
-                {unreadCount}
-              </Badge>
-            )}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-80">
-          <DropdownMenuLabel className="flex items-center justify-between">
-            Notifications
-            <div className="flex gap-2">
-              {unreadCount > 0 && (
-                <Button variant="ghost" size="sm" onClick={markAllAsRead}>
-                  <Check className="w-3 h-3 mr-1" />
-                  Mark all read
-                </Button>
-              )}
-              <Button variant="ghost" size="sm" onClick={() => setViewMode("full")}>
-                <Settings className="w-3 h-3" />
-              </Button>
-            </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
+  // if (viewMode === "dropdown") {
+  //   return (
+  //     <DropdownMenu>
+  //       <DropdownMenuTrigger asChild>
+  //         <Button variant="outline" size="sm" className="relative bg-transparent">
+  //           <Bell className="w-4 h-4" />
+  //           {unreadCount > 0 && (
+  //             <Badge
+  //               variant="destructive"
+  //               className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
+  //             >
+  //               {unreadCount}
+  //             </Badge>
+  //           )}
+  //         </Button>
+  //       </DropdownMenuTrigger>
+  //       <DropdownMenuContent align="end" className="w-80">
+  //         <DropdownMenuLabel className="flex items-center justify-between">
+  //           Notifications
+  //           <div className="flex gap-2">
+  //             {unreadCount > 0 && (
+  //               <Button variant="ghost" size="sm" onClick={markAllAsRead}>
+  //                 <Check className="w-3 h-3 mr-1" />
+  //                 Mark all read
+  //               </Button>
+  //             )}
+  //             <Button variant="ghost" size="sm" onClick={() => setViewMode("full")}>
+  //               <Settings className="w-3 h-3" />
+  //             </Button>
+  //           </div>
+  //         </DropdownMenuLabel>
+  //         <DropdownMenuSeparator />
 
-          {notifications.length === 0 ? (
-            <div className="p-4 text-center text-muted-foreground">No notifications</div>
-          ) : (
-            notifications.slice(0, 5).map((notification) => (
-              <DropdownMenuItem
-                key={notification.id}
-                className={`flex flex-col items-start p-3 cursor-pointer ${
-                  !notification.isRead ? "bg-blue-50 dark:bg-blue-900/20" : ""
-                }`}
-                onClick={() => markAsRead(notification.id)}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <span className="font-medium text-sm">{notification.title}</span>
-                  {!notification.isRead && <div className="w-2 h-2 bg-blue-500 rounded-full" />}
-                </div>
-                <span className="text-xs text-muted-foreground mt-1">{notification.message}</span>
-                <span className="text-xs text-muted-foreground mt-1">
-                  {new Date(notification.createdAt).toLocaleString()}
-                </span>
-              </DropdownMenuItem>
-            ))
-          )}
+  //         {notifications.length === 0 ? (
+  //           <div className="p-4 text-center text-muted-foreground">No notifications</div>
+  //         ) : (
+  //           notifications.slice(0, 5).map((notification) => (
+  //             <DropdownMenuItem
+  //               key={notification.id}
+  //               className={`flex flex-col items-start p-3 cursor-pointer ${
+  //                 !notification.isRead ? "bg-blue-50 dark:bg-blue-900/20" : ""
+  //               }`}
+  //               onClick={() => markAsRead(notification.id)}
+  //             >
+  //               <div className="flex items-center justify-between w-full">
+  //                 <span className="font-medium text-sm">{notification.title}</span>
+  //                 {!notification.isRead && <div className="w-2 h-2 bg-blue-500 rounded-full" />}
+  //               </div>
+  //               <span className="text-xs text-muted-foreground mt-1">{notification.message}</span>
+  //               <span className="text-xs text-muted-foreground mt-1">
+  //                 {new Date(notification.createdAt).toLocaleString()}
+  //               </span>
+  //             </DropdownMenuItem>
+  //           ))
+  //         )}
 
-          {notifications.length > 5 && (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setViewMode("full")} className="text-center">
-                View all notifications
-              </DropdownMenuItem>
-            </>
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    )
-  }
+  //         {notifications.length > 5 && (
+  //           <>
+  //             <DropdownMenuSeparator />
+  //             <DropdownMenuItem onClick={() => setViewMode("full")} className="text-center">
+  //               View all notifications
+  //             </DropdownMenuItem>
+  //           </>
+  //         )}
+  //       </DropdownMenuContent>
+  //     </DropdownMenu>
+  //   )
+  // }
 
   // Full notification management interface
   return (
     <div className="space-y-6">
-      <Tabs defaultValue="notifications" className="space-y-6">
+      {/* <Tabs defaultValue="notifications" className="space-y-6"> */}
         <div className="flex items-center justify-between">
-          <TabsList className="grid w-fit grid-cols-2">
-            <TabsTrigger value="notifications">All Notifications</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
-          </TabsList>
-
-          <div className="flex gap-2">
-            <Button onClick={() => setIsComposing(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Send Notification
-            </Button>
-            <Button variant="outline" onClick={() => setViewMode("dropdown")}>
-              <Bell className="w-4 h-4 mr-2" />
-              Compact View
-            </Button>
-          </div>
+          {/* <TabsList className="grid w-fit grid-cols-2"> */}
+            <p  className="" >All Notifications</p>
+          {/* </TabsList> */}
         </div>
 
-        <TabsContent value="notifications" className="space-y-6">
+        {/* <TabsContent value="notifications" className="space-y-6"> */}
           {/* Search and Filters */}
           <Card>
             <CardHeader>
@@ -354,7 +291,7 @@ export function NotificationCenter() {
                   </SelectContent>
                 </Select>
 
-                <Select value={filterLibrary} onValueChange={setFilterLibrary}>
+                {/* <Select value={filterLibrary} onValueChange={setFilterLibrary}>
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by library" />
                   </SelectTrigger>
@@ -366,7 +303,7 @@ export function NotificationCenter() {
                       </SelectItem>
                     ))}
                   </SelectContent>
-                </Select>
+                </Select> */}
 
                 <div className="flex items-center gap-2">
                   <Filter className="w-4 h-4 text-gray-400" />
@@ -401,7 +338,7 @@ export function NotificationCenter() {
                   type="checkbox"
                   checked={selectedNotifications.length === filteredNotifications.length}
                   onChange={(e) => handleSelectAll(e.target.checked)}
-                  className="rounded"
+                  className="mt-1 rounded"
                 />
                 <Label className="text-sm">Select all</Label>
               </div>
@@ -440,7 +377,8 @@ export function NotificationCenter() {
                       <div className="flex items-center gap-4 text-xs text-gray-500">
                         <span>{new Date(notification.createdAt).toLocaleString()}</span>
                         <span>
-                          Library: {mockLibraries.find((lib) => lib.id === notification.libraryId)?.name || "Unknown"}
+                          Library:
+                           {/* {mockLibraries.find((lib) => lib.id === notification.libraryId)?.name || "Unknown"} */}
                         </span>
                       </div>
                     </div>
@@ -475,188 +413,10 @@ export function NotificationCenter() {
               </Card>
             )}
           </div>
-        </TabsContent>
+        {/* </TabsContent> */}
 
-        <TabsContent value="settings" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="w-5 h-5" />
-                Notification Settings
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <h4 className="font-medium">Delivery Methods</h4>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>Email Notifications</Label>
-                      <p className="text-sm text-gray-500">Receive notifications via email</p>
-                    </div>
-                    <Switch
-                      checked={settings.emailNotifications}
-                      onCheckedChange={(checked) => setSettings({ ...settings, emailNotifications: checked })}
-                    />
-                  </div>
+      {/* </Tabs> */}
 
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>SMS Notifications</Label>
-                      <p className="text-sm text-gray-500">Receive notifications via SMS</p>
-                    </div>
-                    <Switch
-                      checked={settings.smsNotifications}
-                      onCheckedChange={(checked) => setSettings({ ...settings, smsNotifications: checked })}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>Push Notifications</Label>
-                      <p className="text-sm text-gray-500">Receive browser push notifications</p>
-                    </div>
-                    <Switch
-                      checked={settings.pushNotifications}
-                      onCheckedChange={(checked) => setSettings({ ...settings, pushNotifications: checked })}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <h4 className="font-medium">Notification Types</h4>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>Member Actions</Label>
-                      <p className="text-sm text-gray-500">New members, removals, seat changes</p>
-                    </div>
-                    <Switch
-                      checked={settings.memberActions}
-                      onCheckedChange={(checked) => setSettings({ ...settings, memberActions: checked })}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>Payment Updates</Label>
-                      <p className="text-sm text-gray-500">Payment received, overdue alerts</p>
-                    </div>
-                    <Switch
-                      checked={settings.paymentUpdates}
-                      onCheckedChange={(checked) => setSettings({ ...settings, paymentUpdates: checked })}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>Manager Actions</Label>
-                      <p className="text-sm text-gray-500">Manager activities and permission changes</p>
-                    </div>
-                    <Switch
-                      checked={settings.managerActions}
-                      onCheckedChange={(checked) => setSettings({ ...settings, managerActions: checked })}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>System Alerts</Label>
-                      <p className="text-sm text-gray-500">System maintenance and important updates</p>
-                    </div>
-                    <Switch
-                      checked={settings.systemAlerts}
-                      onCheckedChange={(checked) => setSettings({ ...settings, systemAlerts: checked })}
-                    />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {/* Compose Notification Dialog */}
-      <Dialog open={isComposing} onOpenChange={setIsComposing}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Send Notification</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                value={newNotification.title}
-                onChange={(e) => setNewNotification({ ...newNotification, title: e.target.value })}
-                placeholder="Notification title"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="message">Message</Label>
-              <Textarea
-                id="message"
-                value={newNotification.message}
-                onChange={(e) => setNewNotification({ ...newNotification, message: e.target.value })}
-                placeholder="Notification message"
-                rows={3}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="type">Type</Label>
-              <Select
-                value={newNotification.type}
-                onValueChange={(value: Notification["type"]) => setNewNotification({ ...newNotification, type: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="member_added">Member Added</SelectItem>
-                  <SelectItem value="member_removed">Member Removed</SelectItem>
-                  <SelectItem value="payment_received">Payment</SelectItem>
-                  <SelectItem value="seat_changed">Seat Change</SelectItem>
-                  <SelectItem value="manager_action">Manager Action</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="library">Library</Label>
-              <Select
-                value={newNotification.libraryId}
-                onValueChange={(value) => setNewNotification({ ...newNotification, libraryId: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select library" />
-                </SelectTrigger>
-                <SelectContent>
-                  {mockLibraries.map((library) => (
-                    <SelectItem key={library.id} value={library.id}>
-                      {library.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsComposing(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={sendNotification}
-              disabled={!newNotification.title || !newNotification.message || !newNotification.libraryId}
-            >
-              <Send className="w-4 h-4 mr-2" />
-              Send Notification
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

@@ -208,7 +208,9 @@ export interface Payment {
   dueDate: string;
   paidDate?: string;
   method?: "cash" | "card" | "upi" | "bank_transfer";
-}
+} 
+
+export const emailSchema = z.string().email("Invalid email address format.");
 
 export interface Notification {
   id: string;

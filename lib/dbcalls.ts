@@ -418,4 +418,16 @@ export async function libraryUserSeatWithShift(
   });
 
   return seat;
+} 
+
+
+export async function notificationexist(libid:string,adminid:string){ 
+return prisma.notification.findFirst({
+  where:{
+    senderId:adminid, 
+    libraryId:libid,
+    status:"PENDING"
+  }
+})
+
 }
