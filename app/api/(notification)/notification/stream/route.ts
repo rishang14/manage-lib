@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
       };
 
-      registerClient(userid as string, send, () => controller.close());
+      registerClient(userid as string, send);
 
       send({ type: "connected", userid });
 
@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
 
       req.signal.addEventListener("abort", () => {
         removeClient(userid as string);
+        clearInterval(interval);
         controller.close();
       });
     },

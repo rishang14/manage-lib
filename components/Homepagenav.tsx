@@ -23,7 +23,7 @@ const HomeNavBar = async() => {
           <h1 className="text-xl font-bold text-foreground ">LibraryHub</h1>
         </div>
         <div className="flex items-center md:space-x-3 md:ml-6">
-          <NotificationTrigger  notification= {notifications as Notification[]}/>
+          <NotificationTrigger  initial= {notifications as Notification[]}/>
           <ModeToggle />
           <Profilesetting />
         </div>
