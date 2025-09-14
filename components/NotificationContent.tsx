@@ -3,31 +3,26 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Eye, Clock, CheckCircle, XCircle, Bell } from "lucide-react"
+import { Eye, Clock, Bell, CheckCircle, XCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { NotificationDialog } from "./NotificationDialog"
-// import { useNotifications } from "@/hooks/use-notifications"
-// import type { Notification } from "@/types/notification"
 import { cn } from "@/lib/utils"
+import { Notification } from "@prisma/client" 
+type FromData = {
+  [key: string]: string;
+};
 
-interface NotificationDropdownListProps {
-  notifications: Notification[]
-}
-// @ts-ignore
-export function NotificationDropdownList({ notifications }) {
+export function NotificationDropdownList({ notifications }:{notifications:Notification[]}) {
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
 //   const { markAsRead, approveNotification, rejectNotification } = useNotifications()
 
-//   const handleViewNotification = (notification: Notification) => {
-//     if (!notification.isRead) {
-//     //   markAsRead(notification.id)
-//     }
-//     setSelectedNotification(notification)
-//     setDialogOpen(true)
-//   }
+  const handleViewNotification = (notification: Notification) => {
+    setSelectedNotification(notification)
+    setDialogOpen(true)
+  }
 
   const handleApprove = (e: React.MouseEvent, notificationId: string) => {
     e.stopPropagation()
@@ -53,32 +48,27 @@ export function NotificationDropdownList({ notifications }) {
       <ScrollArea className="h-96">
         <div className="p-2"> 
             {/* @ts-ignore */}
-          {notifications.map((notification) => (
+          {notifications.map((notification) =>{ 
+            let from=notification.data as unknown as FromData;
+            return( 
             <div
-            //   key={notification.id}
+              key={notification.id}
               className={cn(
                 "p-3 rounded-lg border mb-2 cursor-pointer hover:bg-accent transition-colors",
-                // !notification.isRead &&
-                 "bg-blue-50 border-blue-200",
               )}
-            //   onClick={() => handleViewNotification(notification)}
+              onClick={() => handleViewNotification(notification)}
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <h4 className="text-sm font-medium truncate">{notification.title}</h4>
-                    {/* {!notification.isRead && <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />}  */}
+                    <h4 className="text-sm font-medium truncate"> <span className="text-xs  text-gray-400 font-bold">From </span>: {from?.invitedby}</h4>
                   </div>
-                  {/* <p className="text-xs text-muted-foreground line-clamp-2 mb-2">{notification.message}</p>  */}
+                  <p className="text-xs text-muted-foreground line-clamp-2 mb-2">{notification.message}</p> 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-xs">
-                        {/* {notification.type} */}
+                        {notification.type}
                       </Badge>
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {/* {notification.timestamp} */}
-                      </span>
                     </div>
                     <Button
                       variant="ghost"
@@ -86,7 +76,7 @@ export function NotificationDropdownList({ notifications }) {
                       className="h-6 px-2 text-xs"
                       onClick={(e) => {
                         e.stopPropagation()
-                        // handleViewNotification(notification)
+                        handleViewNotification(notification)
                       }}
                     >
                       <Eye className="h-3 w-3 mr-1" />
@@ -96,7 +86,7 @@ export function NotificationDropdownList({ notifications }) {
                 </div>
               </div>
 
-              {/* {notification.type === "action" && (
+              {notification.type === "INVITE_MANAGER" && (
                 <div className="flex gap-2 mt-3 pt-2 border-t">
                   <Button
                     size="sm"
@@ -116,13 +106,13 @@ export function NotificationDropdownList({ notifications }) {
                     Reject
                   </Button>
                 </div>
-              )} */}
+              )}
             </div>
-          ))}
+          )})}
         </div>
       </ScrollArea>
 
-      <NotificationDialog open={dialogOpen} onOpenChange={setDialogOpen} notification={selectedNotification} />
+      <NotificationDialog open={dialogOpen} onOpenChange={setDialogOpen} notification={selectedNotification as Notification} />
     </>
   )
 }

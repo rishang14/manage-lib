@@ -9,7 +9,8 @@ import {
   getseatdetails,
   createbooking,
   notificationexist,
-  getallreceivedNotification,
+  getallreceivedNotification, 
+  getsentNotification
 } from "./dbcalls";
 import { getfullDataAftervalidation, verifysession } from "./helper";
 import { Shift } from "@/prisma/zod";
@@ -340,7 +341,7 @@ export const GetReceivedNotification =async(userid:string,libid:string)=>{
      }   
 
      try {
-        const notification= await getallreceivedNotification(userid,libid); 
+        const notification= await getallreceivedNotification(userid); 
         console.log(notification,"all notification received");
      } catch (error) {
       
@@ -351,6 +352,11 @@ export const GetsendNotification= async(userid:string,libid:string)=>{
    const session=await auth(); 
    if(!session?.user.id) return {
      error:"Unauthorized request"
+   } 
+   try {
+     const notification =await getsentNotification(userid,libid)
+   } catch (error) {
+    
    } 
 
 }

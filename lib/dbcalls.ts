@@ -1,7 +1,7 @@
 import { Library ,Shift,Seat} from "@/prisma/zod";
 import prisma from "./prisma";
 import { apiResponse, bookingdetailsType, CreateBookingInput, seatdetails, shiftschemaInput ,shiftupdateschemainput,meberinfo, changeshift, addshift, BookingBackendDbcheckInput } from "@/common/types";
-import { unstable_cache } from "next/cache";
+import { Notification } from "@prisma/client";
 
 
 export async function getuserID(email: string): Promise<string | undefined> {
@@ -432,12 +432,25 @@ return prisma.notification.findFirst({
 
 } 
 
-export async function getallreceivedNotification(userid:string,libid:string){
+export async function getallreceivedNotification(userid:string):Promise<Notification[]>{
   return prisma.notification.findMany({
     where:{
      receiverId:userid, 
-     libraryId:libid,
      status:"PENDING",
+    }
+  })
+} 
+
+export async function getsentNotification(userid:string ,libid:string){
+  return prisma.notification.findMany({
+    where:{
+      senderId:userid,
+      libraryId:libid, 
+      status:"PENDING"
+    }, 
+    omit:{
+      createdAt:true,
+      updatedAt:true
     }
   })
 }
