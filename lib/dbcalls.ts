@@ -430,4 +430,14 @@ return prisma.notification.findFirst({
   }
 })
 
+} 
+
+export async function getallreceivedNotification(userid:string,libid:string){
+  return prisma.notification.findMany({
+    where:{
+     receiverId:userid, 
+     libraryId:libid,
+     status:"PENDING",
+    }
+  })
 }

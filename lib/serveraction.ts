@@ -9,6 +9,7 @@ import {
   getseatdetails,
   createbooking,
   notificationexist,
+  getallreceivedNotification,
 } from "./dbcalls";
 import { getfullDataAftervalidation, verifysession } from "./helper";
 import { Shift } from "@/prisma/zod";
@@ -29,6 +30,8 @@ import { string } from "zod";
 import { error } from "console";
 import { _success } from "zod/v4/core";
 import { Session } from "next-auth";
+import { pushToUser } from "./sse";
+import { auth } from "@/auth";
 
 export const getssrlibdata = async (libid: string) => {
   await verifysession(libid);
@@ -294,8 +297,6 @@ export const addmanager = async (
       libid,
       admin.user.id as string
     );
-    console.log(isnotificationalreadysent, "sent or not ");
-
     if (!isnotificationalreadysent) {
       const notify = await prisma.notification.create({
         data: {
@@ -311,12 +312,45 @@ export const addmanager = async (
           },
         },
       });
-      console.log(notify, "notify");
+      console.log(notify, "notify");  
+      // notification sent :  to admin that notification is sent 
+      pushToUser(admin.user.id as string,{
+        type:"notification:sent", 
+        payload:notify
+      }) 
+      // notification new : to manager that new notification is received 
+      
+      pushToUser(manager.id,{
+        type:"notification:new", 
+        payload:notify
+      })
     }
-
     return { success: "Invvite send to  him" };
   } catch (error) {
     console.log(error, "error");
     return { error: "Internal Server Error" };
   }
 };
+
+
+export const GetReceivedNotification =async(userid:string,libid:string)=>{
+     const session = await auth(); 
+     if(!session?.user.id) {
+      return {error:"Unauthorized request"}; 
+     }   
+
+     try {
+        const notification= await getallreceivedNotification(userid,libid); 
+        console.log(notification,"all notification received");
+     } catch (error) {
+      
+     }
+} 
+
+export const GetsendNotification= async(userid:string,libid:string)=>{
+   const session=await auth(); 
+   if(!session?.user.id) return {
+     error:"Unauthorized request"
+   } 
+
+}
