@@ -9,14 +9,16 @@ import {
   getseatdetails,
   createbooking,
   notificationexist,
-  getallreceivedNotification, 
-  getsentNotification
+  getallreceivedNotification,
+  getsentNotification,
+  updateInvitationNotification,
+  addmanagerTolib,
 } from "./dbcalls";
 import { getfullDataAftervalidation, verifysession } from "./helper";
 import { Shift } from "@/prisma/zod";
 import { revalidatePath } from "next/cache";
 import prisma from "./prisma";
-import { Prisma } from "@prisma/client";
+import { Notification, NotificationStatus, Prisma } from "@prisma/client";
 import {
   seatdetailsschema,
   SeatShiftResult,
@@ -26,9 +28,6 @@ import {
   BookingRequestSchema,
   emailSchema,
 } from "@/common/types";
-import { use } from "react";
-import { string } from "zod";
-import { error } from "console";
 import { _success } from "zod/v4/core";
 import { Session } from "next-auth";
 import { pushToUser } from "./sse";
@@ -312,18 +311,18 @@ export const addmanager = async (
             libraryid: libid,
           },
         },
-      }); 
-      // notification sent :  to admin that notification is sent 
-      pushToUser(admin.user.id as string,{
-        type:"notification:sent", 
-        payload:notify
-      }) 
-      // notification new : to manager that new notification is received 
-      
-      pushToUser(manager.id,{
-        type:"notification:new", 
-        payload:notify
-      })
+      });
+      // notification sent :  to admin that notification is sent
+      pushToUser(admin.user.id as string, {
+        type: "notification:sent",
+        payload: notify,
+      });
+      // notification new : to manager that new notification is received
+
+      pushToUser(manager.id, {
+        type: "notification:new",
+        payload: notify,
+      });
     }
     return { success: "Invite send to  him" };
   } catch (error) {
@@ -332,30 +331,65 @@ export const addmanager = async (
   }
 };
 
+export const GetReceivedNotification = async (
+  userid: string,
+  libid: string
+) => {
+  const session = await auth();
+  if (!session?.user.id) {
+    return { error: "Unauthorized request" };
+  }
 
-export const GetReceivedNotification =async(userid:string,libid:string)=>{
-     const session = await auth(); 
-     if(!session?.user.id) {
-      return {error:"Unauthorized request"}; 
-     }   
+  try {
+    const notification = await getallreceivedNotification(userid);
+  } catch (error) {}
+};
 
-     try {
-        const notification= await getallreceivedNotification(userid); 
+export const GetsendNotification = async (userid: string, libid: string) => {
+  const session = await auth();
+  if (!session?.user.id)
+    return {
+      error: "Unauthorized request",
+    };
+  try {
+    const notification = await getsentNotification(userid, libid);
+  } catch (error) {}
+};
+
+type prop = {
+  action: "ACCEPTED" | "REJECTED";
+};
+
+export const invitationRes = async (
+  notifcationid: string,
+  action: NotificationStatus
+) => {
+  try { 
+    const session=await auth();
+    const updatedNotification = await updateInvitationNotification(
+      notifcationid as string,
+      action as NotificationStatus , 
+      session?.user.name as string 
+    );
     
-     } catch (error) {
-      
-     }
-} 
+    console.log(updatedNotification,"notification")
+    if (updatedNotification.status === "ACCEPTED") {
+      const res = await addmanagerTolib(
+        updatedNotification.libraryId as string,
+        updatedNotification.senderId as string,
+        updatedNotification.receiverId as string,
+      ); 
 
-export const GetsendNotification= async(userid:string,libid:string)=>{
-   const session=await auth(); 
-   if(!session?.user.id) return {
-     error:"Unauthorized request"
-   } 
-   try {
-     const notification =await getsentNotification(userid,libid)
-   } catch (error) {
-    
-   } 
 
-}
+      pushToUser(updatedNotification.senderId as string,{
+       type:"notification:recevied", 
+       payload:updatedNotification
+      }) 
+
+      pushToUser(updatedNotification.receiverId as string,{
+        type:"notification:new", 
+        payload:updatedNotification
+      })
+    }
+  } catch (error) {}
+};

@@ -34,11 +34,12 @@ export function NotificationTrigger({
       console.log(val.type,'data')
      if(val.type === "notification:new"){ 
       console.log("hey inside the notification payload ",val.payload)
-      // setNotification(prev=> ([val.payload ,...prev]));
+      setNotification(prev=> ([val.payload ,...prev]));
      } 
 
      if(val.type === "notification:sent"){
-      console.log("hey i am inside admin notifcaiton ", val.payload)
+      console.log("hey i am inside admin notifcaiton ", val.payload) 
+      setNotification(prev=> ([val.payload ,...prev]));
      }
     } 
 

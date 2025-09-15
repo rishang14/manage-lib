@@ -1,7 +1,7 @@
 import { Library ,Shift,Seat} from "@/prisma/zod";
 import prisma from "./prisma";
 import { apiResponse, bookingdetailsType, CreateBookingInput, seatdetails, shiftschemaInput ,shiftupdateschemainput,meberinfo, changeshift, addshift, BookingBackendDbcheckInput } from "@/common/types";
-import { Notification } from "@prisma/client";
+import { Notification, NotificationStatus } from "@prisma/client";
 
 
 export async function getuserID(email: string): Promise<string | undefined> {
@@ -453,4 +453,31 @@ export async function getsentNotification(userid:string ,libid:string){
       updatedAt:true
     }
   })
+} 
+
+type aType={
+  action:"ACCEPTED" | "REJECTED" 
+}
+ 
+export async function updateInvitationNotification(id:string,action:NotificationStatus,managerName:string) {
+  return prisma.notification.update({
+    where:{
+     id 
+    },data:{
+      status:action, 
+      message:`Requst to join the library as a manager ${action}`, 
+      data:{
+        sendby:managerName,
+      }
+    }, 
+    include:{
+      sender:true, 
+      receiver:true
+    }
+  })
+};
+
+export async function addmanagerTolib(libid:string,adminId:string,managerId:string,) {
+  console.log(adminId,"adminid"); 
+  console.log(managerId,"manager");  
 }
