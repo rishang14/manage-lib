@@ -14,7 +14,7 @@ import { Notification } from "@prisma/client";
 import { Badge } from "./ui/badge";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { json } from "stream/consumers";
+
 
 export function NotificationTrigger({
   initial,
@@ -24,13 +24,23 @@ export function NotificationTrigger({
    const  {data} =useSession(); 
    const [notification,setNotification]=useState<Notification[]>(initial)
    useEffect(()=>{
-   if(!data?.user.id) return ; 
-    const  event= new EventSource(`/api/notification/stream?userid=${data.user.id}`); 
-    
+   if(!data?.user.id) return ;  
+
+
+    const  event= new EventSource(`/api/notification/stream?userid=${data.user.id}&name=${data.user.name}`); 
     event.onmessage= (e)=>{
-     const data=JSON.parse(e.data)
-     console.log(data,"data")
+     const val=JSON.parse(e.data)
+      console.log(val.type,'data')
+     if(val.type === "notification:new"){ 
+      console.log("hey inside the notification payload ",val.payload)
+      // setNotification(prev=> ([val.payload ,...prev]));
+     } 
+
+     if(val.type === "notification:sent"){
+      console.log("hey i am inside admin notifcaiton ", val.payload)
+     }
     } 
+
     event.onerror= (err)=>{ 
      console.error("SSE error", err);
      event.close();
@@ -38,7 +48,9 @@ export function NotificationTrigger({
 
     return () => event.close();
    
-   },[data?.user.id])
+   },[data?.user.id]) 
+
+   console.log(notification,"notification")
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

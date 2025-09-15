@@ -2,12 +2,15 @@
 
 import { PrefectchLibdetails } from "@/lib/serverquery";
 import { useQueryClient } from "@tanstack/react-query";
-import { SquarePenIcon, ExternalLink } from "lucide-react";
+import {  ExternalLink } from "lucide-react";
 import Link from "next/link";
 import React, { useRef } from "react"; 
+import Libcardmenu from "./Libcardmenu";
+import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
 
 
-export const PrefectchLibdetailsCard = ({ libid }: { libid: string }) => { 
+export const PrefectchLibdetailsCard = ({ libid }: { libid: string }) => {  
   // get the queryclient to know where the data is stored and for the cache
   const queryClinet = useQueryClient(); 
   // to know ongoing request it is builtin browser func  
@@ -16,7 +19,7 @@ export const PrefectchLibdetailsCard = ({ libid }: { libid: string }) => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   return (
     <div
-      className="flex gap-2 flex-1 justify-end "
+      className="flex gap-2 flex-1 justify-end items-center "
       onMouseEnter={() => {
         timerRef.current = setTimeout(() => {
           controller.current = PrefectchLibdetails(queryClinet, libid);
@@ -31,11 +34,11 @@ export const PrefectchLibdetailsCard = ({ libid }: { libid: string }) => {
         // also  Abort the request if it already started
         controller.current?.abort();
       }}
-    >
-      <SquarePenIcon className="h-5 w-5  text-cyan-700" />
+    >  
       <Link href={`/library/${libid}`}>
         <ExternalLink className="h-5 w-5  text-cyan-700" />
       </Link>
+     <Libcardmenu libid={libid as string} />
     </div>
   );
 };

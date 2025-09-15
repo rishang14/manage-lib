@@ -139,7 +139,6 @@ const ManagerTab = ({libid,admin}:prop) => {
         </CardContent>
       </Card>
     </div>  
-    <AddmanagerDialog isopen={openaddmanagerDialog} setopen={setopenADDmanagerDialog} libid={libid} admin={admin}/>
  </>
   );
 };

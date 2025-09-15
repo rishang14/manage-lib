@@ -12,28 +12,26 @@ import { Label } from "./ui/label";
 import { addmanager } from "@/lib/serveraction";
 import { toast } from "sonner";
 import { Session } from "next-auth";
+import { useSession } from "next-auth/react";
 
 type prop = {
   isopen: boolean;
   setopen: React.Dispatch<React.SetStateAction<boolean>>;
   libid: string; 
-  admin:Session
 };
 
-const AddmanagerDialog = ({ isopen, setopen, libid,admin }: prop) => {
-  const [isPending, startTransition] = useTransition();
+const AddmanagerDialog = ({ isopen, setopen, libid, }: prop) => {
+  const [isPending, startTransition] = useTransition(); 
+  const {data}=useSession()
   const handlesubmit =  (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const data = new FormData(e.currentTarget);
+    const values= new FormData(e.currentTarget);
     try {
       startTransition(async () => {
-        const res = await addmanager(data, libid,admin);
-        // @ts-ignore
+        const res = await addmanager(values, libid,data as Session);
         if (res?.error) {
-          // @ts-ignore
           toast.error(res?.error, { duration: 2000 });
         } else {
-          // @ts-ignore
           toast.success(res?.success, { duration: 3000 });
         }
       }); 
@@ -41,6 +39,8 @@ const AddmanagerDialog = ({ isopen, setopen, libid,admin }: prop) => {
     } catch (error) {
       console.log(error); 
       toast.error("Internal server error",{duration:3000})
+    }finally{
+      setopen(false)
     }
   };
   return (

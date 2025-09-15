@@ -289,7 +289,7 @@ export const addmanager = async (
     const manager = await prisma.user.findFirst({
       where: { email: validatedata.data },
     });
-    console.log(manager, "manager");
+
     if (!manager) {
       return { error: "No user found with this id" };
     }
@@ -312,8 +312,7 @@ export const addmanager = async (
             libraryid: libid,
           },
         },
-      });
-      console.log(notify, "notify");  
+      }); 
       // notification sent :  to admin that notification is sent 
       pushToUser(admin.user.id as string,{
         type:"notification:sent", 
@@ -326,7 +325,7 @@ export const addmanager = async (
         payload:notify
       })
     }
-    return { success: "Invvite send to  him" };
+    return { success: "Invite send to  him" };
   } catch (error) {
     console.log(error, "error");
     return { error: "Internal Server Error" };
@@ -342,7 +341,7 @@ export const GetReceivedNotification =async(userid:string,libid:string)=>{
 
      try {
         const notification= await getallreceivedNotification(userid); 
-        console.log(notification,"all notification received");
+    
      } catch (error) {
       
      }
