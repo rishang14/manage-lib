@@ -1,6 +1,6 @@
 export const runtime = "nodejs";
 import { auth } from "@/auth";
-import { registerClient, removeClient } from "@/lib/sse";
+import { registerClient, removeClient ,clients} from "@/lib/sse";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -39,7 +39,11 @@ export async function GET(req: NextRequest) {
       };
        console.log("stream is ongoing") 
 
-
+       console.log("before register clinet",clients);
+       registerClient(userid as string, send);  
+      send({ type: "connected", userid }); 
+      console.log("send client after ",)
+      console.log("hey after register clinet",clients)
       const cleanup=()=>{
         if (isClosed) return;
         isClosed = true;
@@ -62,12 +66,7 @@ export async function GET(req: NextRequest) {
           // Controller already closed, ignore
           console.log('Controller already closed');
         }
-      }; 
-     console.log("before register clinet");
-      send({ type: "connected", userid }); 
-      console.log("send client after ",)
-      registerClient(userid as string, send);  
-      console.log("hey after register clinet")
+      };
        timeout = setInterval(() => {
           if (!isClosed) {
           send({ type: "ping" });

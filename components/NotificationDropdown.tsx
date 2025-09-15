@@ -29,7 +29,8 @@ export function NotificationTrigger({
 
     const  event= new EventSource(`/api/notification/stream?userid=${data.user.id}&name=${data.user.name}`); 
     event.onmessage= (e)=>{
-     const val=JSON.parse(e.data)
+     const val=JSON.parse(e.data) 
+     console.log(val,"parsed dataaa")
       console.log(val.type,'data')
      if(val.type === "notification:new"){ 
       console.log("hey inside the notification payload ",val.payload)

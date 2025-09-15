@@ -1,5 +1,9 @@
+declare global {
+  var sseClients: Record<string, { send: (data: any) => void }> | undefined;
+}
 
-const clients: Record<string, { send: (data: any) => void; }> = {}; 
+export const clients = globalThis.sseClients || (globalThis.sseClients = {});
+
 
 console.log(clients,"hey my valuse", "now  at begin")
 
@@ -35,6 +39,7 @@ export const registerClient = (
     console.log(clients,"hey my valuse", "push to register user  ")
 }; 
 
-export const removeClient = (userId: string) => {
+export const removeClient = (userId: string) => { 
   delete clients[userId];
+  console.log("removed user id ", userId)
 };
