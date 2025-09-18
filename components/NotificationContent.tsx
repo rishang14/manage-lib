@@ -8,9 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { NotificationDialog } from "./NotificationDialog";
 import { cn } from "@/lib/utils";
-import { Notification, NotificationStatus } from "@prisma/client";
-import { invitationRes } from "@/lib/serveraction";
+import { Notification } from "@prisma/client";
 import { useSession } from "next-auth/react";
+import HandleResponseButton from "./HandleResponseButton";
 type FromData = {
   [key: string]: string;
 };
@@ -30,19 +30,7 @@ export function NotificationDropdownList({
     setDialogOpen(true);
   };
 
-  const handleInvitationResponse = (
-    e: React.MouseEvent,
-    notificationId: string,
-    action: NotificationStatus
-  ) => {
-    e.stopPropagation();
-
-    startTransition(async () => {
-      try {
-        const res = await invitationRes(notificationId, action);
-      } catch (error) {}
-    });
-  };
+ 
 
   if (notifications.length === 0) {
     return (
@@ -103,32 +91,8 @@ export function NotificationDropdownList({
                   </div>
                 </div>
 
-                {(notification.type === "INVITE_MANAGER" && data?.user.id === notification.receiverId) && (
-                  <div className="flex gap-2 mt-3 pt-2 border-t">
-                    <Button
-                      size="sm"
-                      className="h-7 px-3 text-xs flex-1"
-                      onClick={(e) =>
-                        handleInvitationResponse(e, notification.id, "ACCEPTED")
-                      }
-                      disabled={isPending}
-                    >
-                      <CheckCircle className="h-3 w-3 mr-1" />
-                      {isPending ? "Approving..." : "Approve"}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-7 px-3 text-xs flex-1 bg-transparent"
-                      onClick={(e) =>
-                        handleInvitationResponse(e, notification.id, "REJECTED")
-                      }
-                      disabled={isPending}
-                    >
-                      <XCircle className="h-3 w-3 mr-1" />
-                      {isPending ? "Rejecting..." : "Reject"}
-                    </Button>
-                  </div>
+                {(notification.type === "INVITE_MANAGER" && data?.user.id === notification.receiverId && notification.status === "PENDING") && (
+                  <HandleResponseButton  notifcationId={notification.id} isPending={isPending}/>
                 )}
               </div>
             );

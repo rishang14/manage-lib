@@ -30,7 +30,7 @@ const Libcardmenu = ({libid}:prop) => {
           className=" cursor-pointer"
           size="icon"
         >
-          <Ellipsis size={40} color="#fff" strokeWidth={0.75} />
+          <Ellipsis size={40}  strokeWidth={0.75} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="flex flex-col ">

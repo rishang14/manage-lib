@@ -28,11 +28,11 @@ export const metadata:Metadata={
  
   return (  
      <SidebarProvider>
-      <SimpleSidebar />
-      <SidebarInset>
+      {/* <SimpleSidebar /> */}
+      <SidebarInset className="">
         <HomeNavBar />
         
-        <div className="flex-1 space-y-6 p-6">
+        <div className="flex mx-auto max-w-6xl flex-col container space-y-6 p-6">
           <DashboardHeader />
 
            <MyLibrariesSection  />
