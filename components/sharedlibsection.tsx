@@ -1,23 +1,15 @@
-import { Button } from "@/components/ui/button"
-import { SharedLibraryCard } from "./shared-library-card"
-import { Users, Plus } from 'lucide-react'
+import { auth } from '@/auth'
+import { SharedLib } from '@/lib/dbcalls';
+import { BookOpen, Users,  } from 'lucide-react'
+import { LibraryCard } from './LibraryCard';
+import { Library } from '@prisma/client';
 
-interface SharedLibrary {
-  id: number
-  name: string
-  owner: string
-  location: string
-  myRole: string
-  totalSeats: number
-  occupiedSeats: number
-  color: string
-}
 
-interface SharedLibrariesSectionProps {
-  libraries: SharedLibrary[]
-}
-
-export function SharedLibrariesSection() {
+export async function SharedLibrariesSection() { 
+  const session= await auth(); 
+   if(!session?.user.id) return;  
+    
+    const sharedlib= await SharedLib(session?.user.id as string)
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -25,17 +17,31 @@ export function SharedLibrariesSection() {
           <Users className="h-6 w-6 text-blue-500 mr-2" />
           Shared Libraries
         </h3>
-        <Button variant="outline">
-          <Plus className="h-4 w-4 mr-2" />
-          Join Library
-        </Button>
       </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* {libraries.map((library) => (
-          <SharedLibraryCard key={library.id} library={library} />
-        ))} */}
-      </div>
+       {sharedlib.length === 0 ? (
+          <>
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="flex items-center justify-center   ">
+                <div className=" flex flex-col gap-4 items-center">
+                  <BookOpen size={40} color="#fff" />
+                  <h2 className="font-bold text-lg text-gray-200">
+                    No libraries yet{" "}
+                  </h2>
+                  <p className="font-medium text-lg text-center text-gray-600 ">
+                    {" "}
+                    You are not added yet  .
+                  </p>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {sharedlib.map((library) => (
+              <LibraryCard key={library.id} library={library as Library} />
+            ))}
+          </div>
+        )}
     </div>
   )
 }

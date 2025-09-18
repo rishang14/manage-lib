@@ -2,6 +2,7 @@ import { Library ,Shift,Seat} from "@/prisma/zod";
 import prisma from "./prisma";
 import { apiResponse, bookingdetailsType, CreateBookingInput, seatdetails, shiftschemaInput ,shiftupdateschemainput,meberinfo, changeshift, addshift, BookingBackendDbcheckInput } from "@/common/types";
 import { Notification, NotificationStatus } from "@prisma/client";
+import { Magnet } from "lucide-react";
 
 
 export async function getuserID(email: string): Promise<string | undefined> {
@@ -436,7 +437,6 @@ export async function getallreceivedNotification(userid:string):Promise<Notifica
   return prisma.notification.findMany({
     where:{
      receiverId:userid, 
-     status:"PENDING",
     }
   })
 } 
@@ -446,7 +446,6 @@ export async function getsentNotification(userid:string ,libid:string){
     where:{
       senderId:userid,
       libraryId:libid, 
-      status:"PENDING"
     }, 
     omit:{
       createdAt:true,
@@ -477,7 +476,25 @@ export async function updateInvitationNotification(id:string,action:Notification
   })
 };
 
-export async function addmanagerTolib(libid:string,adminId:string,managerId:string,) {
-  console.log(adminId,"adminid"); 
-  console.log(managerId,"manager");  
+export async function addmanagerTolib(libid:string,adminId:string,managerId:string) {
+  return  prisma.userRole.create({
+    data:{
+      userId:managerId,
+      libraryId:libid,
+      role:"MANAGER"
+    }
+  })
+} 
+
+export async function SharedLib(userid:string):Promise<Library[] >{
+return prisma.library.findMany({
+  where:{  
+    userRoles:{
+      some:{
+        userId:userid,
+        role:"MANAGER"
+      } 
+    } 
+  }, 
+})
 }

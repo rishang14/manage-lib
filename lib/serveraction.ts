@@ -380,16 +380,16 @@ export const invitationRes = async (
         updatedNotification.receiverId as string,
       ); 
 
-
+     revalidatePath("/home");
       pushToUser(updatedNotification.senderId as string,{
-       type:"notification:recevied", 
+       type:"notification:update", 
        payload:updatedNotification
       }) 
 
       pushToUser(updatedNotification.receiverId as string,{
-        type:"notification:new", 
+        type:"notification:update", 
         payload:updatedNotification
       })
-    }
+    } 
   } catch (error) {}
 };

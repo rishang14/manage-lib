@@ -13,7 +13,7 @@ import { NotificationDropdownList } from "./NotificationContent";
 import { Notification } from "@prisma/client";
 import { Badge } from "./ui/badge";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 
 export function NotificationTrigger({
@@ -40,8 +40,13 @@ export function NotificationTrigger({
      if(val.type === "notification:sent"){
       console.log("hey i am inside admin notifcaiton ", val.payload) 
       setNotification(prev=> ([val.payload ,...prev]));
+     } 
+
+     if(val.type=== "notification:update"){
+       handleUpdatedNotification(val.payload);
      }
-    } 
+    }  
+
 
     event.onerror= (err)=>{ 
      console.error("SSE error", err);
@@ -51,8 +56,19 @@ export function NotificationTrigger({
     return () => event.close();
    
    },[data?.user.id]) 
+    
+   const handleUpdatedNotification= useCallback((payload:Notification)=>{
+      setNotification(prev => {
+        const exists=prev.find(p =>p.id ===payload.id); 
 
-   console.log(notification,"notification")
+        if(exists){
+          const rest=prev.filter(p => p.id !==payload.id); 
+          return [{...exists,...payload}, ...rest]; 
+        }else{
+          return [payload,...prev]
+        }
+      })
+   },[])
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
