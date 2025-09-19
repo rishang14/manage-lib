@@ -30,9 +30,11 @@ const AddmanagerDialog = ({ isopen, setopen, libid, }: prop) => {
       startTransition(async () => {
         const res = await addmanager(values, libid,data as Session);
         if (res?.error) {
-          toast.error(res?.error, { duration: 2000 });
+          toast.error(res?.error, { duration: 2000 }); 
+          setopen(false)
         } else {
-          toast.success(res?.success, { duration: 3000 });
+          toast.success(res?.success, { duration: 3000 }); 
+          setopen(false)
         }
       }); 
       
@@ -40,7 +42,7 @@ const AddmanagerDialog = ({ isopen, setopen, libid, }: prop) => {
       console.log(error); 
       toast.error("Internal server error",{duration:3000})
     }finally{
-      setopen(false)
+      
     }
   };
   return (
