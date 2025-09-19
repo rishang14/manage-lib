@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,7 +21,7 @@ import {
   Plus,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { getmemberdetailsasperTheseat } from "@/lib/serveraction";
+import { getmemberdetailsasperTheseat, MemberDelete } from "@/lib/serveraction";
 import { AddMemberDialogParams, shiftschemaInput } from "@/common/types";
 import { AddMemberDialog } from "./AddMemberdetails";
 
@@ -44,18 +44,27 @@ const ShowMemberDialog = ({
     useState<boolean>(false);
   const [essentialdetails, setEssentialsdetails] = useState<
     AddMemberDialogParams | {}
-  >({});
+  >({}); 
+  const [pending,startTransition]=useTransition()
   const { data, isLoading } = useQuery({
     queryKey: ["seatdetails", selectedSeatid],
     queryFn: () => getmemberdetailsasperTheseat(selectedSeatid, libid),
     enabled: !!selectedSeatid,
-  });
+  }); 
+
 
   const handleAddmemberdialogopen = (data: AddMemberDialogParams) => {
     setEssentialsdetails(data);
     setAddmemberdialogopen(true);
   };
 
+
+  const handleMemBerDelete=(memberid:string)=>{
+    startTransition(async()=>{
+      await MemberDelete(libid,memberid); 
+      window.location.reload()
+    })
+  }
   console.log(data, "data for the seat");
   if (isLoading) return <p>loading screen</p>;
   return (
@@ -160,21 +169,23 @@ const ShowMemberDialog = ({
 
                             {/* Action Buttons */}
                             <div className="flex gap-2">
-                              <Button
+                              {/* <Button
                                 size="sm"
                                 variant="outline"
                                 className="flex-1 bg-white/80 hover:bg-white"
                               >
                                 <Edit className="w-3 h-3 mr-1" />
                                 Edit Member
-                              </Button>
+                              </Button> */}
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="flex-1 text-red-600 hover:text-red-700 bg-white/80 hover:bg-red-50"
+                                className="flex-1 text-red-600 hover:text-red-700 bg-white/80 hover:bg-red-50" 
+                                onClick={() =>handleMemBerDelete(memberdetails.member.id)} 
+                                disabled={pending}
                               >
                                 <Trash2 className="w-3 h-3 mr-1" />
-                                Remove
+                               {pending ? "Removing" : "Removed"}
                               </Button>
                             </div>
                           </div>

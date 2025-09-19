@@ -412,3 +412,26 @@ export const reomveManaager = async (libid: string, managerId: string) => {
     return { success: false, error: "Internal server Error" };
   }
 };
+
+export const MemberDelete = async (
+  libid: string,
+  memberId: string
+) => {
+  try {
+    const sess = await auth();
+    if (!sess?.user.email) {
+      return;
+    }
+    const deleteMember = await prisma.member.delete({
+      where: {
+        id: memberId,
+      },
+    });
+    if (deleteMember) {
+      revalidatePath(`/library/${libid}?tab=manage`);
+    }
+    return { success: true };
+  } catch (error) {
+    return { success: false };
+  }
+};
