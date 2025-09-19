@@ -7,10 +7,13 @@ import Link from "next/link";
 import React, { useRef } from "react"; 
 import Libcardmenu from "./Libcardmenu";
 import { useSession } from "next-auth/react";
-import { Session } from "next-auth";
+import { libroles } from "@/common/types";
 
 
-export const PrefectchLibdetailsCard = ({ libid }: { libid: string }) => {  
+export const PrefectchLibdetailsCard = ({ libid }: { libid: string }) => {   
+  const {data}=useSession(); 
+  console.log(data)
+  const userrole= data?.user.libdetails.find((i:libroles) => i.libid === libid ); 
   // get the queryclient to know where the data is stored and for the cache
   const queryClinet = useQueryClient(); 
   // to know ongoing request it is builtin browser func  
@@ -38,7 +41,7 @@ export const PrefectchLibdetailsCard = ({ libid }: { libid: string }) => {
       <Link href={`/library/${libid}`}>
         <ExternalLink className="h-5 w-5  text-cyan-700" />
       </Link>
-     <Libcardmenu libid={libid as string} />
+   { userrole && userrole.role=== "ADMIN"  &&  <Libcardmenu libid={libid as string} /> }
     </div>
   );
 };

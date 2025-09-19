@@ -13,6 +13,7 @@ export const UserRoleSelectSchema: z.ZodType<Prisma.UserRoleSelect> = z.object({
   userId: z.boolean().optional(),
   libraryId: z.boolean().optional(),
   role: z.boolean().optional(),
+  joinedAt: z.boolean().optional(),
   user: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
   library: z.union([z.boolean(),z.lazy(() => LibraryArgsSchema)]).optional(),
 }).strict()

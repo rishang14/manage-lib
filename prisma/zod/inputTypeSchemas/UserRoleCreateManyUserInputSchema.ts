@@ -6,7 +6,8 @@ import { RoleTypeSchema } from './RoleTypeSchema';
 export const UserRoleCreateManyUserInputSchema: z.ZodType<Prisma.UserRoleCreateManyUserInput> = z.object({
   id: z.string().cuid().optional(),
   libraryId: z.string(),
-  role: z.lazy(() => RoleTypeSchema)
+  role: z.lazy(() => RoleTypeSchema),
+  joinedAt: z.coerce.date().optional()
 }).strict();
 
 export default UserRoleCreateManyUserInputSchema;

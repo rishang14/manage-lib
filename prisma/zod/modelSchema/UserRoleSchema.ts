@@ -10,6 +10,7 @@ export const UserRoleSchema = z.object({
   id: z.string().cuid(),
   userId: z.string(),
   libraryId: z.string(),
+  joinedAt: z.coerce.date(),
 })
 
 export type UserRole = z.infer<typeof UserRoleSchema>

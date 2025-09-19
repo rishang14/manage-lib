@@ -8,6 +8,7 @@ import { LibraryCreateNestedOneWithoutUserRolesInputSchema } from './LibraryCrea
 export const UserRoleCreateInputSchema: z.ZodType<Prisma.UserRoleCreateInput> = z.object({
   id: z.string().cuid().optional(),
   role: z.lazy(() => RoleTypeSchema),
+  joinedAt: z.coerce.date().optional(),
   user: z.lazy(() => UserCreateNestedOneWithoutUserRolesInputSchema),
   library: z.lazy(() => LibraryCreateNestedOneWithoutUserRolesInputSchema)
 }).strict();

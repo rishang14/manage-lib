@@ -498,3 +498,26 @@ return prisma.library.findMany({
   }, 
 })
 }
+
+
+
+export async function ManagersPerLib(libid:string) { 
+return prisma.user.findMany({
+  where:{
+    userRoles:{ 
+      some:{
+        role:"MANAGER", 
+        libraryId:libid
+      } 
+    } 
+    
+  }, 
+  include:{
+    userRoles:{
+     select:{
+      joinedAt:true
+     }
+    }
+  }
+}) 
+} 

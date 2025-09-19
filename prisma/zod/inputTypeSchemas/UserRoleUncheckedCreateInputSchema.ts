@@ -7,7 +7,8 @@ export const UserRoleUncheckedCreateInputSchema: z.ZodType<Prisma.UserRoleUnchec
   id: z.string().cuid().optional(),
   userId: z.string(),
   libraryId: z.string(),
-  role: z.lazy(() => RoleTypeSchema)
+  role: z.lazy(() => RoleTypeSchema),
+  joinedAt: z.coerce.date().optional()
 }).strict();
 
 export default UserRoleUncheckedCreateInputSchema;

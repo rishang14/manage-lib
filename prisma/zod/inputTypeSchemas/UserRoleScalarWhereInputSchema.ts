@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { StringFilterSchema } from './StringFilterSchema';
 import { EnumRoleTypeFilterSchema } from './EnumRoleTypeFilterSchema';
 import { RoleTypeSchema } from './RoleTypeSchema';
+import { DateTimeFilterSchema } from './DateTimeFilterSchema';
 
 export const UserRoleScalarWhereInputSchema: z.ZodType<Prisma.UserRoleScalarWhereInput> = z.object({
   AND: z.union([ z.lazy(() => UserRoleScalarWhereInputSchema),z.lazy(() => UserRoleScalarWhereInputSchema).array() ]).optional(),
@@ -13,6 +14,7 @@ export const UserRoleScalarWhereInputSchema: z.ZodType<Prisma.UserRoleScalarWher
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   libraryId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   role: z.union([ z.lazy(() => EnumRoleTypeFilterSchema),z.lazy(() => RoleTypeSchema) ]).optional(),
+  joinedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
 
 export default UserRoleScalarWhereInputSchema;

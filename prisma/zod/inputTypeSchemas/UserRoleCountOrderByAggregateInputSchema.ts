@@ -7,7 +7,8 @@ export const UserRoleCountOrderByAggregateInputSchema: z.ZodType<Prisma.UserRole
   id: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
   libraryId: z.lazy(() => SortOrderSchema).optional(),
-  role: z.lazy(() => SortOrderSchema).optional()
+  role: z.lazy(() => SortOrderSchema).optional(),
+  joinedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export default UserRoleCountOrderByAggregateInputSchema;
