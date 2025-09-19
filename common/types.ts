@@ -7,7 +7,7 @@ import {
   BookingSchema,
 } from "@/prisma/zod";
 import { PaymentSchema } from "@/prisma/zod";
-import { Member } from "@prisma/client";
+import { Member, User } from "@prisma/client";
 
 const ShiftCreateSchema = z.object({ 
   name: z.string().min(1, "Shift name is required"),
@@ -118,7 +118,8 @@ export type apiResponse<> = {
   success: boolean;
   message?: string;
   error?: string;
-}; 
+};  
+
 
 
 
@@ -343,4 +344,18 @@ export type AddMemberDialogParams = {
   shiftName: string;
   libraryId?: string;
   selectedSeatId: string | null;
+}; 
+
+
+type UserRoleLite = {
+  joinedAt: Date;
+  role: string;
 };
+
+// User with roles attached
+export type ManagerWithRoles = User & {
+  userRoles: UserRoleLite[];
+};
+
+// Function return type
+export type ManagersPerLibReturn = ManagerWithRoles[];

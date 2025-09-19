@@ -13,12 +13,13 @@ import {
   getsentNotification,
   updateInvitationNotification,
   addmanagerTolib,
+  reomveManager,
 } from "./dbcalls";
 import { getfullDataAftervalidation, verifysession } from "./helper";
 import { Shift } from "@/prisma/zod";
 import { revalidatePath } from "next/cache";
 import prisma from "./prisma";
-import { Notification, NotificationStatus, Prisma } from "@prisma/client";
+import { NotificationStatus, Prisma } from "@prisma/client";
 import {
   seatdetailsschema,
   SeatShiftResult,
@@ -364,30 +365,50 @@ export const invitationRes = async (
   notifcationid: string,
   action: NotificationStatus
 ) => {
-  try { 
-    const session=await auth();
+  try {
+    const session = await auth();
     const updatedNotification = await updateInvitationNotification(
       notifcationid as string,
-      action as NotificationStatus , 
-      session?.user.name as string 
+      action as NotificationStatus,
+      session?.user.name as string
     );
-    
+
     if (updatedNotification.status === "ACCEPTED") {
       const res = await addmanagerTolib(
         updatedNotification.libraryId as string,
         updatedNotification.senderId as string,
-        updatedNotification.receiverId as string,
-      ); 
+        updatedNotification.receiverId as string
+      );
     }
-      pushToUser(updatedNotification.senderId as string,{
-        type:"notification:update", 
-        payload:updatedNotification
-      }) 
-      
-      pushToUser(updatedNotification.receiverId as string,{
-        type:"notification:update", 
-        payload:updatedNotification
-      })
-      revalidatePath("/home");
+    pushToUser(updatedNotification.senderId as string, {
+      type: "notification:update",
+      payload: updatedNotification,
+    });
+
+    pushToUser(updatedNotification.receiverId as string, {
+      type: "notification:update",
+      payload: updatedNotification,
+    });
+    revalidatePath("/home");
   } catch (error) {}
+};
+
+export const reomveManaager = async (libid: string, managerId: string) => {
+  try {
+    const user = await verifysession(libid);
+
+    if (user.role != "ADMIN") {
+      return { error: "You dont have access to do this operation" };
+    }
+
+    const removeFromManager = await reomveManager(libid, managerId);
+    if (removeFromManager) {
+      return { success: true };
+    }
+    revalidatePath(`/library/${libid}`);
+    revalidatePath(`/library/${libid}/admin`);
+    revalidatePath(`/home`);
+  } catch (error) {
+    return { success: false, error: "Internal server Error" };
+  }
 };

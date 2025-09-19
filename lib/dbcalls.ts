@@ -1,9 +1,20 @@
-import { Library ,Shift,Seat} from "@/prisma/zod";
+import { Library, Shift, Seat } from "@/prisma/zod";
 import prisma from "./prisma";
-import { apiResponse, bookingdetailsType, CreateBookingInput, seatdetails, shiftschemaInput ,shiftupdateschemainput,meberinfo, changeshift, addshift, BookingBackendDbcheckInput } from "@/common/types";
-import { Notification, NotificationStatus } from "@prisma/client";
+import {
+  apiResponse,
+  bookingdetailsType,
+  CreateBookingInput,
+  seatdetails,
+  shiftschemaInput,
+  shiftupdateschemainput,
+  meberinfo,
+  changeshift,
+  addshift,
+  BookingBackendDbcheckInput,
+  ManagerWithRoles,
+} from "@/common/types";
+import { Notification, NotificationStatus, User } from "@prisma/client";
 import { Magnet } from "lucide-react";
-
 
 export async function getuserID(email: string): Promise<string | undefined> {
   try {
@@ -16,11 +27,11 @@ export async function getuserID(email: string): Promise<string | undefined> {
       },
     });
 
-    if(!user){
-      return undefined
-    } 
+    if (!user) {
+      return undefined;
+    }
 
-    return user.id
+    return user.id;
   } catch (error) {
     console.error(`Error retrieving user with email ${email}:`, error);
     return undefined;
@@ -46,49 +57,48 @@ export async function alllibrary(userid: string): Promise<Library[]> {
 }
 
 export async function getlibrarydetails(id: string) {
-try {
+  try {
     const libdetails = await prisma.library.findUnique({
-    where: { id },
-    include: {
-      shifts: true,
-      members: true,
-      seats: true,
-      userRoles: true,
-      owner: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
+      where: { id },
+      include: {
+        shifts: true,
+        members: true,
+        seats: true,
+        userRoles: true,
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
         },
       },
-    },
-  });
-  if (!libdetails) return undefined;
-  return libdetails;
-} catch (error) {
-   console.log("error while getting libdetails",error)
+    });
+    if (!libdetails) return undefined;
+    return libdetails;
+  } catch (error) {
+    console.log("error while getting libdetails", error);
+  }
 }
-} 
 
+export async function getstaticlibdetails(libid: string) {
+  try {
+    const details = await prisma.library.findUnique({
+      where: { id: libid },
+      include: {
+        owner: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
 
-export async function getstaticlibdetails(libid:string) {
-    try {
-       const details=await prisma.library.findUnique({
-        where:{id:libid}, 
-        include:{
-          owner:{
-            select:{
-              name:true, 
-              email:true,
-            }
-          }
-        }
-       }) 
-       
-       return details;
-    } catch (error) { 
-      console.log("got error while fetching the data")
-    }
+    return details;
+  } catch (error) {
+    console.log("got error while fetching the data");
+  }
 }
 
 export async function isuserexist(id: string): Promise<apiResponse> {
@@ -146,8 +156,8 @@ export async function isthisUserIsInLib(
 
     if (user && user.role === "ADMIN") {
       return { success: true, message: "ADMIN" };
-    }    
-      return {success:true , message:"MANAGER"};
+    }
+    return { success: true, message: "MANAGER" };
   } catch (error) {
     console.log(error, "error while finding the admin in lib");
     return {
@@ -157,10 +167,10 @@ export async function isthisUserIsInLib(
   }
 }
 
-
-
-export async function addnewShift(shift: shiftschemaInput): Promise<Shift | undefined> {
-return await prisma.shift.create({
+export async function addnewShift(
+  shift: shiftschemaInput
+): Promise<Shift | undefined> {
+  return await prisma.shift.create({
     data: {
       startTime: shift.startTime,
       endTime: shift.endTime,
@@ -170,141 +180,136 @@ return await prisma.shift.create({
   });
 }
 
-
-export async function UpdateShift(id:string, details:shiftupdateschemainput  ):Promise<Shift | undefined>{
+export async function UpdateShift(
+  id: string,
+  details: shiftupdateschemainput
+): Promise<Shift | undefined> {
   try {
-    const updatedshifts= await prisma.shift.update({
-    where:{id}, 
-    data:{
-      name:details.name, 
-      startTime:details.startTime, 
-      endTime:details.endTime 
-    }
-   }) 
-
-   return updatedshifts; 
-  } catch (error) {
-    console.log (error ,"while upating shift ")
-  }
-} 
-
-
-export async function createseat(details:seatdetails):Promise<Seat | undefined>{
-   
- try {
-   const createseat= await prisma.seat.create({
-    data:{
-      seatNumber:details.seatNumber,  
-      libraryId:details.libraryId
-    }
-  }) 
-
-  if(!createseat){
-     return undefined; 
-  } 
-
-  return createseat;
- } catch (error) {
-   console.log(error,"while creating seat ")
- }
-} 
-
-
-
-
-export async function DeleteUser(userid:string){ 
-  try {
-    
-    const delteduser= await prisma.user.delete({where:{id:userid}}); 
-    if(delteduser){
- 
-     console.log("user deleted")
-    }
-  } catch (error) {
-    console.log(error,"while deleting user")
-  }
-}  
-
-
-export async  function getseatdetails(seatId:string){
-try {
-    const seat= await prisma.seat.findFirst({
-    where:{id:seatId},
-    include:{
-      bookings:{
-        include:{
-          member:true,
-        }
-      }
-    }
-  }) 
-
- return seat;
-} catch (error) {
-   console.log("error while getting seat ",error)
-}
-}  
-
-export const shifts =  async (libid: string) => {
-    return await prisma.shift.findMany({
-      where: { libraryId: libid },
+    const updatedshifts = await prisma.shift.update({
+      where: { id },
+      data: {
+        name: details.name,
+        startTime: details.startTime,
+        endTime: details.endTime,
+      },
     });
-  };
 
+    return updatedshifts;
+  } catch (error) {
+    console.log(error, "while upating shift ");
+  }
+}
 
-export async function isbookingexist(data:bookingdetailsType){
-   try {
-    const isbookingexist= await prisma.booking.findMany({
-    where:{
-      seatId:data.seatId, 
-      shiftId:{
-       in : data.shiftIds
-       } 
-       
-    } , 
-    include:{
-      shift:true
+export async function createseat(
+  details: seatdetails
+): Promise<Seat | undefined> {
+  try {
+    const createseat = await prisma.seat.create({
+      data: {
+        seatNumber: details.seatNumber,
+        libraryId: details.libraryId,
+      },
+    });
+
+    if (!createseat) {
+      return undefined;
     }
-  }) 
 
-  return isbookingexist?.length > 0 ? isbookingexist : null;
-   } catch (error) {
-    console.log(error,"checking booking")
-   }
-} 
+    return createseat;
+  } catch (error) {
+    console.log(error, "while creating seat ");
+  }
+}
 
-
-export  async function createbooking(datas:BookingBackendDbcheckInput,libid:string){
- return await prisma.member.create({
-   data:{
-    name:datas.member.name , 
-    phone:datas.member.phone , 
-    joinedAt:datas.member.joinedAt, 
-    libraryId:datas.libraryId ??libid, 
-    bookings:{
-      create: datas.shiftsIds.map((id:string) => ({
-        shiftId:id as string, 
-        seatId:datas.seatId ,  
-        date:datas.date ?? new Date()
-      }))
-    }, 
-    payments:{
-      create:{
-        paid:datas.payment.paid,
-        amount:datas.payment.amount,
-        paidAt:datas.payment.paidAt, 
-        validTill:datas.payment.validTill, 
-        duration:datas.payment.duration, 
-        startMonth:datas.payment.startMonth
-      }
+export async function DeleteUser(userid: string) {
+  try {
+    const delteduser = await prisma.user.delete({ where: { id: userid } });
+    if (delteduser) {
+      console.log("user deleted");
     }
-   }, 
- })}  
+  } catch (error) {
+    console.log(error, "while deleting user");
+  }
+}
 
+export async function getseatdetails(seatId: string) {
+  try {
+    const seat = await prisma.seat.findFirst({
+      where: { id: seatId },
+      include: {
+        bookings: {
+          include: {
+            member: true,
+          },
+        },
+      },
+    });
 
-export async function undatedmemberinfo(memberinfo:meberinfo){
- 
-   try {
+    return seat;
+  } catch (error) {
+    console.log("error while getting seat ", error);
+  }
+}
+
+export const shifts = async (libid: string) => {
+  return await prisma.shift.findMany({
+    where: { libraryId: libid },
+  });
+};
+
+export async function isbookingexist(data: bookingdetailsType) {
+  try {
+    const isbookingexist = await prisma.booking.findMany({
+      where: {
+        seatId: data.seatId,
+        shiftId: {
+          in: data.shiftIds,
+        },
+      },
+      include: {
+        shift: true,
+      },
+    });
+
+    return isbookingexist?.length > 0 ? isbookingexist : null;
+  } catch (error) {
+    console.log(error, "checking booking");
+  }
+}
+
+export async function createbooking(
+  datas: BookingBackendDbcheckInput,
+  libid: string
+) {
+  return await prisma.member.create({
+    data: {
+      name: datas.member.name,
+      phone: datas.member.phone,
+      joinedAt: datas.member.joinedAt,
+      libraryId: datas.libraryId ?? libid,
+      bookings: {
+        create: datas.shiftsIds.map((id: string) => ({
+          shiftId: id as string,
+          seatId: datas.seatId,
+          date: datas.date ?? new Date(),
+        })),
+      },
+      payments: {
+        create: {
+          paid: datas.payment.paid,
+          amount: datas.payment.amount,
+          paidAt: datas.payment.paidAt,
+          validTill: datas.payment.validTill,
+          duration: datas.payment.duration,
+          startMonth: datas.payment.startMonth,
+        },
+      },
+    },
+  });
+}
+
+export async function undatedmemberinfo(memberinfo: meberinfo) {
+  try {
     const editedmember = await prisma.member.update({
       where: { id: memberinfo.id },
       data: {
@@ -316,12 +321,12 @@ export async function undatedmemberinfo(memberinfo:meberinfo){
 
     return editedmember;
   } catch (error: any) {
-    if (error.code === 'P2025') {
+    if (error.code === "P2025") {
       return undefined;
-    }  
+    }
     throw error;
   }
-} 
+}
 
 export function changemembershifts(datas: changeshift) {
   return datas.newShiftIds.map((shiftId) =>
@@ -336,25 +341,23 @@ export function changemembershifts(datas: changeshift) {
   );
 }
 
+export async function changememberseat(datas: changeshift) {
+  const { newShiftIds } = datas;
 
-export async function changememberseat(datas:changeshift){
-    const {newShiftIds}= datas; 
+  for (const newshift of newShiftIds) {
+    await prisma.booking.create({
+      data: {
+        memberId: datas.memberId,
+        seatId: datas.seatId,
+        shiftId: newshift,
+        date: new Date(),
+      },
+    });
+  }
+}
 
-    for(const newshift of newShiftIds){
-      await prisma.booking.create({
-        data:{
-          memberId:datas.memberId, 
-          seatId:datas.seatId,
-          shiftId:newshift, 
-          date: new Date,
-        }
-      })
-    }
-}  
- 
-
-export  function delteshiftBooking(data: bookingdetailsType) {
- return prisma.booking.deleteMany({
+export function delteshiftBooking(data: bookingdetailsType) {
+  return prisma.booking.deleteMany({
     where: {
       seatId: data.seatId,
       shiftId: {
@@ -363,28 +366,29 @@ export  function delteshiftBooking(data: bookingdetailsType) {
     },
   });
 }
- 
-export async function addnewShiftinmember(datas:addshift){
-  const updatedshift= await prisma.member.update({
-  where: { id: datas.memberId },
-  data: {
-    bookings: {
-      createMany: {
-        data: datas.newShiftIds.map((shiftId) => ({
-          seatId: datas.seatId,
-          shiftId,
-          date: new Date(),
-        })),
-        skipDuplicates: true,
+
+export async function addnewShiftinmember(datas: addshift) {
+  const updatedshift = await prisma.member.update({
+    where: { id: datas.memberId },
+    data: {
+      bookings: {
+        createMany: {
+          data: datas.newShiftIds.map((shiftId) => ({
+            seatId: datas.seatId,
+            shiftId,
+            date: new Date(),
+          })),
+          skipDuplicates: true,
+        },
       },
     },
-  },
-}); 
-if(!updatedshift){return undefined}
- 
-return updatedshift;
-} 
+  });
+  if (!updatedshift) {
+    return undefined;
+  }
 
+  return updatedshift;
+}
 
 export const updateShift = async (data: Shift) => {
   return prisma.shift.update({
@@ -395,9 +399,7 @@ export const updateShift = async (data: Shift) => {
       endTime: data.endTime,
     },
   });
-}; 
-
-
+};
 
 export async function libraryUserSeatWithShift(
   libid: string,
@@ -419,105 +421,127 @@ export async function libraryUserSeatWithShift(
   });
 
   return seat;
-} 
-
-
-export async function notificationexist(libid:string,adminid:string){ 
-return prisma.notification.findFirst({
-  where:{
-    senderId:adminid, 
-    libraryId:libid,
-    status:"PENDING"
-  }
-})
-
-} 
-
-export async function getallreceivedNotification(userid:string):Promise<Notification[]>{
-  return prisma.notification.findMany({
-    where:{
-     receiverId:userid, 
-    }
-  })
-} 
-
-export async function getsentNotification(userid:string ,libid:string){
-  return prisma.notification.findMany({
-    where:{
-      senderId:userid,
-      libraryId:libid, 
-    }, 
-    omit:{
-      createdAt:true,
-      updatedAt:true
-    }
-  })
-} 
-
-type aType={
-  action:"ACCEPTED" | "REJECTED" 
 }
- 
-export async function updateInvitationNotification(id:string,action:NotificationStatus,managerName:string) {
-  return prisma.notification.update({
-    where:{
-     id 
-    },data:{
-      status:action, 
-      message:`Requst to join the library as a manager ${action}`, 
-      data:{
-        sendby:managerName,
-      }
-    }, 
-    include:{
-      sender:true, 
-      receiver:true
-    }
-  })
+
+export async function notificationexist(libid: string, adminid: string) {
+  return prisma.notification.findFirst({
+    where: {
+      senderId: adminid,
+      libraryId: libid,
+      status: "PENDING",
+    },
+  });
+}
+
+export async function getallreceivedNotification(
+  userid: string
+): Promise<Notification[]> {
+  return prisma.notification.findMany({
+    where: {
+      receiverId: userid,
+    },
+  });
+}
+
+export async function getsentNotification(userid: string, libid: string) {
+  return prisma.notification.findMany({
+    where: {
+      senderId: userid,
+      libraryId: libid,
+    },
+    omit: {
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+}
+
+type aType = {
+  action: "ACCEPTED" | "REJECTED";
 };
 
-export async function addmanagerTolib(libid:string,adminId:string,managerId:string) {
-  return  prisma.userRole.create({
-    data:{
-      userId:managerId,
-      libraryId:libid,
-      role:"MANAGER"
-    }
-  })
-} 
-
-export async function SharedLib(userid:string):Promise<Library[] >{
-return prisma.library.findMany({
-  where:{  
-    userRoles:{
-      some:{
-        userId:userid,
-        role:"MANAGER"
-      } 
-    } 
-  }, 
-})
+export async function updateInvitationNotification(
+  id: string,
+  action: NotificationStatus,
+  managerName: string
+) {
+  return prisma.notification.update({
+    where: {
+      id,
+    },
+    data: {
+      status: action,
+      message: `Requst to join the library as a manager ${action}`,
+      data: {
+        sendby: managerName,
+      },
+    },
+    include: {
+      sender: true,
+      receiver: true,
+    },
+  });
 }
 
+export async function addmanagerTolib(
+  libid: string,
+  adminId: string,
+  managerId: string
+) {
+  return prisma.userRole.create({
+    data: {
+      userId: managerId,
+      libraryId: libid,
+      role: "MANAGER",
+    },
+  });
+}
 
+export async function SharedLib(userid: string): Promise<Library[]> {
+  return prisma.library.findMany({
+    where: {
+      userRoles: {
+        some: {
+          userId: userid,
+          role: "MANAGER",
+        },
+      },
+    },
+  });
+}
 
-export async function ManagersPerLib(libid:string) { 
-return prisma.user.findMany({
-  where:{
-    userRoles:{ 
-      some:{
-        role:"MANAGER", 
-        libraryId:libid
-      } 
-    } 
-    
-  }, 
-  include:{
-    userRoles:{
-     select:{
-      joinedAt:true
-     }
-    }
-  }
-}) 
-} 
+export async function ManagersPerLib(
+  libid: string
+): Promise<ManagerWithRoles[]> {
+  return await prisma.user.findMany({
+    where: {
+      userRoles: {
+        some: {
+          role: "MANAGER",
+          libraryId: libid,
+        },
+      },
+    },
+    include: {
+      userRoles: {
+        select: {
+          joinedAt: true,
+          role: true,
+        },
+      },
+    },
+  });
+}
+
+export async function reomveManager(libid: string, managerId: string) {
+  return  prisma.userRole.delete({
+    where: {
+      userId: managerId,
+      role: "MANAGER",
+      userId_libraryId: {
+        userId: managerId,
+        libraryId: libid,
+      },
+    },
+  });
+}

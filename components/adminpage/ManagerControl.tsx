@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { ManagersPerLib } from "@/lib/dbcalls";
 import { User } from "@prisma/client";
+import { ManagerWithRoles } from "@/common/types";
 
 
 type prop ={
@@ -20,12 +21,12 @@ if(admin != "ADMIN"){
   return redirect("/");
 } 
 
-const managers:User[]= await ManagersPerLib(libid as string); 
-console.log(managers);
+const managers:ManagerWithRoles[]= await ManagersPerLib(libid as string); 
+console.log(managers,"managers");
 
   return (
     <div className="space-y-6">
-      <ManagerTab libid={libid} admin={session as Session} mamangers={managers } />
+      <ManagerTab libid={libid} admin={session as Session} managers={managers } />
     </div>
   );
 }
