@@ -63,7 +63,7 @@ export function NotificationDropdownList({
                         <span className="text-xs  text-gray-400 font-bold">
                           From{" "}
                         </span>
-                        : {from?.invitedby}
+                        : {from?.invitedby ?? from?.sendby} 
                       </h4>
                     </div>
                     <p className="text-xs text-muted-foreground line-clamp-2 mb-2">

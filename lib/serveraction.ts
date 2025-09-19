@@ -372,7 +372,6 @@ export const invitationRes = async (
       session?.user.name as string 
     );
     
-    console.log(updatedNotification,"notification")
     if (updatedNotification.status === "ACCEPTED") {
       const res = await addmanagerTolib(
         updatedNotification.libraryId as string,
