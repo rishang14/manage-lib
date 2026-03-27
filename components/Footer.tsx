@@ -6,7 +6,7 @@ import { motion } from "framer-motion"
 
 export function Footer() {
   return (
-    <footer className="bg-background p-2 m-3">
+    <footer className="bg-background p-2 ">
         <motion.div
           className="border-t  pt-4 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0"
           initial={{ opacity: 0 }}

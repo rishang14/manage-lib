@@ -79,7 +79,7 @@ const item = {
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="py-20 md:py-32">
+    <section id="features" className="py-10 md:py-16">
       <div className="container px-4 md:px-6">
         <motion.div
           className="text-center space-y-4 mb-16"

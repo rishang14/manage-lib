@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import {
   Card,
   CardContent,
@@ -39,17 +36,7 @@ const shiftColors = {
 };
 
 const ShiftStatusDot = ({ status }: { status: keyof typeof shiftColors }) => (
-  <motion.div
-    className={`h-3 w-3 rounded-full ${shiftColors[status]}`}
-    initial={{ scale: 0 }}
-    animate={{ scale: 1 }}
-    transition={{
-      type: "spring",
-      stiffness: 300,
-      damping: 20,
-      delay: Math.random() * 0.5,
-    }}
-  />
+  <div className={`h-3 w-3 rounded-full ${shiftColors[status]}`} />
 );
 
 const getStatusIcon = (status: string) => {
@@ -81,35 +68,20 @@ const getStatusBadgeClass = (status: string) => {
 
 const HomepageCard = () => {
   return (
-    <div className="w-full max-w-7xl md:mx-auto md:p-4  p-2 lg:p-8">
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.1 }}
-        transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
-      >
-        <Card className="w-full shadow-2xl overflow-hidden bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 border-0">
-          <CardContent className="p-6 sm:p-8 lg:p-12">
-            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+    <div className="w-full max-w-4xl md:mx-auto md:p-4 md:m-18   border-t  lg:p-8">
+      <div>
+        <Card className="w-full shadow-md border-1 shadow-blue-300/70 bg-zinc-950 overflow-hidden  ">
+          <h3 className="text-center text-5xl text-gray-100">Our services</h3>
+          <CardContent className=" md:p-6 lg:p-8 ">
+            <div className="grid lg:grid-cols-1 gap-8 lg:gap-12">
               {/* Seat Management Card */}
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.6, ease: "easeOut", delay: 0.5 }}
-                whileHover={{ y: -5 }}
-                className="group"
-              >
-                <Card className="h-full shadow-xl relative overflow-hidden bg-gradient-to-br from-emerald-50 to-blue-50 dark:from-emerald-900/20 dark:to-blue-900/20 border border-emerald-200 dark:border-emerald-800 transition-all duration-300 group-hover:shadow-2xl">
+              <div className="group">
+                <Card className="h-full shadow-xl relative overflow-hidden bg-slate-950  transition-all duration-300 group-hover:shadow-2xl">
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-3 mb-2">
-                      <motion.div
-                        whileHover={{ rotate: 15 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                        className="p-2 bg-emerald-100 dark:bg-emerald-900/50 rounded-lg"
-                      >
+                      <div className="p-2 bg-emerald-100 dark:bg-emerald-900/50 rounded-lg">
                         <Armchair className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
-                      </motion.div>
+                      </div>
                       <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
                         Visual Seat Planner
                       </CardTitle>
@@ -120,13 +92,7 @@ const HomepageCard = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <motion.div
-                      className="rounded-lg border bg-white dark:bg-gray-800/50 p-4 shadow-inner"
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true, amount: 0.5 }}
-                      transition={{ staggerChildren: 0.1 }}
-                    >
+                    <div className="rounded-lg border bg-neutral-900/10  p-4 ">
                       <div className="grid grid-cols-[auto_1fr_1fr_1fr] gap-x-3 gap-y-2 items-center text-sm font-medium text-muted-foreground mb-3">
                         <div className="text-left">Seat</div>
                         <div className="text-center">Shift 1</div>
@@ -134,14 +100,9 @@ const HomepageCard = () => {
                         <div className="text-center">Shift 3</div>
                       </div>
                       {mockSeats.map((seat, seatIndex) => (
-                        <motion.div
+                        <div
                           key={seat.id}
                           className="grid grid-cols-[auto_1fr_1fr_1fr] gap-x-3 gap-y-2 items-center py-2.5 border-b last:border-b-0 dark:border-slate-700"
-                          variants={{
-                            hidden: { opacity: 0, x: -20 },
-                            visible: { opacity: 1, x: 0 },
-                          }}
-                          transition={{ delay: seatIndex * 0.1 + 0.6 }}
                         >
                           <div className="font-semibold text-gray-700 dark:text-gray-200">
                             {seat.id}
@@ -156,9 +117,9 @@ const HomepageCard = () => {
                               />
                             </div>
                           ))}
-                        </motion.div>
+                        </div>
                       ))}
-                    </motion.div>
+                    </div>
                     <div className="mt-4 flex flex-wrap gap-3 text-xs">
                       <div className="flex items-center gap-1.5">
                         <div className="h-2 w-2 rounded-full bg-blue-500"></div>
@@ -179,30 +140,24 @@ const HomepageCard = () => {
                         </span>
                       </div>
                     </div>
-                  </CardContent> 
-                  <BorderBeam duration={20} size={100}  colorFrom="#a4f4cf " colorTo="#314158"/>
+                  </CardContent>
+                  <BorderBeam
+                    duration={20}
+                    size={100}
+                    colorFrom="#a4f4cf "
+                    colorTo="#314158"
+                  />
                 </Card>
-              </motion.div>
+              </div>
 
               {/* Payment Management Card */}
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.6, ease: "easeOut", delay: 0.7 }}
-                whileHover={{ y: -5 }}
-                className="group"
-              >
-                <Card className="h-full shadow-xl relative overflow-hidden bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800 transition-all duration-300 group-hover:shadow-2xl">
+              <div className="group">
+                <Card className="h-full shadow-xl relative overflow-hidden bg-slate-950  transition-all duration-300 group-hover:shadow-2xl">
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-3 mb-2">
-                      <motion.div
-                        whileHover={{ rotate: 15 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                        className="p-2 bg-purple-100 dark:bg-purple-900/50 rounded-lg"
-                      >
-                        <CreditCard className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-                      </motion.div>
+                      <div className="p-2 rounded-lg">
+                        <CreditCard className="h-6 w-6" />
+                      </div>
                       <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
                         Payment Dashboard
                       </CardTitle>
@@ -213,23 +168,11 @@ const HomepageCard = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <motion.div
-                      className="rounded-lg border bg-white dark:bg-gray-800/50 p-4 shadow-inner space-y-3"
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true, amount: 0.5 }}
-                      transition={{ staggerChildren: 0.15 }}
-                    >
+                    <div className="rounded-lg border  bg-neutral-900/10 p-4 space-y-3">
                       {mockPayments.map((payment, index) => (
-                        <motion.div
+                        <div
                           key={index}
-                          className="flex items-center justify-between p-3 rounded-md bg-card dark:bg-slate-700/40 shadow-sm hover:shadow-md transition-shadow duration-200"
-                          variants={{
-                            hidden: { opacity: 0, scale: 0.95 },
-                            visible: { opacity: 1, scale: 1 },
-                          }}
-                          transition={{ delay: index * 0.1 + 0.8 }}
-                          whileHover={{ scale: 1.02 }}
+                          className="flex items-center justify-between p-3 rounded-md  bg-slate-900/40 shadow-sm hover:shadow-md transition-shadow duration-200"
                         >
                           <div className="flex items-center gap-3">
                             <div className="p-1.5 bg-gray-100 dark:bg-gray-700 rounded-full">
@@ -247,15 +190,15 @@ const HomepageCard = () => {
                           <Badge
                             variant={getStatusBadgeVariant(payment.status)}
                             className={`${getStatusBadgeClass(
-                              payment.status
+                              payment.status,
                             )} transition-all duration-200`}
                           >
                             {getStatusIcon(payment.status)}
                             <span className="ml-1.5">{payment.status}</span>
                           </Badge>
-                        </motion.div>
+                        </div>
                       ))}
-                    </motion.div>
+                    </div>
                     <div className="mt-4 p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg">
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-600 dark:text-gray-400">
@@ -274,22 +217,14 @@ const HomepageCard = () => {
                         </div>
                       </div>
                     </div>
-                  </CardContent> 
-                  <BorderBeam  duration={20} size={100}/>
+                  </CardContent>
+                  <BorderBeam duration={20} size={100} />
                 </Card>
-              </motion.div>
+              </div>
             </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 1, duration: 0.5 }}
-              className="mt-12 text-center"
-            ></motion.div>
-          </CardContent> 
+          </CardContent>
         </Card>
-      </motion.div>
+      </div>
     </div>
   );
 };

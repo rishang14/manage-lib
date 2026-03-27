@@ -36,10 +36,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={rubik.className}>
       <body
-        className={`${rubik.variable}  antialiased`} 
-        suppressHydrationWarning
+        className="antialiased"
       >
         <Provider
           attribute="class"
