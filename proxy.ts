@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { publicRoutes, protectedRoutes } from "./lib/pathroute";
 import { auth } from "@/auth";
 import { libroles } from "./common/types";
-export default async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   const session = await auth(); 
   const pathname = req.nextUrl.pathname;
 
