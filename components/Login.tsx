@@ -8,7 +8,17 @@ import {
 import Link from "next/link";
 import LoginButton from "./LoginButton";
 import { MdLocalLibrary } from "react-icons/md";
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+import { auth } from "@/auth";
 const LoginPage = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  console.log("data", session);
+  if (session){
+    redirect("/home");
+  }
   return (
     <div className="min-h-screen relative overflow-hidden bg-linear-to-br from-neutral-900 via-zinc-900 to-slate-900">
       {/* Animated Background Elements */}
@@ -33,7 +43,7 @@ const LoginPage = async () => {
           <CardHeader className="text-center  ">
             {/* Company Logo/Icon */}
             <div className="mx-auto w-16 h-16  rounded-2xl flex items-center justify-center shadow-lg">
-              <MdLocalLibrary  width={16} height={16}/>
+              <MdLocalLibrary width={16} height={16} />
             </div>
 
             {/* Company Name */}
