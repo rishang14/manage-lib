@@ -4,13 +4,11 @@ import Link from "next/link";
 
 export function MainSection() {
   return (
-    <section className="py-10 flex items-center justify-center  md:py-20 relative overflow-hidden">
-      <div className="absolute top-20  transform -translate-x-1 w-full h-56 bg-linear-to-l from-black via-blue-500 to-black rounded-full blur-2xl opacity-35"></div>
-      <div className="absolute  bg-gradient-to-br from-blue-400 " />
-      <div className="absolute inset-0" />
+    <section className="py-10 flex items-center justify-center relative md:py-20  overflow-hidden">
+      <div className="absolute top-20   w-full h-56 bg-linear-to-tl from-black via-blue-500 to-black rounded-full blur-2xl opacity-35"></div> 
       <div className="container relative px-4 md:px-6">
         <div className="max-w-4xl mx-auto text-center text-white space-y-8">
-          <div className="inline-flex items-center rounded-full border border-white/20 px-4 py-1.5 text-sm font-medium bg-white/10 backdrop-blur">
+          <div className="inline-flex items-center rounded-full border inset-ring inset-ring-gray-100 px-4 py-1.5 text-sm font-medium bg-white/10 backdrop-blur">
             <Sparkles className="mr-2 h-4 w-4" />
             Start your free trial today
           </div>
