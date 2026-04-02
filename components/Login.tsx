@@ -16,41 +16,25 @@ const LoginPage = async () => {
     headers: await headers(),
   });
   console.log("data", session);
-  if (session){
+  if (session) {
     redirect("/home");
   }
   return (
-    <div className="min-h-screen relative overflow-hidden bg-linear-to-br from-neutral-900 via-zinc-900 to-slate-900">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0">
-        {/* Floating Orbs */}
-        <div className="absolute top-20 left-20 w-72 h-72 bg-violet-500/30 rounded-full blur-xl animate-pulse"></div>
-        <div className="absolute top-40 right-32 w-96 h-96 bg-blue-500/20 rounded-full blur-xl animate-pulse delay-1000"></div>
-        <div className="absolute bottom-32 left-32 w-80 h-80 bg-indigo-500/25 rounded-full blur-xl animate-pulse delay-2000"></div>
-
-        {/* Geometric Shapes */}
-        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white/40 rotate-45 animate-ping delay-500"></div>
-        <div className="absolute top-1/3 right-1/4 w-3 h-3 bg-violet-300/60 rotate-45 animate-ping delay-1500"></div>
-        <div className="absolute bottom-1/3 left-1/3 w-2 h-2 bg-blue-300/50 rotate-45 animate-ping delay-3000"></div>
-
-        {/* Grid Pattern */}
-        <div className="absolute inset-0 bg-[linear-linear(rgba(255,255,255,0.02)_1px,transparent_1px),linear-linear(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-size-[50px_50px]"></div>
-      </div>
-
+    <div className="min-h-screen overflow-hidden">
       {/* Main Content */}
-      <div className="relative z-10 flex items-center justify-center min-h-screen p-2">
-        <Card className="w-full max-w-md backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
-          <CardHeader className="text-center  ">
+      <div className="relative z-10 flex min-h-screen items-center justify-center p-2">
+        <Card className="w-full max-w-md shadow-2xl inset-shadow-xs inset-shadow-zinc-600 backdrop-blur-lg">
+          <CardHeader className="text-center">
             {/* Company Logo/Icon */}
-            <div className="mx-auto w-16 h-16  rounded-2xl flex items-center justify-center shadow-lg">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg">
               <MdLocalLibrary width={16} height={16} />
             </div>
 
             {/* Company Name */}
-            <CardTitle className="text-3xl font-bold bg-linear-to-r from-white to-blue-100 bg-clip-text text-transparent">
+            <CardTitle className="bg-linear-to-r from-gray-100 to-gray-400 bg-clip-text text-3xl font-bold text-transparent">
               <Link href={"/"}>LibShift</Link>
             </CardTitle>
-            <CardDescription className="text-blue-100/80 text-lg">
+            <CardDescription className="text-lg text-gray-400 text-shadow-xs">
               Welcome back to your workspace
             </CardDescription>
           </CardHeader>
@@ -73,8 +57,8 @@ const LoginPage = async () => {
       </div>
 
       {/* Footer */}
-      <div className="absolute bottom-4 left-0 right-0 z-10">
-        <p className="text-center text-blue-100/50 text-sm">
+      <div className="absolute right-0 bottom-4 left-0 z-10">
+        <p className="text-center text-sm text-blue-100/50">
           © 2026 LibShift. All rights reserved.
         </p>
       </div>

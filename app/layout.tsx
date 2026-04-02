@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google"; 
-import localFont from 'next/font/local'; 
+import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
-import { Provider } from "./provider"; 
-
+import { Provider } from "./provider";
 
 const rubik = localFont({
-  display: 'swap',
+  display: "swap",
   src: [
     {
-      path: '../public/font/rubik.woff2',
+      path: "../public/font/rubik.woff2",
     },
   ],
-  variable: '--font-rubik',
+  variable: "--font-rubik",
 });
 
 const geistSans = Geist({
@@ -37,12 +36,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={rubik.className}>
-      <body
-        className="antialiased"
-      >
+      <body className="antialiased bg-neutral-900">
         <Provider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
