@@ -36,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={rubik.className}>
-      <body className="antialiased bg-neutral-900">
+      <body className="bg-neutral-900 antialiased">
         <Provider
           attribute="class"
           defaultTheme="dark"
