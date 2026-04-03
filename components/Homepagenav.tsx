@@ -1,18 +1,33 @@
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { AiOutlineLogout } from "react-icons/ai";
+import { Button } from "./ui/button";
 import { NavProps } from "@/common/types";
-import Profilesetting from "./Profilesetting";
-import { MdLocalLibrary } from "react-icons/md"; 
 
-const HomeNavBar = async({data}:NavProps) => {   
+const HomeNavBar = async ({ data }: NavProps) => {
   return (
-    <header className=" w-full  max-w-240  mx-auto p-2  ">
-      <div className="container flex h-16 items-center justify-between inset-shadow-2xs inset-shadow-neutral-500 bg-linear-to-bl px-2  border from-neutral-900/10  to-neutral-900  rounded-2xl  md:px-4">
-        <div className="flex items-center space-x-2 md:mr-8 mr-3">
-          <div className="w-8 h-8  rounded-lg flex items-center justify-center">
-            <MdLocalLibrary className="w-5 h-5"/>
+    <header className="w-full p-4">
+      <div className="relative container flex h-16 items-center justify-between rounded-2xl bg-neutral-900/10 px-2 shadow-2xl">
+        <div className="absolute inset-x-0 -bottom-px h-px bg-linear-to-r from-transparent via-slate-500 to-transparent"></div>
+        <div className="flex items-center p-2">
+          <div className="flex items-center gap-2">
+            <Avatar className="size-10">
+              <AvatarImage src={data.image ?? ""} />
+              <AvatarFallback>{data.name.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col">
+              <p className="font-medium tracking-tighter text-gray-100/70 text-shadow-sm">
+                Hi ,{data.name}
+              </p>
+              <span className="font-extralightt hidden bg-linear-to-br from-gray-300 to-gray-500 bg-clip-text tracking-tighter text-transparent md:block">
+                {data.email}
+              </span>
+            </div>
           </div>
-          <h1 className="text-xl font-bold text-foreground ">LibShift</h1>
         </div>
-          <Profilesetting data={data}/>
+        <Button className="bg-gray-100 font-medium text-neutral-800 shadow-2xl transition duration-200 text-shadow-sm active:scale-98">
+          Logout
+          <AiOutlineLogout className="size-4" />
+        </Button>
       </div>
     </header>
   );
