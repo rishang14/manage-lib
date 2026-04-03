@@ -5,11 +5,12 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { features } from "@/lib/constant";
+import { DesignedCard } from "./DesignedCard";
 
 export function FeaturesSection() {
   return (
     <section id="features" className="py-10 md:py-8">
-      <div className="container max-w-260 px-4 opacity-95 backdrop-blur-md md:mx-auto md:flex md:gap-4 md:rounded-2xl md:from-neutral-700/40 md:to-neutral-900/50 md:p-3 md:inset-ring md:inset-ring-[rgba(255,255,255,0.2)]">
+      <DesignedCard>
         <div className="p-2 py-4 opacity-90 backdrop-blur-xl md:mx-auto md:flex md:gap-4 md:rounded-xl md:bg-zinc-900">
           <div className="mb-10 gap-3 space-y-2 md:mb-16 md:flex md:w-[30%] md:flex-col md:items-center md:justify-center">
             <h2 className="bg-linear-to-br from-gray-50 from-50% to-gray-600 bg-clip-text text-center text-3xl font-bold text-transparent md:text-5xl">
@@ -35,7 +36,7 @@ export function FeaturesSection() {
             ))}
           </div>
         </div>
-      </div>
+      </DesignedCard>
     </section>
   );
 }

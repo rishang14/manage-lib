@@ -152,9 +152,9 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/50  p-0 m-0 box-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply max-w-260 mx-auto;
   }
 }
